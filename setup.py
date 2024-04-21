@@ -3,14 +3,14 @@
 from setuptools import setup
 
 setup(
-	name='Nemesis Reloaded',
+	name='nemesisreloaded',
 	version='1',
-	packages=['nemesis_reloaded'],
+	packages=['nemesisreloaded'],
 	install_requires=['pygame'],
 	entry_points={
 		"console_scripts": [
-			"nemesis_reloaded = nemesis_reloaded.__main__:main"
-			]
+			"nemesisreloaded = nemesisreloaded.__main__:main"
+		]
 	}
 
 )

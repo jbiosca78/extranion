@@ -1,7 +1,7 @@
 #!/usr/bin/env python3
 
 import sys
-from nemesis_reloaded.game import Game
+from nemesisreloaded.game import Game
 
 def main(args=None):
 	if args is None:
