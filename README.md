@@ -1,2 +1,3 @@
-# nemesis_reloaded
-Práctica de programación de videojuegos para la VIU
+TODO: pipenv
+
+pip install -e . --break-system-packages
