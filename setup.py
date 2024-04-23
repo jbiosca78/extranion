@@ -12,5 +12,4 @@ setup(
 			"nemesisreloaded = nemesisreloaded.__main__:main"
 		]
 	}
-
 )

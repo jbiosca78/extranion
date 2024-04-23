@@ -8,16 +8,26 @@ import time
 class Game:
 
 	def __init__(self):
-		self.__screen=None
-
-		#image=pygame.image.load("images/ship.png").convert_alpha()
-		pass
-
-	def run(self):
 		pygame.init()
 
-		screen=pygame.display.set_mode([640,480], 0, 32)
+		self.__screen=None
+		self.__screen=pygame.display.set_mode([640,480], 0, 32)
 		pygame.display.set_caption("Hello World")
+
+		#image=pygame.image.load("images/ship.png").convert_alpha()
+
+		self.__running = True
+
+	def run(self):
+
+		while self.__running:
+			for event in pygame.event.get():
+				if event.type == pygame.QUIT:
+					self.__running = False
+
+			self.__screen.fill((0,0,0))
+
+			pygame.display.update()
 
 		time.sleep(2)
 		self.__release()
