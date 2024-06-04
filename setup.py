@@ -1,15 +1,12 @@
-#!/usr/bin/env python3
-
 from setuptools import setup
 
 setup(
-	name='nemesisreloaded',
-	version='1',
-	packages=['nemesisreloaded'],
+	name='extranion',
+	version='0.1',
+	packages=['extranion'],
 	install_requires=['pygame'],
 	entry_points={
-		"console_scripts": [
-			"nemesisreloaded = nemesisreloaded.__main__:main"
-		]
+		#"console_scripts": ["extranion = extranion.__main__:main"]
+		"console_scripts": ["extranion = extranion.game:run"]
 	}
 )
