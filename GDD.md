@@ -9,11 +9,12 @@ Audiencia: Jugadores de todas las edades, que disfruten de juegos de naves espac
 Estilo de juego: El jugador maneja una nave y varias hordas de marcianos aparecen en pantalla, siendo necesario matarlos a todos para pasar a la siguiente pantalla. La dificultad aumenta progresivamente tras cada pantalla.
 Otras características: Puntuación y tabla de puntuaciones al estilo de las recreativas clásicas.
 
+## Estilo visual
+
 ## Interface
 
 Pantalla informativa
 Control del juego
-Audio 
 
 ## Físicas
 
@@ -27,3 +28,5 @@ Disparos de los enemigos
 
 Puntos por matar enemigos
 Vidas
+
+## Audio y música
