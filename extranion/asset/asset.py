@@ -3,15 +3,15 @@ from importlib import resources
 import pygame
 #from extranion.asset.a import Asset, AssetType
 from extranion.config import cfg
-from extranion import game
+import extranion.log as log
 
 class AssetItem:
-	def __init__(self, category, atype, filepath, conf):
+	def __init__(self, category, type, filepath, conf):
 		self.category = category
-		self.atype = atype
+		self.type = type
 		self.data = None
-		if self.atype == "image":  self.data = pygame.image.load(filepath)
-		elif self.atype == "font": self.data = pygame.font.Font(filepath, conf["size"])
+		if self.type == "image":  self.data = pygame.image.load(filepath)
+		elif self.type == "font": self.data = pygame.font.Font(filepath, conf["size"])
 
 	def get(self):
 		return self.data
@@ -19,11 +19,12 @@ class AssetItem:
 _assets={}
 
 def load(category, name):
-	if game.DEBUG: print(f"asset.load {category} {name}")
+	#if game.DEBUG: print(f"asset.load {category} {name}")
+	log.debug(f"asset.load {category} {name}")
 	conf=cfg(f"{name}")
-	atype=conf["atype"]
-	filepath=resources.files("extranion.data").joinpath(atype).joinpath(conf["file"])
-	asset = AssetItem(category, atype, filepath, conf)
+	type=conf["type"]
+	filepath=resources.files("extranion.data").joinpath(type).joinpath(conf["file"])
+	asset = AssetItem(category, type, filepath, conf)
 	_assets[name] = asset
 
 def unload(category=None):
@@ -39,7 +40,7 @@ def get(name):
 	if name in _assets:
 		return _assets[name].get()
 	else:
-		print(f"ERROR: Asset {name} not found")
+		log.error(f"ERROR: Asset {name} not found")
 		return None
 	#if sheet_name:
 	#	if sheet_name in self.__assets:

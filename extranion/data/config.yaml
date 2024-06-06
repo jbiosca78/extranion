@@ -1,47 +1,38 @@
 game:
   name: Extranion
-  screen_size:
-    - 1920
-    - 1080
-  #screen_size: [ 960, 540 ]
-  background_color:
-    - 0
-    - 0
-    - 0
-  foreground_color:
-    - 255
-    - 255
-    - 255
-  debug:
-    activated: true
-    collider_color:
-      - 255
-      - 0
-      - 0
-    render_color:
-      - 0
-      - 0
-      - 255
+  screen_size: [ 1920, 1080 ]
+  #canvas_size: [ 1280, 720 ]
+  #canvas_size: [ 960, 540 ]
+  canvas_size: [ 640, 360 ]
+  background_color: [ 0,0,0 ]
+  foreground_color: [ 255,255,255, ]
 
-log:
-  #level: "none" # sin log
-  #level: "error
-  #level: "info"
-  level: debug
-  file: /tmp/extranion.log
+debug:
+  activated: true
+  logfile: "/tmp/extranion.log"
 
 timing:
   fps: 60
-  refresh_debug_fps: 1000
-  stats_pos:
-    - 10
-    - 15
+  debug_fps_refresh: 1000
+  debug_fps_pos: [ 6, 6 ]
+
+intro:
+  logo:
+    type: image
+    file: logo.png
+  logo_pos: [ 120,50 ]
+  text_pos: [ 220,300 ]
+  text_blink_time: 600
 
 fonts:
   sansation:
-    atype: font
+    type: font
     file: sansation.ttf
     size: 24
+  hack:
+    type: font
+    file: hack_nerd.ttf
+    size: 15
 
 entities:
   name: entities

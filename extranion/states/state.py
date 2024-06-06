@@ -12,11 +12,11 @@ class State(ABC):
         pass
 
     @abstractmethod
-    def exit(self):
+    def release(self):
         pass
 
     @abstractmethod
-    def handle_input(self, event):
+    def event(self, event):
         pass
 
     @abstractmethod

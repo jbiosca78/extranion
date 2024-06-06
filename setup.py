@@ -1,3 +1,4 @@
+#!/usr/bin/env python3
 from setuptools import setup
 
 setup(
@@ -6,7 +7,6 @@ setup(
 	packages=['extranion'],
 	install_requires=['pygame'],
 	entry_points={
-		#"console_scripts": ["extranion = extranion.__main__:main"]
-		"console_scripts": ["extranion = extranion.game:run"]
+		"console_scripts": ["extranion = extranion.game:main"]
 	}
 )

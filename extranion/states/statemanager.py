@@ -1,9 +1,9 @@
 from extranion.states.intro import Intro
-#from extranion.states.gameplay import Gameplay
+from extranion.states.play import Play
 
 _states = {
 	"Intro": Intro(),
-	#"GamePlay": Gameplay()
+	"Play": Play()
 }
 
 def init():
@@ -14,10 +14,10 @@ def init():
 	_current_state.enter()
 
 def release():
-	_current_state.exit()
+	_current_state.release()
 
-def handle_input(event):
-	_current_state.handle_input(event)
+def event(event):
+	_current_state.event(event)
 
 def update(delta_time):
 	if _current_state.done:
