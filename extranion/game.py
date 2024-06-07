@@ -153,9 +153,10 @@ def _handle_events():
 					# guardamos el tamaño de la ventana actual para restaurarlo mas adelante
 					global _window_size, _screen
 					_window_size=_screen.get_size()
-					# pasamos a fullscreen
+					# pasamos a fullscreen, linux!
 					os.environ['SDL_VIDEO_WINDOW_POS'] = "0,0"
-					screen=pygame.display.set_mode(_desktop_size, pygame.NOFRAME|pygame.RESIZABLE)
+					#pygame.display.set_mode(_desktop_size, pygame.NOFRAME|pygame.RESIZABLE)
+					pygame.display.set_mode(_desktop_size, pygame.NOFRAME)
 				else:
 					_screen=pygame.display.set_mode(_window_size, pygame.RESIZABLE, 32)
 				return

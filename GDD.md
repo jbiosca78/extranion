@@ -11,6 +11,9 @@ Otras características: Puntuación y tabla de puntuaciones al estilo de las rec
 
 ## Estilo visual
 
+
+https://ianburnette.itch.io/random-sprite-generator
+
 ## Interface
 
 Pantalla informativa

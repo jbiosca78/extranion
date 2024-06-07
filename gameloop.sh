@@ -8,7 +8,7 @@
 # apt install python3-watchdog
 
 main="extranion/game.py"
-windowpos="0 0"
+windowpos="0 50"
 
 if [[ "$1" == "" ]]
 then
