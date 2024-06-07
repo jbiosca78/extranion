@@ -27,10 +27,10 @@ if [[ $oldpid ]]
 then
 	oldwid=$(xdotool search --onlyvisible --pid $oldpid)
 	windowpos=$(xdotool getwindowgeometry $oldwid | grep Position | awk '{print $2}' | tr ',' ' ')
-	echo "oldpid: $oldpid"
-	echo "oldwid: $oldwid"
+	#echo "oldpid: $oldpid"
+	#echo "oldwid: $oldwid"
 fi
-echo "windowpos: $windowpos"
+#echo "windowpos: $windowpos"
 
 # cerramos el juego
 pkill -f "python3 $main"
@@ -46,7 +46,7 @@ python3 $main &
 
 # obtenemos pid del proceso
 pid=$(pgrep -f "python3 $main")
-echo "pid: $pid"
+#echo "pid: $pid"
 # esperamos a que se inicie la ventana y obtengamos su id
 wid=""
 while [[ $wid == "" ]]
@@ -54,7 +54,7 @@ do
 	wid=$(xdotool search --onlyvisible --pid $pid 2>/dev/null)
 done
 wid=$(xdotool search --onlyvisible --pid $pid 2>/dev/null)
-echo "wid: $wid"
+#echo "wid: $wid"
 # restauramos posición
 xdotool windowmove $wid $windowpos
 
