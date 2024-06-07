@@ -1,5 +1,6 @@
 #!/usr/bin/env python3
 
+import sys
 import os
 os.environ['PYGAME_HIDE_SUPPORT_PROMPT'] = '1' # oculta mensaje de bienvenida de pygame
 import pygame
@@ -153,10 +154,13 @@ def _handle_events():
 					# guardamos el tamaño de la ventana actual para restaurarlo mas adelante
 					global _window_size, _screen
 					_window_size=_screen.get_size()
-					# pasamos a fullscreen, linux!
-					os.environ['SDL_VIDEO_WINDOW_POS'] = "0,0"
-					#pygame.display.set_mode(_desktop_size, pygame.NOFRAME|pygame.RESIZABLE)
-					pygame.display.set_mode(_desktop_size, pygame.NOFRAME)
+					# pasamos a fullscreen
+					if sys.platform == 'win32':
+						pygame.display.set_mode(_desktop_size, pygame.FULLSCREEN)
+					else:
+						# en linux da problemas fullscreen y es preferible ventana completa sin bordes
+						os.environ['SDL_VIDEO_WINDOW_POS'] = "0,0"
+						pygame.display.set_mode(_desktop_size, pygame.NOFRAME)
 				else:
 					_screen=pygame.display.set_mode(_window_size, pygame.RESIZABLE, 32)
 				return
