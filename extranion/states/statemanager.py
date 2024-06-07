@@ -1,5 +1,6 @@
 from extranion.states.intro import Intro
 from extranion.states.gameplay import Gameplay
+from extranion import log
 
 _states = {
 	"Intro": Intro(),
@@ -8,7 +9,8 @@ _states = {
 
 def init():
 	global _current_state, _current_state_name
-	_current_state_name="Intro"
+	#_current_state_name="Intro"
+	_current_state_name="Gameplay"
 	_current_state=_states[_current_state_name]
 	_current_state.enter()
 
@@ -29,6 +31,8 @@ def render(surface):
 def _change_state():
 
 	global _current_state, _current_state_name
+
+	log.info(f"Change state from {_current_state_name} to {_current_state.change_state}")
 
 	_current_state.release()
 

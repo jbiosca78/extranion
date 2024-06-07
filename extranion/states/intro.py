@@ -23,7 +23,6 @@ class Intro(State):
 	def release(self):
 		asset.unload('intro')
 		self._stars.release()
-		pass
 
 	def event(self, event):
 		if event.type == pygame.KEYDOWN:
@@ -33,12 +32,11 @@ class Intro(State):
 	def update(self, delta_time):
 		# parpadeo del texto
 		self._text_time+=delta_time
-		if self._text_time>cfg("intro.text_blink_time"):
+		if self._text_time>cfg("layout.intro.text_blink_time"):
 			self._text_time=0
 			self._text_show=not self._text_show
 		# bajo un cielo estrellado
 		self._stars.update(delta_time)
-		pass
 
 	def render(self, canvas):
 		# primero pintamos las estrellas de fondo
@@ -51,6 +49,6 @@ class Intro(State):
 			canvas.blit(self._text, cfg("intro.text_pos"))
 
 	def __render_text(self):
-		font=asset.get("fonts.hack")
+		font=asset.get("font.default")
 		#self.__image.blit(logo, (400,0))
 		self._text = font.render("PRESS SPACE TO CONTINUE", True, cfg("game.foreground_color"), None)

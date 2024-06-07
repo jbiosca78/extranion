@@ -1,9 +1,7 @@
 from importlib import resources
-#from os import path
 import pygame
-#from extranion.asset.a import Asset, AssetType
+from extranion import log
 from extranion.config import cfg
-import extranion.log as log
 
 class AssetItem:
 
@@ -28,9 +26,10 @@ def _load_spritesheet(filepath, size):
 	res_y = image.get_height()
 
 	# calculamos cuantos sprites hay
-	dim_x = res_x // size_x
-	dim_y = res_y // size_y
+	dim_x = res_x // (size_x+1)
+	dim_y = res_y // (size_y+1)
 
+	# cargamos cada sprite en una lista bidimensional (spriterow x spritecol)
 	sheet=[]
 	for y in range(dim_y):
 		sheet.append([])

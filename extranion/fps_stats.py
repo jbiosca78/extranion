@@ -14,7 +14,7 @@ class FPS_Stats:
 		self.__logic_frames += 1
 		self.__update_time += delta_time
 		if self.__update_time > self.__refresh_update_time:
-			font=asset.get("fonts.hack")
+			font=asset.get("font.default")
 			self.__image=font.render(f"{self.__logic_frames} - {self.__render_frames}", True, cfg("game.foreground_color"), None)
 			self.__update_time-=self.__refresh_update_time
 			self.__logic_frames=0

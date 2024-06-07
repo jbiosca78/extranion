@@ -3,12 +3,12 @@ game:
   screen_size: [ 1920, 1080 ]
   canvas_size: [ 640, 360 ]
   background_color: [ 0,0,0 ]
-  foreground_color: [ 255,255,255, ]
+  foreground_color: [ 222,222,222 ]
 
 debug:
-  enabled: true
-  #logfile: "/tmp/extranion.log"
-  logfile: "extranion.log" # habría que detectar si estamos en windows o linux
+  enabled: false
+  #logfile: "/tmp/extranion.log" # habría que detectar si estamos en windows o linux
+  logfile: "extranion.log" # usaremos el path del juego para no dejar ficheros por el sistema
   loglevel: debug
 
 timing:
@@ -16,36 +16,66 @@ timing:
   debug_fps_refresh: 1000
   debug_fps_pos: [ 6, 6 ]
 
-layout:
-
 keymap:
-  debug: [ "F5" ]
+  game:
+    debug: [ "F5" ]
+    fullscreen: [ "F11" ]
+  hero:
+    # Cursors, ESDF and QAOP (no WASD, http://use-esdf.org/)
+    up:    [ "Up",    "e", "q" ]
+    left:  [ "Left",  "s", "o" ]
+    down:  [ "Down",  "d", "a" ]
+    right: [ "Right", "f", "p" ]
+    fire:  [ "Space" ]
 
-intro:
-  logo:
-    type: image
-    file: logo.png
-  logo_pos: [ 120,50 ]
-  text_pos: [ 220,300 ]
-  text_blink_time: 600
+font:
+  default:
+    type: font
+    #file: hack_nerd.ttf
+    file: TerminusTTF-Bold-4.39.ttf
+    #size: 16
+    size: 20
 
-fonts:
-  sansation:
-    type: font
-    file: sansation.ttf
-    size: 24
-  hack:
-    type: font
-    file: hack_nerd.ttf
-    size: 15
+layout:
+  intro:
+    logo:
+      type: image
+      file: logo.png
+    logo_pos: [ 120,50 ]
+    text_pos: [ 230,300 ]
+    text_blink_time: 600
+  game:
+    space_rect: [ 0, 20, 499, 359 ]
+    board_rect: [ 500, 20, 639, 359 ]
+    topscore_text_pos: [ 510, 30 ]
+    topscore_pos: [ 510, 60 ]
+    score_text_pos: [ 510, 90 ]
+    score_pos: [ 510, 120 ]
+    round_text_pos: [ 540, 190 ]
+    round_pos: [ 560, 220 ]
+    scene_text_pos: [ 540, 250 ]
+    scene_pos: [ 560, 280 ]
+    lives_pos: [ 510, 320 ]
 
 sprites:
-  starship:
+  hero:
     type: spritesheet
-    file: spaceship.png
+    file: hero.png
     size: [ 32, 32 ]
+  bullets:
+    type: spritesheet
+    file: bullets.png
+    size: [ 6, 8 ]
 
 entities:
+  hero:
+    start_pos: [ 200, 200 ]
+    acceleration: 0.02
+    speed_max: 0.24
+    #speed_decay: 0.01
+    speed_decay: 0
+
+xentities:
   name: entities
   image_file:
     - shmup.assets.images
@@ -73,14 +103,6 @@ entities:
       velocity:
         - 0
         - 0.2
-
-input:
-  key_mapping:
-    left: o
-    right: p
-    up: q
-    down: a
-    fire: space
 
 music:
   volume: 0.5

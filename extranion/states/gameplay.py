@@ -13,6 +13,9 @@ from extranion.states.state import State
 #from extranion.entities.explosion import Explosion
 import extranion.log as log
 from extranion.asset import asset
+from extranion.config import cfg
+from extranion.entities.hero import Hero
+from extranion.effects.stars import Stars
 
 class Gameplay(State):
 
@@ -25,22 +28,26 @@ class Gameplay(State):
 		#self.__enemy_projectiles= RenderGroup()
 		#self.__enemies = RenderGroup()
 		#self.__explosions = RenderGroup()
-		global _frame, _dir
-		_frame=0
-		_dir=0
+		self._board_rect=cfg("layout.game.board_rect")
+		self._bullet_pos = [0,0]
 
 	def enter(self):
 
 		log.info("Entering state Gameplay")
-		self.__load_assets()
+		self._load_assets()
+		self._hero=Hero(position=cfg("entities.hero.start_pos"), spritesheet="hero")
+		#self._stars=Stars(cfg("game.canvas_size"))
+		self._stars=Stars(cfg("layout.game.space_rect")[2:4])
 
 		#self.__players.add(Hero(self.__spawn_projectile))
 		#SoundManager.instance().play_music(cfg_item("music", "mission", "name"))
 		#self.__spawner = Spawner(self.__spawn_enemy)
 
-	def __load_assets(self):
+	def _load_assets(self):
 
-		asset.load('gameplay', 'sprites.starship', 'starship')
+		asset.load('gameplay', 'sprites.hero', 'hero')
+		asset.load('gameplay', 'sprites.bullets', 'bullets')
+		#self.starship=entity
 		#asset.load('intro','intro.logo')
 
 		#AssetManager.instance().load(AssetType.SpriteSheet, 'gameplay', cfg_item("entities", "name"), cfg_item("entities", "image_file"), data_filename = cfg_item("entities", "data_file"))
@@ -50,11 +57,10 @@ class Gameplay(State):
 		#AssetManager.instance().load(AssetType.Sound, 'gameplay', cfg_item("sfx", "explosion1", "name"), cfg_item("sfx", "explosion1", "file"))
 		#AssetManager.instance().load(AssetType.Sound, 'gameplay', cfg_item("sfx", "explosion2", "name"), cfg_item("sfx", "explosion2", "file"))
 		#AssetManager.instance().load(AssetType.FlipBook, 'gameplay', cfg_item("entities", "explosion", "name"), cfg_item("entities", "explosion" , "image_file"), rows = cfg_item("entities", "explosion", "size")[0], cols = cfg_item("entities", "explosion", "size")[1])
-		pass
-
 
 	def release(self):
 		asset.unload('gameplay')
+		self._stars.release()
 		#for enemy in self.__enemies:
 		#    self.__enemy_pool.release(enemy)
 
@@ -66,28 +72,20 @@ class Gameplay(State):
 		#self.__spawner = None
 		##SoundManager.instance().stop_music()
 		#self.__unload_assets()
-		pass
 
 	def event(self, event):
-		global _dir
-		if event.type == pygame.KEYDOWN:
-			if event.key == pygame.K_LEFT:
-				_dir=-1
-			elif event.key == pygame.K_RIGHT:
-				_dir=1
-		if event.type == pygame.KEYUP:
-			_dir=0
 
-		#    self.__players.handle_input(event.key, True)
-		#if event.type == pygame.KEYUP:
-		#    self.__players.handle_input(event.key, False)
-		#if event.type == pygame.MOUSEBUTTONDOWN:
-		#    self.done = True
+		if event.type == pygame.KEYDOWN: self._hero.input(event.key, True)
+		if event.type == pygame.KEYUP:   self._hero.input(event.key, False)
+
+		if event.type == pygame.KEYDOWN:
+			if event.key == pygame.K_SPACE:
+				self._bullet_pos=self._hero.get_position()
+				self._bullet_pos[0]+=self._hero.get_width()//2-3
 
 	def update(self, delta_time):
-		global _frame
-		_frame+=delta_time/64
-		if _frame>=3: _frame=0
+
+		self._hero.update(delta_time)
 		#self.__players.update(delta_time)
 		#self.__allied_projectiles.update(delta_time)
 		#self.__enemy_projectiles.update(delta_time)
@@ -108,22 +106,55 @@ class Gameplay(State):
 		#    self.__kill_enemy(enemy)
 		#    self.__game_over()
 
+		#bullets=pygame.sprite.Group()
+		#bullets.add(self.__allied_projectiles)
+
+		#self._bullet_pos[1]-=1
+		#print(type(self._bullet_pos))
+		self._bullet_pos[1]-=4
+
+		self._stars.update(delta_time)
+
 	def render(self, canvas):
 
-		global _dir
+		self._stars.render(canvas)
 		#self.__players.draw(surface)
 		#self.__enemies.draw(surface)
 		#self.__allied_projectiles.draw(surface)
 		#self.__enemy_projectiles.draw(surface)
 		#self.__explosions.draw(surface)
 
-		starship=asset.get("starship")
-		canvas.blit(starship[_dir+1][int(_frame)], [100,100])
+		self._hero.render(canvas)
 
+		bullets=asset.get("bullets")
+		# draw bullets[0][0]
+		bpos=self._bullet_pos
+		canvas.blit(bullets[0][0], bpos)
+		#canvas.blit(bullets[0][1], (300,200))
+		#canvas.blit(bullets[0][2], (320,200))
 
-	def __unload_assets(self):
-		#AssetManager.instance().clear("gameplay")
-		pass
+		# draw blue box in board rect
+		canvas.fill((33,36,255), self._board_rect, 1)
+
+		score=1234
+		font=asset.get("font.default")
+		text = font.render(f"TOP SCORE", True, cfg("game.foreground_color"), None)
+		canvas.blit(text, cfg("layout.game.topscore_text_pos"))
+		text = font.render(f"SCORE", True, cfg("game.foreground_color"), None)
+		canvas.blit(text, cfg("layout.game.score_text_pos"))
+		text = font.render(f"ROUND", True, cfg("game.foreground_color"), None)
+		canvas.blit(text, cfg("layout.game.round_text_pos"))
+		text = font.render(f"SCENE", True, cfg("game.foreground_color"), None)
+		canvas.blit(text, cfg("layout.game.scene_text_pos"))
+
+		text = font.render(f"{score:12}", True, cfg("game.foreground_color"), None)
+		canvas.blit(text, cfg("layout.game.topscore_pos"))
+		text = font.render(f"{score:12}", True, cfg("game.foreground_color"), None)
+		canvas.blit(text, cfg("layout.game.score_pos"))
+		text = font.render(f"1", True, cfg("game.foreground_color"), None)
+		canvas.blit(text, cfg("layout.game.round_pos"))
+		text = font.render(f"1", True, cfg("game.foreground_color"), None)
+		canvas.blit(text, cfg("layout.game.scene_pos"))
 
 	def __spawn_projectile(self, proj_type, position):
 		#if proj_type == ProjectileType.Allied:
