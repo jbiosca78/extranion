@@ -1,5 +1,4 @@
 import datetime
-import functools
 import inspect
 
 # Niveles de log

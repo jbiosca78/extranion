@@ -1,15 +1,14 @@
 from extranion.states.intro import Intro
-from extranion.states.play import Play
+from extranion.states.gameplay import Gameplay
 
 _states = {
 	"Intro": Intro(),
-	"Play": Play()
+	"Gameplay": Gameplay()
 }
 
 def init():
 	global _current_state, _current_state_name
-
-	_current_state_name = 'Intro'
+	_current_state_name="Intro"
 	_current_state=_states[_current_state_name]
 	_current_state.enter()
 
@@ -20,7 +19,7 @@ def event(event):
 	_current_state.event(event)
 
 def update(delta_time):
-	if _current_state.done:
+	if _current_state.change_state is not None:
 		_change_state()
 	_current_state.update(delta_time)
 
@@ -31,12 +30,12 @@ def _change_state():
 
 	global _current_state, _current_state_name
 
-	_current_state.exit()
+	_current_state.release()
 
 	previous_state = _current_state_name
-	_current_state_name = _current_state.next_state
+	_current_state_name = _current_state.change_state
 	_current_state = _states[_current_state_name]
 	_current_state.previous_state = previous_state
 
-	_current_state.done = False
+	_current_state.change_state = None
 	_current_state.enter()

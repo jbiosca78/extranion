@@ -1,20 +1,24 @@
 game:
   name: Extranion
   screen_size: [ 1920, 1080 ]
-  #canvas_size: [ 1280, 720 ]
-  #canvas_size: [ 960, 540 ]
   canvas_size: [ 640, 360 ]
   background_color: [ 0,0,0 ]
   foreground_color: [ 255,255,255, ]
 
 debug:
-  activated: true
+  enabled: true
   logfile: "/tmp/extranion.log"
+  loglevel: debug
 
 timing:
   fps: 60
   debug_fps_refresh: 1000
   debug_fps_pos: [ 6, 6 ]
+
+layout:
+
+keymap:
+  debug: [ "F5" ]
 
 intro:
   logo:
@@ -33,6 +37,12 @@ fonts:
     type: font
     file: hack_nerd.ttf
     size: 15
+
+sprites:
+  starship:
+    type: spritesheet
+    file: spaceship.png
+    size: [ 32, 32 ]
 
 entities:
   name: entities

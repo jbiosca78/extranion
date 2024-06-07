@@ -5,7 +5,7 @@ os.environ['PYGAME_HIDE_SUPPORT_PROMPT'] = '1' # oculta mensaje de bienvenida de
 import pygame
 from extranion.fps_stats import FPS_Stats
 #from extranion.config import cfg_item, Config
-from extranion.config import cfg,DEBUG
+from extranion.config import cfg
 #from extranion.assets.assetmanager import AssetManager		# lanzamos el juego
 import extranion.log as log
 from importlib import resources
@@ -27,10 +27,9 @@ def main():
 		pass
 
 	try:
-		# Iniciamos logger si se ha configurado
-		x=cfg("debug.logfiles")
-		logfile=resources.files("extranion").joinpath("extranion.log")
-		log.init(file=logfile, level="DEBUG")
+		# Iniciamos logger si el debug está activo
+		if cfg("debug.enabled"):
+			log.init(file=cfg("debug.logfile"), level=cfg("debug.loglevel"))
 		log.info("* Game Start *")
 
 		# lanzamos el juego
@@ -74,7 +73,8 @@ def _initialize():
 		_canvas=pygame.Surface((canvas_x,canvas_y))
 
 		log.info("Initializing game")
-		global _time_per_frame, _fps_stats, _running
+		global _debug, _time_per_frame, _fps_stats, _running
+		_debug=cfg("debug.enabled")
 		_time_per_frame=1000.0/cfg("timing.fps")
 		_fps_stats=FPS_Stats()
 		_load_assets()
@@ -119,7 +119,7 @@ def _mainloop():
 		# Si no estamos en debug, esperamos el tiempo sobrante entre frames
 		# restando el tiempo que tardamos en generar un frame (time_post-time_prev)
 		# para evitar sobrecargar la CPU
-		if not DEBUG:
+		if not _debug:
 			if (time_post-time_prev)<_time_per_frame:
 				time.sleep((_time_per_frame-(time_post-time_prev))/1000)
 
@@ -132,7 +132,7 @@ def _unload_assets():
 	asset.unload('main')
 
 def _handle_events():
-	global DEBUG, _running
+	global _debug, _running
 
 	for event in pygame.event.get():
 		if event.type == pygame.QUIT: _running=False
@@ -141,7 +141,7 @@ def _handle_events():
 				_running=False
 				return
 			elif event.key == pygame.K_F5:
-				DEBUG=not DEBUG
+				_debug=not _debug
 				return
 			elif event.key == pygame.K_F11:
 				global _fullscreen
@@ -172,11 +172,10 @@ def _render():
 	_canvas.fill(cfg("game.background_color"))
 
 	statemanager.render(_canvas)
-	if DEBUG: _fps_stats.render(_canvas)
+	if _debug: _fps_stats.render(_canvas)
 
 	pygame.transform.scale(_canvas, _screen.get_size(), _screen)
 	pygame.display.update()
-
 
 if __name__ == "__main__":
 	main()

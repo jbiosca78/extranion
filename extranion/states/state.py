@@ -3,9 +3,8 @@ from abc import ABC, abstractmethod
 class State(ABC):
 
     def __init__(self):
-        self.done = False
-        self.next_state = ""
-        self.previous_state = ""
+        self.previous_state = None
+        self.change_state = None
 
     @abstractmethod
     def enter(self):

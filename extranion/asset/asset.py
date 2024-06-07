@@ -4,26 +4,17 @@ import pygame
 #from extranion.asset.a import Asset, AssetType
 from extranion.config import cfg
 import extranion.log as log
-
-class AssetItem:
-	def __init__(self, category, type, filepath, conf):
-		self.category = category
-		self.type = type
-		self.data = None
-		if self.type == "image":  self.data = pygame.image.load(filepath)
-		elif self.type == "font": self.data = pygame.font.Font(filepath, conf["size"])
-
-	def get(self):
-		return self.data
+from extranion.asset.assetitem import AssetItem
 
 _assets={}
 
-def load(category, name):
-	#if game.DEBUG: print(f"asset.load {category} {name}")
-	log.debug(f"asset.load {category} {name}")
-	conf=cfg(f"{name}")
+def load(category, config, name=None):
+	global _assets
+	if name is None: name = config
+	log.debug(f"asset.load {category} {config} {name}")
+	conf=cfg(f"{config}")
 	type=conf["type"]
-	filepath=resources.files("extranion.data").joinpath(type).joinpath(conf["file"])
+	filepath=str(resources.files("extranion.data").joinpath(type).joinpath(conf["file"]))
 	asset = AssetItem(category, type, filepath, conf)
 	_assets[name] = asset
 
@@ -37,6 +28,7 @@ def unload(category=None):
 		_assets = {}
 
 def get(name):
+	global _assets
 	if name in _assets:
 		return _assets[name].get()
 	else:
