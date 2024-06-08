@@ -51,11 +51,11 @@ layout:
     topscore_pos: [ 510, 60 ]
     score_text_pos: [ 510, 90 ]
     score_pos: [ 510, 120 ]
-    round_text_pos: [ 540, 190 ]
-    round_pos: [ 560, 220 ]
-    scene_text_pos: [ 540, 250 ]
-    scene_pos: [ 560, 280 ]
-    lives_pos: [ 510, 320 ]
+    charge_text_pos: [ 540, 190 ]
+    charge_pos: [ 570, 220 ]
+    scene_text_pos: [ 545, 250 ]
+    scene_pos: [ 570, 280 ]
+    lives_pos: [ 504, 320 ]
 
 sprites:
   hero:
@@ -66,10 +66,14 @@ sprites:
     type: spritesheet
     file: bullets.png
     size: [ 6, 8 ]
+  exerion:
+    type: spritesheet
+    file: exerion-sheet-x2.png
+    size: [ 32, 32 ]
 
 entities:
   hero:
-    start_pos: [ 200, 200 ]
+    start_pos: [ 234, 320 ]
     acceleration: 0.02
     speed_max: 0.24
     #speed_decay: 0.01

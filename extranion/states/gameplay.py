@@ -14,8 +14,9 @@ from extranion.states.state import State
 import extranion.log as log
 from extranion.asset import asset
 from extranion.config import cfg
-from extranion.entities.hero import Hero
 from extranion.effects.stars import Stars
+from extranion.entities.hero import Hero
+from extranion.entities.enemy import Enemy
 
 class Gameplay(State):
 
@@ -30,14 +31,19 @@ class Gameplay(State):
 		#self.__explosions = RenderGroup()
 		self._board_rect=cfg("layout.game.board_rect")
 		self._bullet_pos = [0,0]
+		self._maxscore=1234
+		self._score=0
+		self._charge=0
+		self._lives=4
 
 	def enter(self):
 
 		log.info("Entering state Gameplay")
+		self._stars=Stars(cfg("layout.game.space_rect")[2:4])
 		self._load_assets()
 		self._hero=Hero(position=cfg("entities.hero.start_pos"), spritesheet="hero")
+		self._enemy=Enemy(position=[250,100], spritesheet="exerion")
 		#self._stars=Stars(cfg("game.canvas_size"))
-		self._stars=Stars(cfg("layout.game.space_rect")[2:4])
 
 		#self.__players.add(Hero(self.__spawn_projectile))
 		#SoundManager.instance().play_music(cfg_item("music", "mission", "name"))
@@ -47,6 +53,7 @@ class Gameplay(State):
 
 		asset.load('gameplay', 'sprites.hero', 'hero')
 		asset.load('gameplay', 'sprites.bullets', 'bullets')
+		asset.load('gameplay', 'sprites.exerion', 'exerion')
 		#self.starship=entity
 		#asset.load('intro','intro.logo')
 
@@ -86,6 +93,7 @@ class Gameplay(State):
 	def update(self, delta_time):
 
 		self._hero.update(delta_time)
+		self._enemy.update(delta_time)
 		#self.__players.update(delta_time)
 		#self.__allied_projectiles.update(delta_time)
 		#self.__enemy_projectiles.update(delta_time)
@@ -111,7 +119,7 @@ class Gameplay(State):
 
 		#self._bullet_pos[1]-=1
 		#print(type(self._bullet_pos))
-		self._bullet_pos[1]-=4
+		self._bullet_pos[1]-=4.5
 
 		self._stars.update(delta_time)
 
@@ -124,8 +132,6 @@ class Gameplay(State):
 		#self.__enemy_projectiles.draw(surface)
 		#self.__explosions.draw(surface)
 
-		self._hero.render(canvas)
-
 		bullets=asset.get("bullets")
 		# draw bullets[0][0]
 		bpos=self._bullet_pos
@@ -133,28 +139,39 @@ class Gameplay(State):
 		#canvas.blit(bullets[0][1], (300,200))
 		#canvas.blit(bullets[0][2], (320,200))
 
+		self._enemy.render(canvas)
+		self._hero.render(canvas)
+
 		# draw blue box in board rect
 		canvas.fill((33,36,255), self._board_rect, 1)
 
-		score=1234
 		font=asset.get("font.default")
 		text = font.render(f"TOP SCORE", True, cfg("game.foreground_color"), None)
 		canvas.blit(text, cfg("layout.game.topscore_text_pos"))
 		text = font.render(f"SCORE", True, cfg("game.foreground_color"), None)
 		canvas.blit(text, cfg("layout.game.score_text_pos"))
-		text = font.render(f"ROUND", True, cfg("game.foreground_color"), None)
-		canvas.blit(text, cfg("layout.game.round_text_pos"))
+		text = font.render(f"CHARGE", True, cfg("game.foreground_color"), None)
+		canvas.blit(text, cfg("layout.game.charge_text_pos"))
 		text = font.render(f"SCENE", True, cfg("game.foreground_color"), None)
 		canvas.blit(text, cfg("layout.game.scene_text_pos"))
 
+		score=1234
+		self._charge+=1
+		self._score+=10
+
 		text = font.render(f"{score:12}", True, cfg("game.foreground_color"), None)
 		canvas.blit(text, cfg("layout.game.topscore_pos"))
-		text = font.render(f"{score:12}", True, cfg("game.foreground_color"), None)
+		text = font.render(f"{self._score:12}", True, cfg("game.foreground_color"), None)
 		canvas.blit(text, cfg("layout.game.score_pos"))
+		text = font.render(str(self._charge), True, cfg("game.foreground_color"), None)
+		canvas.blit(text, cfg("layout.game.charge_pos")-pygame.math.Vector2(text.get_width()/2, 0))
 		text = font.render(f"1", True, cfg("game.foreground_color"), None)
-		canvas.blit(text, cfg("layout.game.round_pos"))
-		text = font.render(f"1", True, cfg("game.foreground_color"), None)
-		canvas.blit(text, cfg("layout.game.scene_pos"))
+		canvas.blit(text, cfg("layout.game.scene_pos")-pygame.math.Vector2(text.get_width()/2, 0))
+
+		# draw lives
+		exerion=asset.get("exerion")
+		for l in range(self._lives):
+			canvas.blit(exerion[0][0], cfg("layout.game.lives_pos")+pygame.math.Vector2((32+2)*l,0))
 
 	def __spawn_projectile(self, proj_type, position):
 		#if proj_type == ProjectileType.Allied:

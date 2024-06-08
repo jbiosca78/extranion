@@ -2,9 +2,14 @@ from abc import ABC, abstractmethod
 import pygame
 from extranion.asset import asset
 
+# Esta clase representa una entidad del juego, y gestiona:
+# El asset (spritesheet), y su animación
+# La posición y dirección de movimiento (velocidad)
+# La actualización de la posición y el renderizado
+
 class Entity(ABC):
 
-	def __init__(self, position, spritesheet, spriterow, spritecol=0, spriteframes=3, spritespeed=64):
+	def __init__(self, position, spritesheet, spriterow, spritecol=0, spriteframes=3, spritespeed=120):
 
 		self.position = pygame.math.Vector2(position[0], position[1])
 		self.velocity = pygame.math.Vector2(0.0, 0.0)
@@ -26,8 +31,6 @@ class Entity(ABC):
 
 		# desplazamiento
 		self.position+=self.velocity*delta_time
-		#self.position.x+=self.velocity.x
-		#self.position.y+=self.velocity.y
 
 	@abstractmethod
 	def render(self, canvas):
@@ -39,4 +42,7 @@ class Entity(ABC):
 		return list(self.position)
 
 	def get_width(self):
-		return self.spritesheet[self.spriterow][0].get_width()
+		return self.spritesheet[self.spriterow][self.spritecol].get_width()
+
+	def get_height(self):
+		return self.spritesheet[self.spriterow][self.spritecol].get_height()

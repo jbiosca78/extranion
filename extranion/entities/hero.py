@@ -6,7 +6,7 @@ from extranion import log
 class Hero(Entity):
 
 	def __init__(self, position, spritesheet):
-		super().__init__(spritesheet=spritesheet, position=position, spriterow=1)
+		super().__init__(spritesheet=spritesheet, position=position, spriterow=1, spritespeed=64)
 
 		self._map_input()
 		self._input_pressed = { "left": False, "right": False, "up": False, "down": False }
@@ -48,8 +48,8 @@ class Hero(Entity):
 		self.spriterow=moving_x+1 # seleccionamos animación
 
 		# check boundaries
-		sprite_width=self.spritesheet[self.spriterow][0].get_width()
-		sprite_height=self.spritesheet[self.spriterow][0].get_height()
+		sprite_width=self.get_width()
+		sprite_height=self.get_height()
 		if self.position.x<self._space_rect[0]:
 			self.position.x=self._space_rect[0]
 			if self.velocity.x<0: self.velocity.x=0
@@ -88,6 +88,3 @@ class Hero(Entity):
 		#		_dir=1
 		#if event.type == pygame.KEYUP:
 		#	_dir=0
-
-	def get_position(self):
-		return list(self.position)
