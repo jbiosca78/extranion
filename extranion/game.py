@@ -7,7 +7,7 @@ os.environ['PYGAME_HIDE_SUPPORT_PROMPT'] = '1' # oculta mensaje de bienvenida de
 import pygame
 from importlib import resources
 from extranion import log
-from extranion.config import cfg
+from extranion.config import cfg, gvar
 from extranion.states import statemanager
 from extranion.asset import asset
 from extranion.fps_stats import FPS_Stats
@@ -24,19 +24,17 @@ def main():
 		pass
 
 	try:
-		global _debug
-		_debug=cfg("debug.enabled")
-		# Iniciamos logger si el debug está activo
-		if _debug:
-			logfile=resources.files("extranion").joinpath(cfg("debug.logfile"))
-			log.init(file=logfile, level=cfg("debug.loglevel"))
+		# Iniciamos logger si está activado
+		if cfg("log.enabled"):
+			logfile=resources.files("extranion").joinpath(cfg("log.file"))
+			log.init(file=logfile, level=cfg("log.level"))
 		log.info("* Game Start *")
 
 		# lanzamos el juego
 		_initialize()
 		_mainloop()
 		_release()
-	except Exception:
+	except Exception as e:
 		if Console:
 			console.print_exception(extra_lines=2, show_locals=True)
 		else:
@@ -79,8 +77,7 @@ def _initialize():
 		_running=True
 
 	except Exception as e:
-		log.fatal("Error initializing game!")
-		log.fatal(e)
+		log.fatal(f"Exception {type(e).__name__}: {str(e)}")
 		log.outbreak()
 		raise
 
@@ -117,7 +114,7 @@ def _mainloop():
 		# si no estamos en debug, esperamos el tiempo sobrante entre frames
 		# restando el tiempo que tardamos en generar un frame (time_post-time_prev)
 		# así evitamos sobrecargar la CPU
-		if not _debug:
+		if not gvar.DEBUG:
 			if (time_post-time_prev)<_time_per_frame:
 				time.sleep((_time_per_frame-(time_post-time_prev))/1000)
 
@@ -130,17 +127,15 @@ def _unload_assets():
 	asset.unload('main')
 
 def _handle_events():
-	global _debug, _running, _window_size, _screen, _fullscreen
+	global _running, _window_size, _screen, _fullscreen
 
 	for event in pygame.event.get():
 		if event.type == pygame.QUIT: _running=False
 		elif event.type == pygame.KEYDOWN:
 			if event.key == pygame.K_ESCAPE:
 				_running=False
-				return
 			elif event.key == pygame.K_F5:
-				_debug=not _debug
-				return
+				gvar.DEBUG=not gvar.DEBUG
 			elif event.key == pygame.K_F11:
 				_fullscreen=not _fullscreen
 				if _fullscreen:
@@ -173,7 +168,7 @@ def _render():
 	_canvas.fill(cfg("game.background_color"))
 
 	statemanager.render(_canvas)
-	if _debug: _fps_stats.render(_canvas)
+	if gvar.DEBUG: _fps_stats.render(_canvas)
 
 	pygame.transform.scale(_canvas, _screen.get_size(), _screen)
 	pygame.display.update()

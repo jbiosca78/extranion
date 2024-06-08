@@ -11,12 +11,13 @@ from extranion.states.state import State
 #from extranion.entities.pool import Pool
 #from extranion.entities.enemy.enemy import Enemy
 #from extranion.entities.explosion import Explosion
-import extranion.log as log
+from extranion import log
 from extranion.asset import asset
 from extranion.config import cfg
 from extranion.effects.stars import Stars
 from extranion.entities.hero import Hero
 from extranion.entities.enemy import Enemy
+from extranion.entities.entitygroup import EntityGroup
 
 class Gameplay(State):
 
@@ -34,15 +35,21 @@ class Gameplay(State):
 		self._maxscore=1234
 		self._score=0
 		self._charge=0
-		self._lives=4
+		self._lives=2
+		self._scene=1
 
 	def enter(self):
 
 		log.info("Entering state Gameplay")
 		self._stars=Stars(cfg("layout.game.space_rect")[2:4])
 		self._load_assets()
-		self._hero=Hero(position=cfg("entities.hero.start_pos"), spritesheet="hero")
-		self._enemy=Enemy(position=[250,100], spritesheet="exerion")
+		self._hero=Hero("hero",cfg("entities.hero.start_pos"))
+
+		self._enemies=EntityGroup()
+		self._enemies.add(Enemy("enemy_1", position=[250,100]))
+		#self._enemies.add(Enemy(position=[250,100], spritesheet="exerion", spriterow=2))
+		#self._enemies.add(Enemy(position=[200,100], spritesheet="exerion", spriterow=3))
+		#self._enemies.add(Enemy(position=[300,100], spritesheet="exerion", spriterow=4))
 		#self._stars=Stars(cfg("game.canvas_size"))
 
 		#self.__players.add(Hero(self.__spawn_projectile))
@@ -54,6 +61,7 @@ class Gameplay(State):
 		asset.load('gameplay', 'sprites.hero', 'hero')
 		asset.load('gameplay', 'sprites.bullets', 'bullets')
 		asset.load('gameplay', 'sprites.exerion', 'exerion')
+		asset.load('gameplay', 'sprites.enemies', 'enemies')
 		#self.starship=entity
 		#asset.load('intro','intro.logo')
 
@@ -88,12 +96,12 @@ class Gameplay(State):
 		if event.type == pygame.KEYDOWN:
 			if event.key == pygame.K_SPACE:
 				self._bullet_pos=self._hero.get_position()
-				self._bullet_pos[0]+=self._hero.get_width()//2-3
+				self._bullet_pos[0]+=self._hero.width//2-3
 
 	def update(self, delta_time):
 
 		self._hero.update(delta_time)
-		self._enemy.update(delta_time)
+		self._enemies.update(delta_time)
 		#self.__players.update(delta_time)
 		#self.__allied_projectiles.update(delta_time)
 		#self.__enemy_projectiles.update(delta_time)
@@ -123,6 +131,11 @@ class Gameplay(State):
 
 		self._stars.update(delta_time)
 
+		for enemy in pygame.sprite.spritecollide(self._hero, self._enemies, True):
+			print("COLLISION")
+		#	self._hero.kill()
+		#	self._lives-=1
+
 	def render(self, canvas):
 
 		self._stars.render(canvas)
@@ -139,7 +152,7 @@ class Gameplay(State):
 		#canvas.blit(bullets[0][1], (300,200))
 		#canvas.blit(bullets[0][2], (320,200))
 
-		self._enemy.render(canvas)
+		self._enemies.render(canvas)
 		self._hero.render(canvas)
 
 		# draw blue box in board rect

@@ -1,5 +1,7 @@
 import random
 
+# Pixel Stars by Jose Biosca (2024)
+
 _SPEED=1.8
 
 class Stars:

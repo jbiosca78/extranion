@@ -5,11 +5,16 @@ game:
   background_color: [ 0,0,0 ]
   foreground_color: [ 222,222,222 ]
 
+log:
+  enabled: true
+  #logfile: "/tmp/extranion.log" # habría que detectar si estamos en windows o linux
+  file: "extranion.log" # usaremos el path del juego para no dejar ficheros por el sistema
+  level: debug
+
 debug:
   enabled: false
-  #logfile: "/tmp/extranion.log" # habría que detectar si estamos en windows o linux
-  logfile: "extranion.log" # usaremos el path del juego para no dejar ficheros por el sistema
-  loglevel: debug
+  rect_render_color: [ 0, 0, 255 ]
+  rect_collider_color: [ 255, 0, 0 ]
 
 timing:
   fps: 60
@@ -70,14 +75,36 @@ sprites:
     type: spritesheet
     file: exerion-sheet-x2.png
     size: [ 32, 32 ]
+  enemies:
+    type: spritesheet
+    file: enemies.png
+    size: [ 32, 32 ]
 
 entities:
+
   hero:
-    start_pos: [ 234, 320 ]
+    spritesheet: "hero"
+    animation:
+      default: [ 1, 0, 3, 64 ]
+      left:    [ 0, 0, 3, 64 ]
+      right:   [ 2, 0, 3, 64 ]
+    inflate_collider: [ -4, -4 ]
+    start_pos: [ 250, 330 ]
     acceleration: 0.02
     speed_max: 0.24
-    #speed_decay: 0.01
-    speed_decay: 0
+    speed_decay: 0.005
+
+  enemy_1:
+    spritesheet: "enemies"
+    animation:
+      default: [ 1, 0, 3, 150 ]
+    inflate_collider: [ -4, -4 ]
+
+  enemy_2:
+    spritesheet: "enemies"
+    animation:
+      default: [ 3, 0, 2, 120 ]
+    inflate_collider: [ -4, -4 ]
 
 xentities:
   name: entities

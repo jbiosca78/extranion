@@ -1,4 +1,4 @@
-# Práctica VIU, mejoras y extras
+# Práctica VIU, mejoras y extras respecto a la práctica de clase
 
 Este juego nace como una práctica del curso de programación de videojuegos de la Universidad de Valencia (VIU) impartida por Iván Fuertes.
 
@@ -8,7 +8,18 @@ El tipo de juego es parecido al videojuego que se desarrolla en el curso, ya que
 Las clases 'singleton', no me gustan personalmente, no le veo sentido en python a tener una clase que sólo se instancia una vez ya que el propio funcionamiento de los módulos de python ya realiza esa función.
 Por lo tanto en lugar de tener clases, ejecuto la inicialización de los objetos en el propio módulo y los métodos de la clase estática los dejo como métodos del propio módulo.
 
-De esta manera se reduce mucho la simplicidad del código en los módulos y en las llamadas a los métodos, ya que puedo prescindir del ".instance().". Como ejemplo el módulo config se reduce de 28 líneas de código a 7.
+De esta manera se reduce mucho la simplicidad del código en los módulos y en las llamadas a los métodos, ya que puedo prescindir del ".instance().". Como ejemplo, el módulo config se reduce de 28 líneas de código a 7.
+
+## Entidades
+Encuentro algo confuso el nombre de las clases de GameObject y RenderGroup (que hacen mas cosas además de render).
+En Extranion las clases se llaman Entity y EntityGroup.
+
+La clase Entity es mas compleja que en clase porque además de gestionar la posición de cada entidad también gestiona la animación (cada entidad puede tener X número de frames y la velocidad de cambio de frames), y el movimiento a partir del vector de velocidad.
+Deja de ser una clase abstracta ya que tiene código común a la mayoría de las entidades.
+
+El método handle_input ya no está en la clase entity. No le veo sentido tenerlo ahí y tener que implementarlo en cada una de las clases que heredan de entity cuando la única clase que tiene input es la clase Hero, ninguna otra entidad va a gestionarlo. Es más, en la clase GamePlay de clase sólo se llama al input de Hero, por lo tanto únicamente la clase Hero tiene el método input para gestionar el movimiento.
+
+Pygame además de groupcollide también tiene spritecollide, por lo que la clase Hero no la usamos a través de un entitygroup, sino que se crea directamente y usamos spritecollide para comprobar sus colisiones.
 
 ## Assets
 No me gusta mezclar código python con los propios assets del juego, por lo que he creado un directorio data con los binarios (imágenes, fuentes, etc) y he dejado en assets únicamente el código.

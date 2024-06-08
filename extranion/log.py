@@ -41,7 +41,7 @@ def error(msg):
 	_write(ERROR,msg)
 
 def fatal(msg):
-	_write(ERROR,msg)
+	_write(FATAL,msg)
 
 def inside(section=None):
 

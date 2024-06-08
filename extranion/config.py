@@ -23,4 +23,5 @@ configpath=resources.files("extranion.data").joinpath("config.yaml")
 configdata=yaml.safe_load(open(configpath,"rt"))
 
 # Establecemos variables globales
-DEBUG = cfg("debug.activated")
+class gvar:
+	DEBUG = cfg("debug.enabled")

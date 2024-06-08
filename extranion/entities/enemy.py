@@ -5,8 +5,8 @@ from extranion import log
 
 class Enemy(Entity):
 
-	def __init__(self, position, spritesheet):
-		super().__init__(spritesheet=spritesheet, position=position, spriterow=2)
+	def __init__(self, name, position=(0,0)):
+		super().__init__(name, position)
 
 		self._space_rect=cfg("layout.game.space_rect")
 
