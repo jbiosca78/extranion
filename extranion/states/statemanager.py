@@ -15,7 +15,7 @@ def init():
 	_current_state.enter()
 
 def release():
-	_current_state.release()
+	_current_state.exit()
 
 def event(event):
 	_current_state.event(event)
@@ -34,7 +34,7 @@ def _change_state():
 
 	log.info(f"Change state from {_current_state_name} to {_current_state.change_state}")
 
-	_current_state.release()
+	_current_state.exit()
 
 	previous_state = _current_state_name
 	_current_state_name = _current_state.change_state

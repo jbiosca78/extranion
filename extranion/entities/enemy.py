@@ -5,46 +5,18 @@ from extranion import log
 
 class Enemy(Entity):
 
-	def __init__(self, name, position=(0,0)):
+	def __init__(self, name, position=(0,0), hero_position_callback=None):
 		super().__init__(name, position)
 
+		self._name=name
 		self._space_rect=cfg("layout.game.space_rect")
+		self._hero_position_callback = hero_position_callback
 
 	def update(self, delta_time):
 		super().update(delta_time)
 
-		# get move directions
-		#moving_x=0
-		#moving_y=0
-		#self._acceleration=0.02
-		#self._speed_max=3
-
-		## increase velocity in moving direction
-		#self.velocity.x += moving_x*self._acceleration
-		#if self.velocity.x>self._speed_max: self.velocity.x=self._speed_max
-		#if self.velocity.x<-self._speed_max: self.velocity.x=-self._speed_max
-		#if moving_x==0: self.velocity.x*=(1-self._speed_decay)
-		#self.velocity.y += moving_y*self._acceleration
-		#if self.velocity.y>self._speed_max: self.velocity.y=self._speed_max
-		#if self.velocity.y<-self._speed_max: self.velocity.y=-self._speed_max
-		#if moving_y==0: self.velocity.y*=(1-self._speed_decay)
-		#self.spriterow=moving_x+1 # seleccionamos animación
-
-		# check boundaries
-		#sprite_width=self.spritesheet[self.spriterow][0].get_width()
-		#sprite_height=self.spritesheet[self.spriterow][0].get_height()
-		#if self.position.x<self._space_rect[0]:
-		#	self.position.x=self._space_rect[0]
-		#	if self.velocity.x<0: self.velocity.x=0
-		#if self.position.x>self._space_rect[2]-sprite_width:
-		#	self.position.x=self._space_rect[2]-sprite_width
-		#	if self.velocity.x>0: self.velocity.x=0
-		#if self.position.y<self._space_rect[1]:
-		#	self.position.y=self._space_rect[1]
-		#	if self.velocity.y<0: self.velocity.y=0
-		#if self.position.y>self._space_rect[3]-sprite_height:
-		#	self.position.y=self._space_rect[3]-sprite_height
-		#	if self.velocity.y>0: self.velocity.y=0
+		if self._name == "mariposa": self._move_mariposa()
+		if self._name == "rueda": self._move_rueda()
 
 	def render(self, canvas):
 		super().render(canvas)
@@ -71,3 +43,38 @@ class Enemy(Entity):
 		#		_dir=1
 		#if event.type == pygame.KEYUP:
 		#	_dir=0
+
+	def _move_mariposa(self):
+		# La mariposa sigue al jugador. Pero a diferencia de Exerion que siempre
+		# iba a la misma velocidad en direcciones ortogonales o diagonales, aquí
+		# agregamos el concepto de aceleración, obteniendo un movimiento mucho más
+		# orgánico. además se consigue un efecto de 'ondulación' que hace que se
+		# parezca más aun al movimiento de una mariposa. éxito absoluto aquí.
+
+		hero_position = self._hero_position_callback()
+
+		acceleration=cfg("entities.mariposa.acceleration")
+		if hero_position.x > self.position.x: self.velocity.x += acceleration
+		if hero_position.x < self.position.x: self.velocity.x -= acceleration
+		if hero_position.y > self.position.y: self.velocity.y += acceleration
+		if hero_position.y < self.position.y: self.velocity.y -= acceleration
+
+		speed_max=cfg("entities.mariposa.speed_max")
+		if self.velocity.x>speed_max: self.velocity.x=speed_max
+		if self.velocity.x<-speed_max: self.velocity.x=-speed_max
+		if self.velocity.y>speed_max: self.velocity.y=speed_max
+		if self.velocity.y<-speed_max: self.velocity.y=-speed_max
+
+	def _move_rueda(self):
+		# La rueda se mueve exactamente igual que en Exerión, siempre hacia el jugador
+		# a una velocidad fija. Es una especie de "bonus track" porque es muy fácil
+		# de matar (aunque en niveles altos donde dispara mucho y hay que dar vueltas)
+		# su puntación es mas baja por este motivo
+
+		hero_position = self._hero_position_callback()
+		# calculamos el vector hacia el jugador
+		direction = pygame.math.Vector2(hero_position) - self.position
+		# lo convertimos a vector unitario
+		direction.normalize_ip()
+		# y lo ajustamos a la velocidad
+		self.velocity=direction*cfg("entities.rueda.speed")

@@ -15,12 +15,15 @@ def load(category, config, name=None):
 	asset = AssetItem(category, type, filepath, conf)
 	_assets[name] = asset
 
-def unload(category=None):
+def unload(category=None, name=None):
 	global _assets
 	if category:
 		for k in list(_assets.keys()):
 			if _assets[k].category == category:
 				del _assets[k]
+	elif name:
+		if name in _assets:
+			del _assets[name]
 	else:
 		_assets = {}
 

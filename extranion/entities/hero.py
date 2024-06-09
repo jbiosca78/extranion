@@ -32,7 +32,7 @@ class Hero(Entity):
 			self._input_pressed["up"] = pressed
 			log.debug(f"up = {pressed}")
 		elif key in self._keymap["down"]:
-			self._input_pressed["down"]  = pressed
+			self._input_pressed["down"] = pressed
 			log.debug(f"down = {pressed}")
 		elif key in self._keymap["left"]:
 			self._input_pressed["left"] = pressed
@@ -44,14 +44,14 @@ class Hero(Entity):
 	def update(self, delta_time):
 		super().update(delta_time)
 
-		# get move directions
+		# obtenemos las direcciones de movimiento horizontal y vertical
 		moving_x=moving_y=0
 		if self._input_pressed["left"]: moving_x-=1
 		if self._input_pressed["right"]: moving_x+=1
 		if self._input_pressed["up"]: moving_y-=1
 		if self._input_pressed["down"]: moving_y+=1
 
-		# increase velocity in moving direction
+		# aceleramos en la dirección de movimiento correspondiente hasta el máximo
 		self.velocity.x += moving_x*self._acceleration
 		if self.velocity.x>self._speed_max: self.velocity.x=self._speed_max
 		if self.velocity.x<-self._speed_max: self.velocity.x=-self._speed_max
@@ -60,11 +60,13 @@ class Hero(Entity):
 		if self.velocity.y>self._speed_max: self.velocity.y=self._speed_max
 		if self.velocity.y<-self._speed_max: self.velocity.y=-self._speed_max
 		if moving_y==0: self.velocity.y*=(1-self._speed_decay)
-		self._spriterow=moving_x+1 # seleccionamos animación (izquierda, centro, derecha)
 
-		# check boundaries
+		# establecemos la animación según el movimiento horizontal
+		self.set_animation(["left","default","right"][moving_x+1])
+
 		# si estamos en un borde, no nos movemos y quitamos la aceleración hacia ese borde
-		# para evitar el efecto "pegajoso"
+		# para evitar el efecto "pegajoso". además si llegamos a un borde, permitimos
+		# movimiento en otra dirección si es posible
 		if self.position.x<self._space_rect[0]+self.width/2:
 			self.position.x=self._space_rect[0]+self.width/2
 			if self.velocity.x<0: self.velocity.x=0
@@ -93,3 +95,6 @@ class Hero(Entity):
 		#		_dir=1
 		#if event.type == pygame.KEYUP:
 		#	_dir=0
+
+	def get_position(self):
+		return super().get_position().copy()

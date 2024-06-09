@@ -51,16 +51,23 @@ layout:
     text_blink_time: 600
   game:
     space_rect: [ 0, 20, 499, 359 ]
-    board_rect: [ 500, 20, 639, 359 ]
+    board_rect: [ 500, 00, 639, 359 ]
     topscore_text_pos: [ 510, 30 ]
     topscore_pos: [ 510, 60 ]
     score_text_pos: [ 510, 90 ]
     score_pos: [ 510, 120 ]
-    charge_text_pos: [ 540, 190 ]
-    charge_pos: [ 570, 220 ]
-    scene_text_pos: [ 545, 250 ]
-    scene_pos: [ 570, 280 ]
+    charge_text_pos: [ 540, 180 ]
+    charge_pos: [ 570, 210 ]
+    scene_text_pos: [ 545, 240 ]
+    scene_pos: [ 570, 270 ]
     lives_pos: [ 504, 320 ]
+
+mechanics:
+  start_charge: 50
+  start_lives: 1
+  wave_wait: 3000
+  enemies_per_wave: 20
+  waves_per_scene: 1
 
 sprites:
   hero:
@@ -94,17 +101,51 @@ entities:
     speed_max: 0.24
     speed_decay: 0.005
 
-  enemy_1:
+  mariposa:
+    spritesheet: "enemies"
+    animation:
+      default: [ 0, 0, 3, 150 ]
+    inflate_collider: [ -4, -4 ]
+    escape_time: 5000
+    acceleration: 0.01
+    speed_max: 0.1
+    basepoints: 100
+
+  pajaro:
     spritesheet: "enemies"
     animation:
       default: [ 1, 0, 3, 150 ]
     inflate_collider: [ -4, -4 ]
+    basepoints: 100
 
-  enemy_2:
+  ovni:
     spritesheet: "enemies"
     animation:
-      default: [ 3, 0, 2, 120 ]
+      default: [ 3, 0, 3, 150 ]
     inflate_collider: [ -4, -4 ]
+    basepoints: 100
+
+  rueda:
+    spritesheet: "enemies"
+    animation:
+      default: [ 4, 0, 3, 150 ]
+    inflate_collider: [ -4, -4 ]
+    speed: 0.1
+    basepoints: 100
+
+  elefante:
+    spritesheet: "enemies"
+    animation:
+      default: [ 5, 1, 2, 150 ]
+    inflate_collider: [ -4, -4 ]
+    basepoints: 100
+
+  pluma:
+    spritesheet: "enemies"
+    animation:
+      default: [ 6, 0, 3, 300 ]
+    inflate_collider: [ -4, -4 ]
+    basepoints: 100
 
 xentities:
   name: entities

@@ -22,10 +22,7 @@ class Entity(pygame.sprite.Sprite):
 
 		self.config=cfg("entities", name)
 		self.spritesheet=asset.get(self.config["spritesheet"])
-		self.spriterow=self.config["animation"]["default"][0]
-		self.spritecol=self.config["animation"]["default"][1]
-		self.animframes=self.config["animation"]["default"][2]
-		self.animspeed=self.config["animation"]["default"][3]
+		self.set_animation("default")
 		self.animptr=0
 
 		self.width=self.spritesheet[self.spriterow][self.spritecol].get_width()
@@ -33,17 +30,23 @@ class Entity(pygame.sprite.Sprite):
 		self.render_rect=self.spritesheet[self.spriterow][self.spritecol].get_rect()
 		self.rect=self.render_rect.inflate(self.config["inflate_collider"])
 
-		#self.rect=pygame.Rect
+	def set_animation(self, animation):
+
+		self.spriterow=self.config["animation"][animation][0]
+		self.spritecol=self.config["animation"][animation][1]
+		self.animframes=self.config["animation"][animation][2]
+		self.animspeed=self.config["animation"][animation][3]
 
 	def update(self, delta_time):
-
-		# animación sprite
-		self.animptr+=delta_time/self.animspeed
-		if self.animptr>=self.animframes: self.animptr=0
 
 		# desplazamiento
 		self.position+=self.velocity*delta_time
 		self.render_rect.center=self.rect.center=self.position
+
+		# animación sprite
+		if self.animspeed>0:
+			self.animptr+=delta_time/self.animspeed
+		if self.animptr>=self.animframes: self.animptr=0
 
 	def render(self, canvas):
 
@@ -55,13 +58,4 @@ class Entity(pygame.sprite.Sprite):
 			pygame.draw.rect(canvas, cfg("debug.rect_collider_color"), self.rect, 1)
 
 	def get_position(self):
-		#return list(self.position)
 		return self.position.copy()
-
-	#def get_width(self):
-	#	#return self.spritesheet[self.spriterow][self.spritecol].get_width()
-	#	return self.width
-
-	#def get_height(self):
-	#	#return self.spritesheet[self.spriterow][self.spritecol].get_height()
-	#	return self.height

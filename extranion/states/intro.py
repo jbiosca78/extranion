@@ -20,7 +20,7 @@ class Intro(State):
 		self._stars=Stars(cfg("game.canvas_size"))
 		self.__render_text()
 
-	def release(self):
+	def exit(self):
 		asset.unload('intro')
 		self._stars.release()
 

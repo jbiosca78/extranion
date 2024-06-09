@@ -11,7 +11,7 @@ class State(ABC):
         pass
 
     @abstractmethod
-    def release(self):
+    def exit(self):
         pass
 
     @abstractmethod

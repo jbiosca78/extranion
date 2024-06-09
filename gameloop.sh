@@ -42,7 +42,7 @@ done
 
 # iniciamos nuevo juego
 echo "Iniciamos juego"
-python3 $main &
+(python3 $main; echo "Game closed") &
 
 # obtenemos pid del proceso
 pid=$(pgrep -f "python3 $main")

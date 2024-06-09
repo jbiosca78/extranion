@@ -32,11 +32,16 @@ class Gameplay(State):
 		#self.__explosions = RenderGroup()
 		self._board_rect=cfg("layout.game.board_rect")
 		self._bullet_pos = [0,0]
-		self._maxscore=1234
+
+		self._lives=cfg("mechanics.start_lives")
+		self._charge=cfg("mechanics.start_charge")
 		self._score=0
-		self._charge=0
-		self._lives=2
-		self._scene=1
+		self._maxscore=1234
+
+		self._scene=0
+		self._wave=0
+		self._wavewait=0
+
 
 	def enter(self):
 
@@ -45,8 +50,15 @@ class Gameplay(State):
 		self._load_assets()
 		self._hero=Hero("hero",cfg("entities.hero.start_pos"))
 
+		self._herobullets=EntityGroup()
+
 		self._enemies=EntityGroup()
-		self._enemies.add(Enemy("enemy_1", position=[250,100]))
+		#self._enemies.add(Enemy("elefante", [150,100]))
+		#self._enemies.add(Enemy("mariposa", [200,100], self._hero.get_position))
+		#self._enemies.add(Enemy("pajaro", [250,100]))
+		#self._enemies.add(Enemy("pluma", [300,100]))
+		#self._enemies.add(Enemy("rueda", [350,100], self._hero.get_position))
+		#self._enemies.add(Enemy("ovni", [400,100]))
 		#self._enemies.add(Enemy(position=[250,100], spritesheet="exerion", spriterow=2))
 		#self._enemies.add(Enemy(position=[200,100], spritesheet="exerion", spriterow=3))
 		#self._enemies.add(Enemy(position=[300,100], spritesheet="exerion", spriterow=4))
@@ -73,7 +85,12 @@ class Gameplay(State):
 		#AssetManager.instance().load(AssetType.Sound, 'gameplay', cfg_item("sfx", "explosion2", "name"), cfg_item("sfx", "explosion2", "file"))
 		#AssetManager.instance().load(AssetType.FlipBook, 'gameplay', cfg_item("entities", "explosion", "name"), cfg_item("entities", "explosion" , "image_file"), rows = cfg_item("entities", "explosion", "size")[0], cols = cfg_item("entities", "explosion", "size")[1])
 
-	def release(self):
+	def exit(self):
+
+		# vaciamos los EntityGroups
+		self._herobullets.empty()
+		self._enemies.empty()
+
 		asset.unload('gameplay')
 		self._stars.release()
 		#for enemy in self.__enemies:
@@ -99,6 +116,13 @@ class Gameplay(State):
 				self._bullet_pos[0]+=self._hero.width//2-3
 
 	def update(self, delta_time):
+
+		if len(self._enemies)==0:
+			self._wavewait+=delta_time
+			if self._wavewait>cfg("mechanics.wave_wait"):
+				self._wavewait=0
+				self._scene+=1
+				self._enemies.add(Enemy("mariposa", [200,100], self._hero.get_position))
 
 		self._hero.update(delta_time)
 		self._enemies.update(delta_time)
@@ -133,6 +157,8 @@ class Gameplay(State):
 
 		for enemy in pygame.sprite.spritecollide(self._hero, self._enemies, True):
 			print("COLLISION")
+			self._charge+=1
+			self._score+=10
 		#	self._hero.kill()
 		#	self._lives-=1
 
@@ -169,8 +195,8 @@ class Gameplay(State):
 		canvas.blit(text, cfg("layout.game.scene_text_pos"))
 
 		score=1234
-		self._charge+=1
-		self._score+=10
+		#self._charge+=1
+		#self._score+=10
 
 		text = font.render(f"{score:12}", True, cfg("game.foreground_color"), None)
 		canvas.blit(text, cfg("layout.game.topscore_pos"))
@@ -178,7 +204,7 @@ class Gameplay(State):
 		canvas.blit(text, cfg("layout.game.score_pos"))
 		text = font.render(str(self._charge), True, cfg("game.foreground_color"), None)
 		canvas.blit(text, cfg("layout.game.charge_pos")-pygame.math.Vector2(text.get_width()/2, 0))
-		text = font.render(f"1", True, cfg("game.foreground_color"), None)
+		text = font.render(f"{self._scene}", True, cfg("game.foreground_color"), None)
 		canvas.blit(text, cfg("layout.game.scene_pos")-pygame.math.Vector2(text.get_width()/2, 0))
 
 		# draw lives

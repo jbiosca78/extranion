@@ -9,12 +9,9 @@ class AssetItem:
 		self.category = category
 		self.type = type
 		self.data = None
-		if self.type == "image":
-			self.data = pygame.image.load(filepath)
-		elif self.type == "font":
-			self.data = pygame.font.Font(filepath, conf["size"])
-		elif self.type == "spritesheet":
-			self.data = _load_spritesheet(filepath, conf["size"])
+		if self.type == "image": self.data = pygame.image.load(filepath)
+		elif self.type == "font": self.data = pygame.font.Font(filepath, conf["size"])
+		elif self.type == "spritesheet": self.data = _load_spritesheet(filepath, conf["size"])
 
 	def get(self):
 		return self.data
