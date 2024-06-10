@@ -4,7 +4,7 @@ from extranion.asset import asset
 class FPS_Stats:
 
 	def __init__(self):
-		self.__refresh_update_time = cfg("timing.debug_fps_refresh")
+		self.__refresh_update_time = cfg("debug.fps_refresh")
 		self.__update_time=0
 		self.__logic_frames=0
 		self.__render_frames=0
@@ -23,4 +23,4 @@ class FPS_Stats:
 	def render(self, surface_dst):
 		self.__render_frames+=1
 		if self.__image is not None:
-			surface_dst.blit(self.__image, cfg("timing.debug_fps_pos"))
+			surface_dst.blit(self.__image, cfg("debug.fps_pos"))

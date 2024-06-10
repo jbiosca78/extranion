@@ -17,7 +17,6 @@ from extranion.asset import asset
 from extranion.config import cfg
 from extranion.effects.stars import Stars
 from extranion.entities.hero import Hero
-from extranion.entities.enemy import Enemy
 from extranion.entities.entitygroup import EntityGroup
 from extranion.scene.scenecontroller import SceneController
 
@@ -47,9 +46,9 @@ class Gameplay(State):
 		log.info("Entering state Gameplay")
 		# entidades
 		self._load_assets()
-		self._hero=Hero("hero",cfg("entities.hero.start_pos"))
+		self.__herobullets=EntityGroup()
+		self._hero=Hero("hero", cfg("entities.hero.start_pos"), self.__herobullets)
 		self._enemies=EntityGroup()
-		self._herobullets=EntityGroup()
 		# control de escenas
 		self._scenecontroller=SceneController()
 		# efectos
@@ -58,9 +57,9 @@ class Gameplay(State):
 	def _load_assets(self):
 
 		asset.load('gameplay', 'sprites.hero', 'hero')
+		asset.load('gameplay', 'sprites.enemies', 'enemies')
 		asset.load('gameplay', 'sprites.bullets', 'bullets')
 		asset.load('gameplay', 'sprites.exerion', 'exerion')
-		asset.load('gameplay', 'sprites.enemies', 'enemies')
 		#self.starship=entity
 		#asset.load('intro','intro.logo')
 
@@ -75,7 +74,7 @@ class Gameplay(State):
 	def exit(self):
 
 		# vaciamos los EntityGroups
-		self._herobullets.empty()
+		self.__herobullets.empty()
 		self._enemies.empty()
 
 		asset.unload('gameplay')
@@ -90,7 +89,6 @@ class Gameplay(State):
 		#self.__explosions.empty()
 		#self.__spawner = None
 		##SoundManager.instance().stop_music()
-		#self.__unload_assets()RoboForex
 
 	def event(self, event):
 
@@ -100,10 +98,10 @@ class Gameplay(State):
 				log.info(f"PAUSE: {self._pause}")
 		if self._pause: return
 
-		if event.type == pygame.KEYDOWN:
-			if event.key == pygame.K_SPACE:
-				self._bullet_pos=self._hero.get_position()
-				self._bullet_pos[0]+=self._hero.width//2-3
+		#if event.type == pygame.KEYDOWN:
+		#	if event.key == pygame.K_SPACE:
+		#		self._bullet_pos=self._hero.get_position()
+		#		self._bullet_pos[0]+=self._hero.width//2-3
 		if event.type == pygame.KEYDOWN: self._hero.input(event.key, True)
 		if event.type == pygame.KEYUP:   self._hero.input(event.key, False)
 
@@ -114,6 +112,7 @@ class Gameplay(State):
 		self._scenecontroller.update(delta_time, self._hero, self._enemies)
 		self._hero.update(delta_time)
 		self._enemies.update(delta_time)
+		self.__herobullets.update(delta_time)
 		#self.__players.update(delta_time)
 		#self.__allied_projectiles.update(delta_time)
 		#self.__enemy_projectiles.update(delta_time)
@@ -171,6 +170,7 @@ class Gameplay(State):
 
 		self._enemies.render(canvas)
 		self._hero.render(canvas)
+		self.__herobullets.render(canvas)
 
 		# draw blue box in board rect
 		canvas.fill((33,36,255), self._board_rect, 1)
@@ -210,7 +210,7 @@ class Gameplay(State):
 			canvas.fill(cfg("game.menu_color"), pause_box)
 			canvas.blit(text, cfg("layout.game.pause_text_pos"))
 
-	def __spawn_projectile(self, proj_type, position):
+	def _spawn_projectile(self, proj_type, position):
 		#if proj_type == ProjectileType.Allied:
 		#    self.__allied_projectiles.add(ProjectileFactory.create_projectile(proj_type, position))
 		#    SoundManager.instance().play_sound(cfg_item("sfx", "allied_gunfire", "name"))

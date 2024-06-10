@@ -6,12 +6,13 @@ from extranion import log
 
 class HeroBullet(Entity):
 
-	def __init__(self, name, position=(0,0)):
-		super().__init__(name, position)
+	def __init__(self, position=(0,0)):
+		super().__init__("herobullet", position)
 
-		self._speed=cfg("entities.herobullet.speed")
-
+		self.velocity=vector(0, -cfg("entities.herobullet.speed"))
 
 
 	def update(self, delta_time):
 		super().update(delta_time)
+
+		if self.position.y < 0: self.kill()

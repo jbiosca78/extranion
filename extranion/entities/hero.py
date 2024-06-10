@@ -2,11 +2,11 @@ from extranion.entities.entity import Entity
 import pygame
 from extranion.config import cfg
 from extranion import log
+from extranion.entities.herobullet import HeroBullet
 
 class Hero(Entity):
 
-	def __init__(self, name, position):
-		#super().__init__(spritesheet=spritesheet, position=position, spriterow=1, spritespeed=64)
+	def __init__(self, name, position, bullets):
 		super().__init__(name, position)
 
 		self._map_input()
@@ -16,7 +16,15 @@ class Hero(Entity):
 		self._speed_max=cfg("entities.hero.speed_max")
 		self._speed_decay=cfg("entities.hero.speed_decay")
 
-		self._space_rect=cfg("layout.game.space_rect")
+		# dimensiones del espacio donde puede entrar la nave
+		space=cfg("layout.game.space_rect")
+		self._space_rect=(space[0]+self.width/2, space[1]+self.height/2, space[2]-self.width/2, space[3]-self.height/2)
+
+		# referencia a los proyectiles
+		self.__bullets=bullets
+
+		cooldown_fire_normal=0
+		cooldown_fire_fast=0
 
 	def _map_input(self):
 		self._keymap = {}
@@ -24,7 +32,8 @@ class Hero(Entity):
 		for g, v in kmap.items():
 			self._keymap[g] = []
 			for k in v:
-				code=pygame.key.key_code(k)
+				if k == "LALT": code=pygame.K_LALT
+				else: code=pygame.key.key_code(k)
 				self._keymap[g].append(code)
 
 	def input(self, key, pressed):
@@ -40,6 +49,10 @@ class Hero(Entity):
 		elif key in self._keymap["right"]:
 			self._input_pressed["right"] = pressed
 			log.debug(f"right = {pressed}")
+
+		if pressed:
+			if key in self._keymap["fire_normal"]: self.__fire("normal")
+			if key in self._keymap["fire_fast"]: self.__fire("fast")
 
 	def update(self, delta_time):
 		super().update(delta_time)
@@ -61,31 +74,33 @@ class Hero(Entity):
 		if self.velocity.y<-self._speed_max: self.velocity.y=-self._speed_max
 		if moving_y==0: self.velocity.y*=(1-self._speed_decay)
 
-		# establecemos la animación según el movimiento horizontal
-		self.set_animation(["left","default","right"][moving_x+1])
-
 		# si estamos en un borde, no nos movemos y quitamos la aceleración hacia ese borde
 		# para evitar el efecto "pegajoso". además si llegamos a un borde, permitimos
 		# movimiento en otra dirección si es posible
-		if self.position.x<self._space_rect[0]+self.width/2:
-			self.position.x=self._space_rect[0]+self.width/2
+		# simplifica esto en python
+		if self.position.x<self._space_rect[0]:
+			self.position.x=self._space_rect[0]
 			if self.velocity.x<0: self.velocity.x=0
 			log.debug("hero in left boundary")
-		if self.position.x>self._space_rect[2]-self.width/2:
-			self.position.x=self._space_rect[2]-self.width/2
-			if self.velocity.x>0: self.velocity.x=0
-			log.debug("hero in right boundary")
-		if self.position.y<self._space_rect[1]+self.height/2:
-			self.position.y=self._space_rect[1]+self.height/2
+		if self.position.y<self._space_rect[1]:
+			self.position.y=self._space_rect[1]
 			if self.velocity.y<0: self.velocity.y=0
 			log.debug("hero in top boundary")
-		if self.position.y>self._space_rect[3]-self.height/2:
-			self.position.y=self._space_rect[3]-self.height/2
+		if self.position.x>self._space_rect[2]:
+			self.position.x=self._space_rect[2]
+			if self.velocity.x>0: self.velocity.x=0
+			log.debug("hero in right boundary")
+		if self.position.y>self._space_rect[3]:
+			self.position.y=self._space_rect[3]
 			if self.velocity.y>0: self.velocity.y=0
 			log.debug("hero in bottom boundary")
 
-	def render(self, canvas):
-		super().render(canvas)
+		# establecemos la animación según el movimiento horizontal
+		self.set_animation(["left","default","right"][moving_x+1])
+
+	def __fire(self, type):
+
+		self.__bullets.add(HeroBullet(self.position))
 
 		#if event.type == pygame.KEYDOWN:
 		#	if event.key in self._keymap["left"]:

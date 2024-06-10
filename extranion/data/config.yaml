@@ -5,6 +5,7 @@ game:
   background_color: [ 0,0,0 ]
   foreground_color: [ 222,222,222 ]
   menu_color: [ 33,33,255 ]
+  fps: 60
 
 log:
   enabled: true
@@ -16,11 +17,9 @@ debug:
   enabled: false
   rect_render_color: [ 0, 0, 255 ]
   rect_collider_color: [ 255, 0, 0 ]
-
-timing:
-  fps: 60
-  debug_fps_refresh: 1000
-  debug_fps_pos: [ 6, 6 ]
+  fps_pos: [ 6, 6 ]
+  fps_refresh: 1000
+  mem_pos: [ 6, 26 ]
 
 keymap:
   game:
@@ -32,7 +31,8 @@ keymap:
     left:  [ "Left",  "s", "o" ]
     down:  [ "Down",  "d", "a" ]
     right: [ "Right", "f", "p" ]
-    fire:  [ "Space" ]
+    fire_normal:  [ "Space", "v" ]
+    fire_fast:  [ "LALT", "c" ]
 
 font:
   default:
@@ -102,6 +102,8 @@ entities:
     acceleration: 0.02
     speed_max: 0.24
     speed_decay: 0.005
+    cooldown_fire_normal: 200
+    cooldown_fire_fast: 10
 
   mariposa:
     spritesheet: "enemies"
@@ -154,8 +156,8 @@ entities:
     spritesheet: "bullets"
     animation:
       default: [ 0, 0, 1, 0 ]
-      inflate_collider: [ -2, 0 ]
-      speed: 4.5
+    inflate_collider: [ -2, 0 ]
+    speed: 0.5
 
 xentities:
   name: entities

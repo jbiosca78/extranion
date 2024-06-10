@@ -11,6 +11,7 @@ from extranion.config import cfg, gvar
 from extranion.states import statemanager
 from extranion.asset import asset
 from extranion.fps_stats import FPS_Stats
+from extranion.memory_stats import debug_memory_log, debug_memory_render
 
 def main():
 	# si tenemos instalado rich, lo usamos para
@@ -70,7 +71,7 @@ def _initialize():
 
 		log.info("Initializing game")
 		global _time_per_frame, _fps_stats, _running
-		_time_per_frame=1000.0/cfg("timing.fps")
+		_time_per_frame=1000.0/cfg("game.fps")
 		_fps_stats=FPS_Stats()
 		_load_assets()
 		statemanager.init()
@@ -127,35 +128,38 @@ def _unload_assets():
 	asset.unload('main')
 
 def _handle_events():
-	global _running, _window_size, _screen, _fullscreen
+	global _running
 
 	for event in pygame.event.get():
 		if event.type == pygame.QUIT: _running=False
 		elif event.type == pygame.KEYDOWN:
-			if event.key == pygame.K_ESCAPE:
-				_running=False
-			elif event.key == pygame.K_F5:
-				gvar.DEBUG=not gvar.DEBUG
-			elif event.key == pygame.K_F11:
-				_fullscreen=not _fullscreen
-				if _fullscreen:
-					# guardamos el tamaño de la ventana actual para restaurarlo al pasar a ventana
-					_window_size=_screen.get_size()
-					# pasamos a fullscreen
-					if sys.platform == 'win32':
-						#pygame.display.set_mode(_desktop_size, pygame.FULLSCREEN|pygame.SCALED)
-						_screen=pygame.display.set_mode(_desktop_size, pygame.FULLSCREEN|pygame.DOUBLEBUF)
-					else:
-					#	# en linux da problemas fullscreen y es preferible ventana completa sin bordes
-						os.environ['SDL_VIDEO_WINDOW_POS'] = "0,0"
-						#pygame.display.set_mode(_desktop_size, pygame.NOFRAME|pygame.HWACCEL|pygame.DOUBLEBUF|pygame.HWSURFACE, 32)
-						# HWACCEL y HWSURFACE están deprecados y ya no hacen nada
-						# SDL no soporta DOUBLEBUF, sólo tiene sentido para el modo OPENGL
-						_screen=pygame.display.set_mode(_desktop_size, pygame.NOFRAME)
-				else:
-					_screen=pygame.display.set_mode(_window_size, pygame.RESIZABLE)
+			if event.key == pygame.K_ESCAPE: _running=False
+			elif event.key == pygame.K_F5: gvar.DEBUG=not gvar.DEBUG
+			elif event.key == pygame.K_F11: __toggle_fullscreen()
+			elif event.key == pygame.K_F12: pygame.image.save(_canvas, "screenshot.png")
+			elif event.key == pygame.K_TAB: debug_memory_log()
 		statemanager.event(event)
 	pass
+
+def __toggle_fullscreen():
+	global _fullscreen, _screen, _window_size
+	_fullscreen=not _fullscreen
+	if _fullscreen:
+		# guardamos el tamaño de la ventana actual para restaurarlo al pasar a ventana
+		_window_size=_screen.get_size()
+		# pasamos a fullscreen
+		if sys.platform == 'win32':
+			#pygame.display.set_mode(_desktop_size, pygame.FULLSCREEN|pygame.SCALED)
+			_screen=pygame.display.set_mode(_desktop_size, pygame.FULLSCREEN|pygame.DOUBLEBUF)
+		else:
+		#	# en linux da problemas fullscreen y es preferible ventana completa sin bordes
+			os.environ['SDL_VIDEO_WINDOW_POS'] = "0,0"
+			#pygame.display.set_mode(_desktop_size, pygame.NOFRAME|pygame.HWACCEL|pygame.DOUBLEBUF|pygame.HWSURFACE, 32)
+			# HWACCEL y HWSURFACE están deprecados y ya no hacen nada
+			# SDL no soporta DOUBLEBUF, sólo tiene sentido para el modo OPENGL
+			_screen=pygame.display.set_mode(_desktop_size, pygame.NOFRAME)
+	else:
+		_screen=pygame.display.set_mode(_window_size, pygame.RESIZABLE)
 
 def _update(delta_time):
 	statemanager.update(delta_time)
@@ -166,7 +170,9 @@ def _render():
 
 	_canvas.fill(cfg("game.background_color"))
 	statemanager.render(_canvas)
-	if gvar.DEBUG: _fps_stats.render(_canvas)
+	if gvar.DEBUG:
+		_fps_stats.render(_canvas)
+		debug_memory_render(_canvas)
 
 	# escalado básico sin mantener aspect ratio
 	pygame.transform.scale(_canvas, _screen.get_size(), _screen)
