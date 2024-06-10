@@ -63,11 +63,11 @@ layout:
     lives_pos: [ 504, 320 ]
 
 mechanics:
-  start_charge: 50
-  start_lives: 1
+  initial_charge: 50
+  initial_lives: 1
   wave_wait: 3000
-  enemies_per_wave: 20
-  waves_per_scene: 1
+  wave_size: 10
+  waves_per_scene: 3
 
 sprites:
   hero:
@@ -110,6 +110,7 @@ entities:
     acceleration: 0.01
     speed_max: 0.1
     basepoints: 100
+    seed: 1234
 
   pajaro:
     spritesheet: "enemies"
@@ -130,7 +131,7 @@ entities:
     animation:
       default: [ 4, 0, 3, 150 ]
     inflate_collider: [ -4, -4 ]
-    speed: 0.1
+    speed: 0.15
     basepoints: 100
 
   elefante:

@@ -18,6 +18,7 @@ from extranion.effects.stars import Stars
 from extranion.entities.hero import Hero
 from extranion.entities.enemy import Enemy
 from extranion.entities.entitygroup import EntityGroup
+from extranion.scene.scenecontroller import SceneController
 
 class Gameplay(State):
 
@@ -33,14 +34,10 @@ class Gameplay(State):
 		self._board_rect=cfg("layout.game.board_rect")
 		self._bullet_pos = [0,0]
 
-		self._lives=cfg("mechanics.start_lives")
-		self._charge=cfg("mechanics.start_charge")
+		self._lives=cfg("mechanics.initial_lives")
+		self._charge=cfg("mechanics.initial_charge")
 		self._score=0
 		self._maxscore=1234
-
-		self._scene=0
-		self._wave=0
-		self._wavewait=0
 
 
 	def enter(self):
@@ -49,6 +46,8 @@ class Gameplay(State):
 		self._stars=Stars(cfg("layout.game.space_rect")[2:4])
 		self._load_assets()
 		self._hero=Hero("hero",cfg("entities.hero.start_pos"))
+
+		self._scenecontroller=SceneController()
 
 		self._herobullets=EntityGroup()
 
@@ -103,7 +102,7 @@ class Gameplay(State):
 		#self.__explosions.empty()
 		#self.__spawner = None
 		##SoundManager.instance().stop_music()
-		#self.__unload_assets()
+		#self.__unload_assets()RoboForex
 
 	def event(self, event):
 
@@ -117,13 +116,7 @@ class Gameplay(State):
 
 	def update(self, delta_time):
 
-		if len(self._enemies)==0:
-			self._wavewait+=delta_time
-			if self._wavewait>cfg("mechanics.wave_wait"):
-				self._wavewait=0
-				self._scene+=1
-				self._enemies.add(Enemy("mariposa", [200,100], self._hero.get_position))
-
+		self._scenecontroller.update(delta_time, self._hero, self._enemies)
 		self._hero.update(delta_time)
 		self._enemies.update(delta_time)
 		#self.__players.update(delta_time)
@@ -161,6 +154,9 @@ class Gameplay(State):
 			self._score+=10
 		#	self._hero.kill()
 		#	self._lives-=1
+
+	def _update_enemy_direction(self):
+		pass
 
 	def render(self, canvas):
 
@@ -204,7 +200,7 @@ class Gameplay(State):
 		canvas.blit(text, cfg("layout.game.score_pos"))
 		text = font.render(str(self._charge), True, cfg("game.foreground_color"), None)
 		canvas.blit(text, cfg("layout.game.charge_pos")-pygame.math.Vector2(text.get_width()/2, 0))
-		text = font.render(f"{self._scene}", True, cfg("game.foreground_color"), None)
+		text = font.render(f"{self._scenecontroller.scene}", True, cfg("game.foreground_color"), None)
 		canvas.blit(text, cfg("layout.game.scene_pos")-pygame.math.Vector2(text.get_width()/2, 0))
 
 		# draw lives

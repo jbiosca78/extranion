@@ -163,35 +163,31 @@ def _update(delta_time):
 	#SoundManager.instance().update(delta_time)
 
 def _render():
-	global _canvas
 
 	_canvas.fill(cfg("game.background_color"))
-
 	statemanager.render(_canvas)
 	if gvar.DEBUG: _fps_stats.render(_canvas)
 
-	# antiguo escalado básico sin mantener aspect ratio
-	#pygame.transform.scale(_canvas, _screen.get_size(), _screen)
+	# escalado básico sin mantener aspect ratio
+	pygame.transform.scale(_canvas, _screen.get_size(), _screen)
 
 	# Escalado manteniendo aspect ratio
-	canvasratio=_canvas.get_width()/_canvas.get_height()
-	screenratio=_screen.get_width()/_screen.get_height()
-	if canvasratio>screenratio:
-		# si el canvas es más ancho que la pantalla, ajustamos el ancho
-		newwidth=int(_screen.get_width())
-		newheight=int(_canvas.get_height()*newwidth/_canvas.get_width())
-	else:
-		# si el canvas es más alto que la pantalla, ajustamos el alto
-		newheight=int(_screen.get_height())
-		newwidth=int(_canvas.get_width()*newheight/_canvas.get_height())
-
-	# Escalamos a un tamaño que cabe en la ventana
-	expandcanvas=pygame.Surface((newwidth,newheight))
-	pygame.transform.scale(_canvas, (newwidth,newheight), expandcanvas)
-
-	# Transferimos el canvas escalado al centro de la pantalla
-	_screen.fill(cfg("game.background_color"))
-	_screen.blit(expandcanvas, ((_screen.get_width()-newwidth)/2,0))
+	#canvasratio=_canvas.get_width()/_canvas.get_height()
+	#screenratio=_screen.get_width()/_screen.get_height()
+	#if canvasratio>screenratio:
+	#	# si el canvas es más ancho que la pantalla, ajustamos el ancho
+	#	newwidth=int(_screen.get_width())
+	#	newheight=int(_canvas.get_height()*newwidth/_canvas.get_width())
+	#else:
+	#	# si el canvas es más alto que la pantalla, ajustamos el alto
+	#	newheight=int(_screen.get_height())
+	#	newwidth=int(_canvas.get_width()*newheight/_canvas.get_height())
+	#expandcanvas=pygame.Surface((newwidth,newheight))
+	## Escalamos a un tamaño que cabe en la ventana
+	#pygame.transform.scale(_canvas, (newwidth,newheight), expandcanvas)
+	## Transferimos el canvas escalado al centro de la pantalla
+	#_screen.fill(cfg("game.background_color"))
+	#_screen.blit(expandcanvas, ((_screen.get_width()-newwidth)/2,0))
 
 	pygame.display.update()
 

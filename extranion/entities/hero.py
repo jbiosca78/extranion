@@ -95,6 +95,3 @@ class Hero(Entity):
 		#		_dir=1
 		#if event.type == pygame.KEYUP:
 		#	_dir=0
-
-	def get_position(self):
-		return super().get_position().copy()

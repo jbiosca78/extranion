@@ -1,4 +1,5 @@
 import pygame
+from pygame.math import Vector2 as vector
 from extranion.asset import asset
 #from extranion.config import DEBUG
 from extranion.config import gvar
@@ -17,8 +18,8 @@ class Entity(pygame.sprite.Sprite):
 
 		log.info(f"Creating entity {name}")
 
-		self.position = pygame.math.Vector2(position)
-		self.velocity = pygame.math.Vector2(velocity)
+		self.position = vector(position)
+		self.velocity = vector(velocity)
 
 		self.config=cfg("entities", name)
 		self.spritesheet=asset.get(self.config["spritesheet"])
