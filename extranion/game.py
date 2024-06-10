@@ -133,7 +133,8 @@ def _handle_events():
 	for event in pygame.event.get():
 		if event.type == pygame.QUIT: _running=False
 		elif event.type == pygame.KEYDOWN:
-			if event.key == pygame.K_ESCAPE: _running=False
+			if event.key == pygame.K_ESCAPE:
+				if statemanager.current_state.name=="Intro": _running=False
 			elif event.key == pygame.K_F5: gvar.DEBUG=not gvar.DEBUG
 			elif event.key == pygame.K_F11: __toggle_fullscreen()
 			elif event.key == pygame.K_F12: pygame.image.save(_canvas, "screenshot.png")

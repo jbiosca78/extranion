@@ -25,7 +25,9 @@ class SceneController:
 			# Cuando termina la espera vienen los enemigos
 			if self.wavewait>cfg("mechanics.wave_wait"):
 				for i in range(cfg("mechanics.wave_size")):
-					enemies.add(Enemy("mariposa", [400+i*30,0-i*30]))
+					if self.scene%2==0: enemies.add(Enemy("mariposa", [400+i*30,0-i*30]))
+					if self.scene%2==1: enemies.add(Enemy("rueda", [400+i*30,0-i*30]))
+
 					#self._enemies.add(Enemy("rueda", [400+i*30,0-i*30]))
 				self.wavewait=0
 

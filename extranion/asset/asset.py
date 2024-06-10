@@ -8,7 +8,7 @@ _assets={}
 def load(category, config, name=None):
 	global _assets
 	if name is None: name = config
-	log.debug(f"asset.load {category} {config} {name}")
+	log.debug(f"asset load {category} {config} {name}")
 	conf=cfg(f"{config}")
 	type=conf["type"]
 	filepath=str(resources.files("extranion.data").joinpath(type).joinpath(conf["file"]))
@@ -20,9 +20,11 @@ def unload(category=None, name=None):
 	if category:
 		for k in list(_assets.keys()):
 			if _assets[k].category == category:
+				log.debug(f"asset unload {k}")
 				del _assets[k]
 	elif name:
 		if name in _assets:
+			log.debug(f"asset unload {name}")
 			del _assets[name]
 	else:
 		_assets = {}

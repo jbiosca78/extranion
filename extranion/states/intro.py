@@ -9,6 +9,7 @@ class Intro(State):
 
 	def __init__(self):
 		super().__init__()
+		self.name="Intro"
 		# variables para hacer parpadear el texto. TODO: efecto de parpadeo en effects?
 		self._text_show=True
 		self._text_time=0

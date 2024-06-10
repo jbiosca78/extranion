@@ -2,44 +2,41 @@ from extranion.states.intro import Intro
 from extranion.states.gameplay import Gameplay
 from extranion import log
 
-_states = {
+states = {
 	"Intro": Intro(),
 	"Gameplay": Gameplay()
 }
 
 def init():
-	global _current_state, _current_state_name
-	_current_state_name="Intro"
-	#_current_state_name="Gameplay"
-	_current_state=_states[_current_state_name]
-	_current_state.enter()
+	global current_state
+	current_state=states["Intro"]
+	#current_state=states["Gameplay"]
+	current_state.enter()
 
 def release():
-	_current_state.exit()
+	current_state.exit()
 
 def event(event):
-	_current_state.event(event)
+	current_state.event(event)
 
 def update(delta_time):
-	if _current_state.change_state is not None:
-		_change_state()
-	_current_state.update(delta_time)
+	if current_state.change_state is not None: __change_state()
+	current_state.update(delta_time)
 
 def render(surface):
-	_current_state.render(surface)
+	current_state.render(surface)
 
-def _change_state():
+def __change_state():
 
-	global _current_state, _current_state_name
+	global current_state
 
-	log.info(f"Change state from {_current_state_name} to {_current_state.change_state}")
+	prev_state = current_state.name
+	new_state = current_state.change_state
 
-	_current_state.exit()
+	log.info(f"Change state from {prev_state} to {new_state}")
 
-	previous_state = _current_state_name
-	_current_state_name = _current_state.change_state
-	_current_state = _states[_current_state_name]
-	_current_state.previous_state = previous_state
-
-	_current_state.change_state = None
-	_current_state.enter()
+	current_state.exit()
+	current_state=states[new_state]
+	current_state.previous_state = prev_state
+	current_state.change_state = None
+	current_state.enter()

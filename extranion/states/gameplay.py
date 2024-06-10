@@ -24,8 +24,7 @@ class Gameplay(State):
 
 	def __init__(self):
 		super().__init__()
-
-		self._pause=False
+		self.name="Gameplay"
 		#self.__enemy_pool = Pool(Enemy, 2)
 		#self.__players = RenderGroup()
 		#self.__allied_projectiles = RenderGroup()
@@ -33,26 +32,33 @@ class Gameplay(State):
 		#self.__enemies = RenderGroup()
 		#self.__explosions = RenderGroup()
 		self._board_rect=cfg("layout.game.board_rect")
-		self._bullet_pos = [0,0]
 
-		self._lives=cfg("mechanics.initial_lives")
-		self._charge=cfg("mechanics.initial_charge")
-		self._score=0
-		self._maxscore=1234
-
+		# grupos de entidades
+		self.__herobullets=EntityGroup()
+		self._enemies=EntityGroup()
 
 	def enter(self):
 
 		log.info("Entering state Gameplay")
-		# entidades
-		self._load_assets()
-		self.__herobullets=EntityGroup()
-		self._hero=Hero("hero", cfg("entities.hero.start_pos"), self.__herobullets)
-		self._enemies=EntityGroup()
+
+		self._pause=False
+
 		# control de escenas
 		self._scenecontroller=SceneController()
-		# efectos
+
+		# inicializamos valores de partida
+		self._lives=cfg("mechanics.initial_lives")
+		self._score=0
+		self._maxscore=1234
+
+		# cargamos assets
+		self._load_assets()
+
+		# cargamos efectos
 		self._stars=Stars(cfg("layout.game.space_rect")[2:4])
+
+		# cargamos héroe
+		self.__hero=Hero("hero", cfg("entities.hero.start_pos"), self.__herobullets)
 
 	def _load_assets(self):
 
@@ -96,21 +102,19 @@ class Gameplay(State):
 			if event.key == pygame.K_RETURN:
 				self._pause=not self._pause
 				log.info(f"PAUSE: {self._pause}")
+			if event.key == pygame.K_ESCAPE:
+				self.change_state="Intro"
 		if self._pause: return
 
-		#if event.type == pygame.KEYDOWN:
-		#	if event.key == pygame.K_SPACE:
-		#		self._bullet_pos=self._hero.get_position()
-		#		self._bullet_pos[0]+=self._hero.width//2-3
-		if event.type == pygame.KEYDOWN: self._hero.input(event.key, True)
-		if event.type == pygame.KEYUP:   self._hero.input(event.key, False)
+		if event.type == pygame.KEYDOWN: self.__hero.input(event.key, True)
+		if event.type == pygame.KEYUP:   self.__hero.input(event.key, False)
 
 	def update(self, delta_time):
 
 		if self._pause: return
 
-		self._scenecontroller.update(delta_time, self._hero, self._enemies)
-		self._hero.update(delta_time)
+		self._scenecontroller.update(delta_time, self.__hero, self._enemies)
+		self.__hero.update(delta_time)
 		self._enemies.update(delta_time)
 		self.__herobullets.update(delta_time)
 		#self.__players.update(delta_time)
@@ -138,19 +142,18 @@ class Gameplay(State):
 
 		#self._bullet_pos[1]-=1
 		#print(type(self._bullet_pos))
-		self._bullet_pos[1]-=4.5
 
 		self._stars.update(delta_time)
 
-		for enemy in pygame.sprite.spritecollide(self._hero, self._enemies, True):
+		for enemy in pygame.sprite.spritecollide(self.__hero, self._enemies, True):
 			print("COLLISION")
-			self._charge+=1
-			self._score+=10
-		#	self._hero.kill()
-		#	self._lives-=1
+			if self._lives==0:
+				self.change_state="Intro"
+			self._lives-=1
 
-	def _update_enemy_direction(self):
-		pass
+		for enemy in pygame.sprite.groupcollide(self._enemies, self.__herobullets, True, True):
+			self.__hero.charge+=1
+			self._score+=10
 
 	def render(self, canvas):
 
@@ -161,16 +164,9 @@ class Gameplay(State):
 		#self.__enemy_projectiles.draw(surface)
 		#self.__explosions.draw(surface)
 
-		bullets=asset.get("bullets")
-		# draw bullets[0][0]
-		bpos=self._bullet_pos
-		canvas.blit(bullets[0][0], bpos)
-		#canvas.blit(bullets[0][1], (300,200))
-		#canvas.blit(bullets[0][2], (320,200))
-
-		self._enemies.render(canvas)
-		self._hero.render(canvas)
 		self.__herobullets.render(canvas)
+		self._enemies.render(canvas)
+		self.__hero.render(canvas)
 
 		# draw blue box in board rect
 		canvas.fill((33,36,255), self._board_rect, 1)
@@ -193,7 +189,7 @@ class Gameplay(State):
 		canvas.blit(text, cfg("layout.game.topscore_pos"))
 		text = font.render(f"{self._score:12}", True, cfg("game.foreground_color"), None)
 		canvas.blit(text, cfg("layout.game.score_pos"))
-		text = font.render(str(self._charge), True, cfg("game.foreground_color"), None)
+		text = font.render(str(self.__hero.charge), True, cfg("game.foreground_color"), None)
 		canvas.blit(text, cfg("layout.game.charge_pos")-vector(text.get_width()/2, 0))
 		text = font.render(f"{self._scenecontroller.scene}", True, cfg("game.foreground_color"), None)
 		canvas.blit(text, cfg("layout.game.scene_pos")-vector(text.get_width()/2, 0))

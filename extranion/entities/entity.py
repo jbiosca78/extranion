@@ -18,6 +18,7 @@ class Entity(pygame.sprite.Sprite):
 		super().__init__()
 
 		log.info(f"Creating entity {name}")
+		self.name=name
 
 		self.position = vector(position)
 		self.velocity = vector(velocity)
@@ -32,6 +33,10 @@ class Entity(pygame.sprite.Sprite):
 		self.height=self.spritesheet[self.spriterow][self.spritecol].get_height()
 		self.render_rect=self.spritesheet[self.spriterow][self.spritecol].get_rect()
 		self.rect=self.render_rect.inflate(self.config["inflate_collider"])
+
+	def kill(self):
+		log.info(f"Killing entity {self.name}")
+		super().kill()
 
 	def set_animation(self, animation):
 

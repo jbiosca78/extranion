@@ -1,5 +1,6 @@
 from extranion.entities.entity import Entity
 import pygame
+from pygame.math import Vector2 as vector
 from extranion.config import cfg
 from extranion import log
 from extranion.entities.herobullet import HeroBullet
@@ -22,9 +23,9 @@ class Hero(Entity):
 
 		# referencia a los proyectiles
 		self.__bullets=bullets
-
-		cooldown_fire_normal=0
-		cooldown_fire_fast=0
+		self.__cooldown_fast_fire=0
+		self.__fast_firing=False
+		self.charge=cfg("mechanics.initial_charge")
 
 	def _map_input(self):
 		self._keymap = {}
@@ -49,10 +50,13 @@ class Hero(Entity):
 		elif key in self._keymap["right"]:
 			self._input_pressed["right"] = pressed
 			log.debug(f"right = {pressed}")
+		elif key in self._keymap["fire_fast"]:
+			self.__fast_firing = pressed
+			log.debug(f"fire_fast = {pressed}")
 
 		if pressed:
 			if key in self._keymap["fire_normal"]: self.__fire("normal")
-			if key in self._keymap["fire_fast"]: self.__fire("fast")
+			#if key in self._keymap["fire_fast"]: self.__fire("fast")
 
 	def update(self, delta_time):
 		super().update(delta_time)
@@ -98,9 +102,23 @@ class Hero(Entity):
 		# establecemos la animación según el movimiento horizontal
 		self.set_animation(["left","default","right"][moving_x+1])
 
-	def __fire(self, type):
+		if self.__cooldown_fast_fire>0: self.__cooldown_fast_fire-=delta_time
+		if self.__fast_firing: self.__fire("fast")
 
-		self.__bullets.add(HeroBullet(self.position))
+
+	def __fire(self, fire_type):
+
+		if fire_type=="normal":
+			if len(self.__bullets)>1: return
+			self.__bullets.add(HeroBullet(self.position-vector(8,0)))
+			self.__bullets.add(HeroBullet(self.position+vector(8,0)))
+
+		if fire_type=="fast":
+			if self.__cooldown_fast_fire>0: return
+			if self.charge==0: return
+			self.charge-=1
+			self.__cooldown_fast_fire=cfg("entities.hero.cooldown_fast_fire")
+			self.__bullets.add(HeroBullet(self.position))
 
 		#if event.type == pygame.KEYDOWN:
 		#	if event.key in self._keymap["left"]:

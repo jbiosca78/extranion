@@ -52,6 +52,8 @@ layout:
     text_blink_time: 600
   game:
     space_rect: [ 0, 20, 499, 359 ]
+    pause_text_pos: [ 225, 170 ]
+
     board_rect: [ 500, 00, 639, 359 ]
     topscore_text_pos: [ 510, 30 ]
     topscore_pos: [ 510, 60 ]
@@ -62,14 +64,13 @@ layout:
     scene_text_pos: [ 545, 240 ]
     scene_pos: [ 570, 270 ]
     lives_pos: [ 504, 320 ]
-    pause_text_pos: [ 225, 170 ]
 
 mechanics:
+  initial_lives: 3
   initial_charge: 50
-  initial_lives: 1
-  wave_wait: 3000
-  wave_size: 10
   waves_per_scene: 3
+  wave_size: 10
+  wave_wait: 3000
 
 sprites:
   hero:
@@ -100,10 +101,9 @@ entities:
     inflate_collider: [ -4, -4 ]
     start_pos: [ 250, 330 ]
     acceleration: 0.02
-    speed_max: 0.24
+    speed_max: 0.2
     speed_decay: 0.005
-    cooldown_fire_normal: 200
-    cooldown_fire_fast: 10
+    cooldown_fast_fire: 100
 
   mariposa:
     spritesheet: "enemies"
