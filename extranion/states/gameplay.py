@@ -1,4 +1,5 @@
 import pygame
+from pygame.math import Vector2 as vector
 from extranion.states.state import State
 #from extranion.entities.hero import Hero
 #from extranion.entities.rendergroup import RenderGroup
@@ -93,16 +94,18 @@ class Gameplay(State):
 
 	def event(self, event):
 
-		if event.type == pygame.KEYDOWN: self._hero.input(event.key, True)
-		if event.type == pygame.KEYUP:   self._hero.input(event.key, False)
+		if event.type == pygame.KEYDOWN:
+			if event.key == pygame.K_RETURN:
+				self._pause=not self._pause
+				log.info(f"PAUSE: {self._pause}")
+		if self._pause: return
 
 		if event.type == pygame.KEYDOWN:
 			if event.key == pygame.K_SPACE:
 				self._bullet_pos=self._hero.get_position()
 				self._bullet_pos[0]+=self._hero.width//2-3
-			if event.key == pygame.K_RETURN:
-				self._pause=not self._pause
-				print(f"PAUSE: {self._pause}")
+		if event.type == pygame.KEYDOWN: self._hero.input(event.key, True)
+		if event.type == pygame.KEYUP:   self._hero.input(event.key, False)
 
 	def update(self, delta_time):
 
@@ -191,14 +194,21 @@ class Gameplay(State):
 		text = font.render(f"{self._score:12}", True, cfg("game.foreground_color"), None)
 		canvas.blit(text, cfg("layout.game.score_pos"))
 		text = font.render(str(self._charge), True, cfg("game.foreground_color"), None)
-		canvas.blit(text, cfg("layout.game.charge_pos")-pygame.math.Vector2(text.get_width()/2, 0))
+		canvas.blit(text, cfg("layout.game.charge_pos")-vector(text.get_width()/2, 0))
 		text = font.render(f"{self._scenecontroller.scene}", True, cfg("game.foreground_color"), None)
-		canvas.blit(text, cfg("layout.game.scene_pos")-pygame.math.Vector2(text.get_width()/2, 0))
+		canvas.blit(text, cfg("layout.game.scene_pos")-vector(text.get_width()/2, 0))
 
 		# draw lives
 		exerion=asset.get("exerion")
 		for l in range(self._lives):
-			canvas.blit(exerion[0][0], cfg("layout.game.lives_pos")+pygame.math.Vector2((32+2)*l,0))
+			canvas.blit(exerion[0][0], cfg("layout.game.lives_pos")+vector((32+2)*l,0))
+
+		# draw pause
+		if self._pause:
+			text=font.render("PAUSE", True, cfg("game.foreground_color"), None)
+			pause_box=pygame.rect.Rect(cfg("layout.game.pause_text_pos")-vector(5,5), text.get_size()+vector(10,10))
+			canvas.fill(cfg("game.menu_color"), pause_box)
+			canvas.blit(text, cfg("layout.game.pause_text_pos"))
 
 	def __spawn_projectile(self, proj_type, position):
 		#if proj_type == ProjectileType.Allied:

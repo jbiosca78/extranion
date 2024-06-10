@@ -12,10 +12,11 @@ class Intro(State):
 		# variables para hacer parpadear el texto. TODO: efecto de parpadeo en effects?
 		self._text_show=True
 		self._text_time=0
+		self._text_blink_time=cfg("layout.intro.text_blink_time")
 
 	def enter(self):
 		log.info("Entering state Intro")
-		asset.load('intro','intro.logo', 'logo')
+		asset.load('intro','layout.intro.logo', 'logo')
 		# iniciamos el efecto de estrellas
 		self._stars=Stars(cfg("game.canvas_size"))
 		self.__render_text()
@@ -31,10 +32,11 @@ class Intro(State):
 
 	def update(self, delta_time):
 		# parpadeo del texto
-		self._text_time+=delta_time
-		if self._text_time>cfg("layout.intro.text_blink_time"):
-			self._text_time=0
-			self._text_show=not self._text_show
+		if self._text_blink_time>0:
+			self._text_time+=delta_time
+			if self._text_time>self._text_blink_time:
+				self._text_time=0
+				self._text_show=not self._text_show
 		# bajo un cielo estrellado
 		self._stars.update(delta_time)
 
@@ -43,10 +45,10 @@ class Intro(State):
 		self._stars.render(canvas)
 		# mostramos el super logo
 		logo=asset.get("logo")
-		canvas.blit(logo, cfg("intro.logo_pos"))
+		canvas.blit(logo, cfg("layout.intro.logo_pos"))
 		# y finalmente el texto
 		if self._text_show:
-			canvas.blit(self._text, cfg("intro.text_pos"))
+			canvas.blit(self._text, cfg("layout.intro.text_pos"))
 
 	def __render_text(self):
 		font=asset.get("font.default")

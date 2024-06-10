@@ -47,8 +47,7 @@ class Entity(pygame.sprite.Sprite):
 		self.render_rect.center=self.rect.center=self.position
 
 		# animación sprite
-		if self.animspeed>0:
-			self.animptr+=delta_time/self.animspeed
+		if self.animspeed>0: self.animptr+=delta_time/self.animspeed
 		if self.animptr>=self.animframes: self.animptr=0
 
 	def render(self, canvas):

@@ -4,6 +4,7 @@ game:
   canvas_size: [ 640, 360 ]
   background_color: [ 0,0,0 ]
   foreground_color: [ 222,222,222 ]
+  menu_color: [ 33,33,255 ]
 
 log:
   enabled: true
@@ -47,7 +48,7 @@ layout:
       type: image
       file: logo.png
     logo_pos: [ 120,50 ]
-    text_pos: [ 230,300 ]
+    text_pos: [ 200,300 ]
     text_blink_time: 600
   game:
     space_rect: [ 0, 20, 499, 359 ]
@@ -61,6 +62,7 @@ layout:
     scene_text_pos: [ 545, 240 ]
     scene_pos: [ 570, 270 ]
     lives_pos: [ 504, 320 ]
+    pause_text_pos: [ 225, 170 ]
 
 mechanics:
   initial_charge: 50
@@ -148,6 +150,13 @@ entities:
     inflate_collider: [ -4, -4 ]
     basepoints: 100
 
+  herobullet:
+    spritesheet: "bullets"
+    animation:
+      default: [ 0, 0, 1, 0 ]
+      inflate_collider: [ -2, 0 ]
+      speed: 4.5
+
 xentities:
   name: entities
   image_file:
@@ -197,7 +206,7 @@ sfx:
     name: enemy_gunfire
     file:
       - shmup.assets.sfx
-      - enemy_gunfire.wav
+      - enemy_gunfextranion/entities/enemy.pyire.wav
   explosion1:
     name: explosion1
     file:

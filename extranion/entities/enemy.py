@@ -20,30 +20,6 @@ class Enemy(Entity):
 		if self._name == "mariposa": self._move_mariposa()
 		if self._name == "rueda": self._move_rueda()
 
-	def render(self, canvas):
-		super().render(canvas)
-
-	def input(self, key, pressed):
-		if key in self._keymap["up"]:
-			self._input_pressed["up"] = pressed
-			log.debug(f"up = {pressed}")
-		elif key in self._keymap["down"]:
-			self._input_pressed["down"]  = pressed
-			log.debug(f"down = {pressed}")
-		elif key in self._keymap["left"]:
-			self._input_pressed["left"] = pressed
-			log.debug(f"left = {pressed}")
-		elif key in self._keymap["right"]:
-			self._input_pressed["right"] = pressed
-			log.debug(f"right = {pressed}")
-
-		#if event.type == pygame.KEYDOWN:
-		#	if event.key in self._keymap["left"]:
-		#	#if event.key == pygame.K_LEFT:
-		#		_dir=-1
-		#	elif event.key == pygame.K_RIGHT:
-		#		_dir=1
-		#if event.type == pygame.KEYUP-:8
 	def _move_mariposa(self):
 		# La mariposa sigue al jugador. Pero a diferencia de Exerion que siempre
 		# iba a la misma velocidad en direcciones ortogonales o diagonales, aquí

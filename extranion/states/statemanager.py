@@ -9,8 +9,8 @@ _states = {
 
 def init():
 	global _current_state, _current_state_name
-	#_current_state_name="Intro"
-	_current_state_name="Gameplay"
+	_current_state_name="Intro"
+	#_current_state_name="Gameplay"
 	_current_state=_states[_current_state_name]
 	_current_state.enter()
 
