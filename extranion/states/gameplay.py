@@ -25,6 +25,7 @@ class Gameplay(State):
 	def __init__(self):
 		super().__init__()
 
+		self._pause=False
 		#self.__enemy_pool = Pool(Enemy, 2)
 		#self.__players = RenderGroup()
 		#self.__allied_projectiles = RenderGroup()
@@ -43,29 +44,15 @@ class Gameplay(State):
 	def enter(self):
 
 		log.info("Entering state Gameplay")
-		self._stars=Stars(cfg("layout.game.space_rect")[2:4])
+		# entidades
 		self._load_assets()
 		self._hero=Hero("hero",cfg("entities.hero.start_pos"))
-
-		self._scenecontroller=SceneController()
-
-		self._herobullets=EntityGroup()
-
 		self._enemies=EntityGroup()
-		#self._enemies.add(Enemy("elefante", [150,100]))
-		#self._enemies.add(Enemy("mariposa", [200,100], self._hero.get_position))
-		#self._enemies.add(Enemy("pajaro", [250,100]))
-		#self._enemies.add(Enemy("pluma", [300,100]))
-		#self._enemies.add(Enemy("rueda", [350,100], self._hero.get_position))
-		#self._enemies.add(Enemy("ovni", [400,100]))
-		#self._enemies.add(Enemy(position=[250,100], spritesheet="exerion", spriterow=2))
-		#self._enemies.add(Enemy(position=[200,100], spritesheet="exerion", spriterow=3))
-		#self._enemies.add(Enemy(position=[300,100], spritesheet="exerion", spriterow=4))
-		#self._stars=Stars(cfg("game.canvas_size"))
-
-		#self.__players.add(Hero(self.__spawn_projectile))
-		#SoundManager.instance().play_music(cfg_item("music", "mission", "name"))
-		#self.__spawner = Spawner(self.__spawn_enemy)
+		self._herobullets=EntityGroup()
+		# control de escenas
+		self._scenecontroller=SceneController()
+		# efectos
+		self._stars=Stars(cfg("layout.game.space_rect")[2:4])
 
 	def _load_assets(self):
 
@@ -113,8 +100,13 @@ class Gameplay(State):
 			if event.key == pygame.K_SPACE:
 				self._bullet_pos=self._hero.get_position()
 				self._bullet_pos[0]+=self._hero.width//2-3
+			if event.key == pygame.K_RETURN:
+				self._pause=not self._pause
+				print(f"PAUSE: {self._pause}")
 
 	def update(self, delta_time):
+
+		if self._pause: return
 
 		self._scenecontroller.update(delta_time, self._hero, self._enemies)
 		self._hero.update(delta_time)

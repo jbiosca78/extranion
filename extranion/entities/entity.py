@@ -5,6 +5,7 @@ from extranion.asset import asset
 from extranion.config import gvar
 from extranion.config import cfg
 from extranion import log
+import random
 
 # Esta clase representa una entidad del juego, y gestiona:
 # El asset (spritesheet), y su animación
@@ -24,7 +25,8 @@ class Entity(pygame.sprite.Sprite):
 		self.config=cfg("entities", name)
 		self.spritesheet=asset.get(self.config["spritesheet"])
 		self.set_animation("default")
-		self.animptr=0
+		# iniciamos con un frame aleatorio para que no se vean todos igual
+		self.animptr=random.random()*self.animframes
 
 		self.width=self.spritesheet[self.spriterow][self.spritecol].get_width()
 		self.height=self.spritesheet[self.spriterow][self.spritecol].get_height()
