@@ -7,4 +7,4 @@ The game is a simple 2D game where the player controls a spaceship and shoots do
 The mechanics are simple, kill all of them!
 You gain points and charge by killing enemies. Charge can be used for rapid fire. Dont waste it!
 
-![Extranion Logo](extranion.png)
+![Extranion Intro](screenshot.png)
