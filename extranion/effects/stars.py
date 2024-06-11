@@ -2,10 +2,11 @@ import random
 
 # Pixel Stars by Jose Biosca (2024)
 
-_SPEED=1.8
-
 class Stars:
-	def __init__(self, size, numstars=500):
+	def __init__(self, size, numstars=500, direction="down", speed=1.8):
+
+		self.speed=speed
+		self.dir=direction
 		self.fx,self.fy=size
 		self.stars=[]
 		# generamos estrellas
@@ -27,11 +28,23 @@ class Stars:
 		for s in self.stars:
 			# movemos la estrella, mas lento cuanto mas lejana
 			depth=s["depth"]
-			s["y"]+=depth/delta_time*_SPEED
-			# si llega al borde inferior, generamos otra
-			if s["y"]>self.fy:
-				s["y"]=0
-				s["x"]=random.randint(0,self.fx)
+			lightyears=depth/delta_time*self.speed
+
+			# hacia abajo
+			if self.dir=="down":
+				s["y"]+=lightyears
+				# si llega al borde inferior, generamos otra
+				if s["y"]>self.fy:
+					s["y"]=0
+					s["x"]=random.randint(0,self.fx)
+
+			# hacia arriba
+			if self.dir=="up":
+				s["y"]-=lightyears
+				# si llega al borde superior, generamos otra
+				if s["y"]<0:
+					s["y"]=self.fy
+					s["x"]=random.randint(0,self.fx)
 
 	def render(self, canvas):
 		# draw stars

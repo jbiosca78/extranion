@@ -54,7 +54,7 @@ layout:
     space_rect: [ 0, 20, 499, 359 ]
     pause_text_pos: [ 225, 170 ]
 
-    board_rect: [ 500, 00, 639, 359 ]
+    board_rect: [ 500, 0, 139, 359 ]
     topscore_text_pos: [ 510, 30 ]
     topscore_pos: [ 510, 60 ]
     score_text_pos: [ 510, 90 ]
@@ -71,6 +71,7 @@ mechanics:
   waves_per_scene: 3
   wave_size: 10
   wave_wait: 3000
+  enemy_list: [ "mariposa", "rueda" ]
 
 sprites:
   hero:

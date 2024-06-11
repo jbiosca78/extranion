@@ -16,6 +16,7 @@ from extranion import log
 from extranion.asset import asset
 from extranion.config import cfg
 from extranion.effects.stars import Stars
+from extranion.effects.planetsurface import PlanetSurface
 from extranion.entities.hero import Hero
 from extranion.entities.entitygroup import EntityGroup
 from extranion.scene.scenecontroller import SceneController
@@ -25,17 +26,12 @@ class Gameplay(State):
 	def __init__(self):
 		super().__init__()
 		self.name="Gameplay"
-		#self.__enemy_pool = Pool(Enemy, 2)
-		#self.__players = RenderGroup()
-		#self.__allied_projectiles = RenderGroup()
-		#self.__enemy_projectiles= RenderGroup()
-		#self.__enemies = RenderGroup()
-		#self.__explosions = RenderGroup()
-		self._board_rect=cfg("layout.game.board_rect")
 
 		# grupos de entidades
 		self.__herobullets=EntityGroup()
 		self._enemies=EntityGroup()
+
+		self._board_rect=cfg("layout.game.board_rect")
 
 	def enter(self):
 
@@ -55,7 +51,8 @@ class Gameplay(State):
 		self._load_assets()
 
 		# cargamos efectos
-		self._stars=Stars(cfg("layout.game.space_rect")[2:4])
+		self.__stars=Stars(cfg("layout.game.space_rect")[2:4], direction="up", speed=0.2)
+		self.__planetsurface=PlanetSurface(cfg("layout.game.space_rect"))
 
 		# cargamos héroe
 		self.__hero=Hero("hero", cfg("entities.hero.start_pos"), self.__herobullets)
@@ -76,25 +73,6 @@ class Gameplay(State):
 		#AssetManager.instance().load(AssetType.Sound, 'gameplay', cfg_item("sfx", "explosion1", "name"), cfg_item("sfx", "explosion1", "file"))
 		#AssetManager.instance().load(AssetType.Sound, 'gameplay', cfg_item("sfx", "explosion2", "name"), cfg_item("sfx", "explosion2", "file"))
 		#AssetManager.instance().load(AssetType.FlipBook, 'gameplay', cfg_item("entities", "explosion", "name"), cfg_item("entities", "explosion" , "image_file"), rows = cfg_item("entities", "explosion", "size")[0], cols = cfg_item("entities", "explosion", "size")[1])
-
-	def exit(self):
-
-		# vaciamos los EntityGroups
-		self.__herobullets.empty()
-		self._enemies.empty()
-
-		asset.unload('gameplay')
-		self._stars.release()
-		#for enemy in self.__enemies:
-		#    self.__enemy_pool.release(enemy)
-
-		#self.__players.empty()
-		#self.__allied_projectiles.empty()
-		#self.__enemy_projectiles.empty()
-		#self.__enemies.empty()
-		#self.__explosions.empty()
-		#self.__spawner = None
-		##SoundManager.instance().stop_music()
 
 	def event(self, event):
 
@@ -117,33 +95,6 @@ class Gameplay(State):
 		self.__hero.update(delta_time)
 		self._enemies.update(delta_time)
 		self.__herobullets.update(delta_time)
-		#self.__players.update(delta_time)
-		#self.__allied_projectiles.update(delta_time)
-		#self.__enemy_projectiles.update(delta_time)
-		#self.__enemies.update(delta_time)
-		#self.__spawner.update(delta_time)
-		#self.__explosions.update(delta_time)
-
-		#for player in pygame.sprite.groupcollide(self.__players, self.__enemy_projectiles, True, True).keys():
-		#    self.__spawn_explosion(player.get_position())
-		#    self.__game_over()
-
-		#for enemy in pygame.sprite.groupcollide(self.__enemies, self.__allied_projectiles, False, True).keys():
-		#    self.__spawn_explosion(enemy.body.position)
-		#    self.__kill_enemy(enemy)
-
-		#for enemy in pygame.sprite.groupcollide(self.__enemies, self.__players, False, True).keys():
-		#    self.__spawn_explosion(enemy.body.position)
-		#    self.__kill_enemy(enemy)
-		#    self.__game_over()
-
-		#bullets=pygame.sprite.Group()
-		#bullets.add(self.__allied_projectiles)
-
-		#self._bullet_pos[1]-=1
-		#print(type(self._bullet_pos))
-
-		self._stars.update(delta_time)
 
 		for enemy in pygame.sprite.spritecollide(self.__hero, self._enemies, True):
 			print("COLLISION")
@@ -155,9 +106,14 @@ class Gameplay(State):
 			self.__hero.charge+=1
 			self._score+=10
 
+		self.__stars.update(delta_time)
+		self.__planetsurface.update(delta_time)
+
 	def render(self, canvas):
 
-		self._stars.render(canvas)
+		self.__stars.render(canvas)
+		self.__planetsurface.render(canvas)
+
 		#self.__players.draw(surface)
 		#self.__enemies.draw(surface)
 		#self.__allied_projectiles.draw(surface)
@@ -230,3 +186,23 @@ class Gameplay(State):
 
 	def __game_over(self):
 		print("GAME OVER")
+
+	def exit(self):
+
+		# vaciamos los EntityGroups
+		self.__herobullets.empty()
+		self._enemies.empty()
+
+		asset.unload('gameplay')
+		self.__planetsurface.release()
+		self.__stars.release()
+		#for enemy in self.__enemies:
+		#    self.__enemy_pool.release(enemy)
+
+		#self.__players.empty()
+		#self.__allied_projectiles.empty()
+		#self.__enemy_projectiles.empty()
+		#self.__enemies.empty()
+		#self.__explosions.empty()
+		#self.__spawner = None
+		##SoundManager.instance().stop_music()

@@ -1,6 +1,6 @@
 # Extranion
 
-This is a retro shoot'em up game inspired by MSX Exerion.
+This is a retro shoot 'em up game inspired by MSX Exerion.
 
 The game is a simple 2D game where the player controls a spaceship and shoots down enemy spaceships.
 
