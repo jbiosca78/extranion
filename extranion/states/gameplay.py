@@ -91,7 +91,7 @@ class Gameplay(State):
 
 		if self._pause: return
 
-		#self._scenecontroller.update(delta_time, self.__hero, self._enemies)
+		self._scenecontroller.update(delta_time, self.__hero, self._enemies)
 		self.__hero.update(delta_time)
 		self._enemies.update(delta_time)
 		self.__herobullets.update(delta_time)
