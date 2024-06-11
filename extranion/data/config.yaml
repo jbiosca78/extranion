@@ -51,10 +51,10 @@ layout:
     text_pos: [ 200,300 ]
     text_blink_time: 600
   game:
-    space_rect: [ 0, 20, 499, 359 ]
+    space_rect: [ 0, 20, 500, 360 ]
     pause_text_pos: [ 225, 170 ]
 
-    board_rect: [ 500, 0, 139, 359 ]
+    board_rect: [ 500, 0, 140, 360 ]
     topscore_text_pos: [ 510, 30 ]
     topscore_pos: [ 510, 60 ]
     score_text_pos: [ 510, 90 ]
@@ -63,10 +63,10 @@ layout:
     charge_pos: [ 570, 210 ]
     scene_text_pos: [ 545, 240 ]
     scene_pos: [ 570, 270 ]
-    lives_pos: [ 504, 320 ]
+    lives_pos: [ 503, 320 ]
 
 mechanics:
-  initial_lives: 3
+  initial_lives: 4
   initial_charge: 50
   waves_per_scene: 3
   wave_size: 10

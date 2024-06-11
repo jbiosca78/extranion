@@ -18,8 +18,8 @@ class Stars:
 			if c==2: r=g=1 # estrellas amarillas
 			if c==3: b=1 # estrellas azules
 			self.stars.append({
-				"x": random.randint(0, self.fx),
-				"y": random.randint(0, self.fy),
+				"x": random.randint(0, self.fx-1),
+				"y": random.randint(0, self.fy-1),
 				"depth": random.randint(1, 6),
 				"r":r, "g":g, "b":b,
 			})

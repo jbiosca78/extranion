@@ -51,7 +51,7 @@ class Gameplay(State):
 		self._load_assets()
 
 		# cargamos efectos
-		self.__stars=Stars(cfg("layout.game.space_rect")[2:4], direction="up", speed=0.2)
+		self.__stars=Stars(cfg("layout.game.space_rect")[2:4], direction="up", speed=0.4)
 		self.__planetsurface=PlanetSurface(cfg("layout.game.space_rect"))
 
 		# cargamos héroe
@@ -91,7 +91,7 @@ class Gameplay(State):
 
 		if self._pause: return
 
-		self._scenecontroller.update(delta_time, self.__hero, self._enemies)
+		#self._scenecontroller.update(delta_time, self.__hero, self._enemies)
 		self.__hero.update(delta_time)
 		self._enemies.update(delta_time)
 		self.__herobullets.update(delta_time)
