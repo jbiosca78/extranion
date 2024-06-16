@@ -47,7 +47,7 @@ layout:
     logo:
       type: image
       file: logo.png
-    logo_pos: [ 120,50 ]
+    logo_pos: [ 120,40 ]
     text_pos: [ 200,300 ]
     text_blink_time: 600
   game:

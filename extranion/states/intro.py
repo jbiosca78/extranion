@@ -2,7 +2,7 @@ import pygame
 from extranion.states.state import State
 from extranion.config import cfg
 from extranion.asset import asset
-from extranion.effects.stars import Stars
+from extranion.effects.stars3d import Stars3D
 import extranion.log as log
 
 class Intro(State):
@@ -19,7 +19,8 @@ class Intro(State):
 		log.info("Entering state Intro")
 		asset.load('intro','layout.intro.logo', 'logo')
 		# iniciamos el efecto de estrellas
-		self._stars=Stars(cfg("game.canvas_size"))
+		#self._stars=Stars(cfg("game.canvas_size"))
+		self._stars=Stars3D(cfg("game.canvas_size"), speed=0.2)
 		self.__render_text()
 
 	def exit(self):

@@ -16,6 +16,7 @@ from extranion import log
 from extranion.asset import asset
 from extranion.config import cfg
 from extranion.effects.stars import Stars
+from extranion.effects.stars3d import Stars3D
 from extranion.effects.planetsurface import PlanetSurface
 from extranion.entities.hero import Hero
 from extranion.entities.entitygroup import EntityGroup
@@ -51,7 +52,8 @@ class Gameplay(State):
 		self._load_assets()
 
 		# cargamos efectos
-		self.__stars=Stars(cfg("layout.game.space_rect")[2:4], direction="up", speed=0.5)
+		#self.__stars=Stars3D(cfg("layout.game.space_rect")[2:4], direction="up", speed=0.5)
+		self.__stars=Stars3D(cfg("layout.game.space_rect")[2:4])
 		self.__planetsurface=PlanetSurface(cfg("layout.game.space_rect"))
 
 		# cargamos héroe

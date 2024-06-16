@@ -3,7 +3,7 @@ import random
 # Pixel Stars by Jose Biosca (2024)
 
 class Stars:
-	def __init__(self, size, numstars=500, direction="down", speed=1.8):
+	def __init__(self, size, numstars=400, direction="down", speed=1.8):
 
 		self.speed=speed
 		self.dir=direction
