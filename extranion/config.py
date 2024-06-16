@@ -25,3 +25,4 @@ configdata=yaml.safe_load(open(configpath,"rt"))
 # Establecemos variables globales
 class gvar:
 	DEBUG = cfg("debug.enabled")
+	HERO_POS = None

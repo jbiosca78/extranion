@@ -21,7 +21,6 @@ class PlanetSurface:
 		#	selself.generate()
 
 		self._nstart=1
-		self.__mpos=0
 
 		self.__objects=[]
 		for _ in range(30):
@@ -64,8 +63,11 @@ class PlanetSurface:
 
 	def render(self, canvas):
 
+		shift_y=(360-gvar.HERO_POS.y)/5
+		shift_x=(gvar.HERO_POS.x-640/2)
+
 		x,y,w,h=self.canvas_rect
-		horizon_y=int(h/2+y)
+		horizon_y=int(h/2+y)+shift_y
 
 		# Stripes
 		pygame.draw.rect(canvas, [100,20,20], [x,horizon_y,x+w,y+h])
@@ -89,7 +91,7 @@ class PlanetSurface:
 			# la posición x se multiplica por 10 desde el centro
 			# la posición y a una distancia de 0% será el horizonte y en 100% algo mas bajo
 			# que el borde inferior de la pantalla (factor de 1.3) para evitar que desaparezca de repente
-			obj_x=w/2-(w/2-obj.posx)*(1+d*9)
+			obj_x=w/2-(w/2-obj.posx)*(1+d*9)-shift_x*d
 			obj_y=horizon_y+(h-horizon_y)*d*1.3
 			# lo dibujamos
 			canvas.blit(sprite, (int(obj_x)+x-sprite.get_width()/2, int(obj_y)+y-sprite.get_height()/2))
