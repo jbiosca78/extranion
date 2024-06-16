@@ -2,8 +2,7 @@ import pygame
 from pygame.math import Vector2 as vector
 from extranion.asset import asset
 #from extranion.config import DEBUG
-from extranion.config import gvar
-from extranion.config import cfg
+from extranion.config import cfg,gvar
 from extranion import log
 import random
 

@@ -58,26 +58,46 @@ class PlanetSurface:
 				obj.distance=0
 				obj.posx=random.randint(0,500)
 
-		self._stripeidx+=0.0042
+		self._stripeidx+=0.005
 		if self._stripeidx>0.2:
 			self._stripeidx=0
 
 	def render(self, canvas):
 
+		#print(self.rect)
+		# 0,20, 499,359
+		#pass
+
 		x,y,w,h=self.canvas_rect
 		horizon_y=int(h/2+y)
 
-		# Stripes
+		#c=[[100,20,20,0],[100,40,20]]
+		#ci=0
+		#n=self._nstart
+		#i=horizon_y
+		#while i<h:
+		#	j=1+n
+		#	n=n*1.6
+		#	#print(i,j5)
+		#	pygame.draw.rect(canvas, c[ci], (x,i+y,w,j))
+		#	ci=1-ci
+		#	i+=int(j)
+
+
+		# stripes
 		pygame.draw.rect(canvas, [100,20,20], [x,horizon_y,x+w,y+h])
+
 		# 0%-10% 20%-30% 40%-50% 60%-70% 80%-90%
-		for d1 in 0, 0.2, 0.4, 0.6, 0.8:
+		for d1 in 0,0.2,0.4,0.6,0.8:
 			d1=d1+self._stripeidx
 			d2=d1+0.1
 			y1=horizon_y+(h-horizon_y)*(d1*d1*d1*d1)
 			y2=horizon_y+(h-horizon_y)*(d2*d2*d2*d2)
-			pygame.draw.rect(canvas, [100,30,30], [0+x,int(y1),w,int(y2-y1)])
+			pygame.draw.rect(canvas, [100,40,20], [0+x,int(y1),w,int(y2-y1)])
 
-		# Objetos
+		print()
+
+
 		for obj in self.__objects:
 			# obtenemos la distancia, que es un porcentaje que indica si el objeto está en el
 			# horizonte (0%) o ha llegado a nuestra posición actual (100)
@@ -90,6 +110,7 @@ class PlanetSurface:
 			# la posición y a una distancia de 0% será el horizonte y en 100% algo mas bajo
 			# que el borde inferior de la pantalla (factor de 1.3) para evitar que desaparezca de repente
 			obj_x=w/2-(w/2-obj.posx)*(1+d*9)
+			#obj_y=horizon_y+(h-horizon_y)*d*1.3
 			obj_y=horizon_y+(h-horizon_y)*d*1.3
 			# lo dibujamos
 			canvas.blit(sprite, (int(obj_x)+x-sprite.get_width()/2, int(obj_y)+y-sprite.get_height()/2))

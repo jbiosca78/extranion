@@ -51,7 +51,7 @@ class Gameplay(State):
 		self._load_assets()
 
 		# cargamos efectos
-		self.__stars=Stars(cfg("layout.game.space_rect")[2:4], direction="up", speed=0.4)
+		self.__stars=Stars(cfg("layout.game.space_rect")[2:4], direction="up", speed=0.5)
 		self.__planetsurface=PlanetSurface(cfg("layout.game.space_rect"))
 
 		# cargamos héroe
@@ -63,6 +63,7 @@ class Gameplay(State):
 		asset.load('gameplay', 'sprites.enemies', 'enemies')
 		asset.load('gameplay', 'sprites.bullets', 'bullets')
 		asset.load('gameplay', 'sprites.exerion', 'exerion')
+		asset.load('gameplay', 'sprites.mountains', 'mountains')
 		#self.starship=entity
 		#asset.load('intro','intro.logo')
 
@@ -125,7 +126,7 @@ class Gameplay(State):
 		self.__hero.render(canvas)
 
 		# draw blue box in board rect
-		canvas.fill((33,36,255), self._board_rect, 1)
+		canvas.fill((33,36,255), self._board_rect)
 
 		font=asset.get("font.default")
 		text = font.render(f"TOP SCORE", True, cfg("game.foreground_color"), None)
