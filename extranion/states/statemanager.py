@@ -1,9 +1,11 @@
 from extranion.states.intro import Intro
+from extranion.states.travel import Travel
 from extranion.states.gameplay import Gameplay
 from extranion import log
 
 states = {
 	"Intro": Intro(),
+	"Travel": Travel(),
 	"Gameplay": Gameplay()
 }
 

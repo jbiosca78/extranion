@@ -50,6 +50,18 @@ layout:
     logo_pos: [ 120,40 ]
     text_pos: [ 200,300 ]
     text_blink_time: 600
+  travel:
+    ship-straight:
+      type: image
+      file: ship-straight.png
+    ship-turn:
+      type: image
+      file: ship-turn.png
+    ship_pos: [ 170, 150 ]
+    travelling_time: 1800
+    arriving_time: 1600
+    turbulencias_time: 80
+    turbulencias_shift: 2
   game:
     pause_text_pos: [ 225, 170 ]
     space_rect: [ 0, 0, 500, 360 ]
@@ -103,7 +115,7 @@ entities:
       left:    [ 0, 0, 3, 60 ]
       right:   [ 2, 0, 3, 60 ]
     inflate_collider: [ -8, -4 ]
-    start_pos: [ 250, 300 ]
+    start_pos: [ 250, 200 ]
     acceleration: 0.02
     speed_max: 0.2
     speed_decay: 0.005

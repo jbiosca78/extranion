@@ -11,20 +11,25 @@ Otras características: Puntuación y tabla de puntuaciones al estilo de las rec
 
 ## Estilo visual
 
-El estilo visual del juego es pixelado, los marcianos serán los mismos assets que el juego Exerion del que nos inspiramos.
+El estilo visual del juego será pixelado retro, los marcianos serán los mismos assets que el juego Exerion del que nos inspiramos excepto la nave del jugador, que se ha mejorado considerablemente pero sin perder el estilo retro.
+
+La nave del jugador se ha generado mediante Stable Diffusion 3 medium (instalación local). Tras generar múltiples naves se ha seleccionado una. El prompt usado finalmente ha sido:
+"rear back view of videogame war spaceship, the background is entirely black without stars or planets. the propulsors are powered on with red energy inside. we are alone in space and see the spaceship in front of us moving towards."
+Y el prompt negativo: "background planet stars"
+
+La imagen principal se ha recortado y reducido para la secuencia de vuelo y se ha girado 10 grados para la nave llegando al destino. Esas mismas imágenes se han reducido 32x32 pixels para los spritesheets del juego (mas unos pequeños retoques pixel a pixel en los propulsores para la animación).
+
+Finalmente para el logo de inicio se ha utilizado también stable diffusion selecionando el logo de entre multitud de imágenes.
 
 Nota: Debido a que se reutilizan los assets de Exerion, no es posible distribuir el juego ni siquiera como Open Source. Si alguna vez fuera necesario habría que reemplazar los assets de Exerion por otros distintos.
 Se podrían generar con alguna herramienta de creación de sprites aleatoria como por ejemplo:
 https://ianburnette.itch.io/random-sprite-generator
 
-La nave del jugador no será tan pixelada, sin llegar a tener una resulución muy alta, pero algo mas moderno.
-Para generarla hemos partido de una imagen encontrada por internet, reduciendo mucho su resolución y posteriormente alterando mucho su aspecto y colores.
-
-Finalmente para el logo de inicio hemos usado un generador de imágenes de IA para generar múltiples alternativas, hemos seleccionado uno y modificado para obtener el aspecto deseado.
-
 ## Interface
 
 La pantalla inicial consta de una presentación y logotipo del juego.
+
+Al iniciarl el juego se muestra una breve animación de la nave del jugador viajando a máxima velocidad durante unos segundos.
 
 La interface del juego es sencilla, basada en el estilo de Exerion. En la parte central se encuentra el espacio de juego y a la derecha el interfaz informativo, que consta de un registro de la puntuación máxima conseguida, la puntuación de la partida actual, el nivel de carga que tenemos para los disparos rápidos, la escena en la que nos encontramos y finalmente un contador de vidas.
 

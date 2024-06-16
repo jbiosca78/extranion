@@ -1,7 +1,16 @@
 import random
 import pygame
 
-# Pixel Stars by Jose Biosca (2024)
+# Pixel 3D Stars by Jose Biosca (2024)
+
+# A cada estrella se le asigna una posición aleatoria en pantalla y una distancia Z entre 0 y 999
+# Las posiciones X e Y parten del centro de la pantalla.
+# La posición X e Y en cada momento se divide por z/1000 de forma que a valores altos de Z, cada
+# estrella estará en su posición inicial, y a medida que Z se acerque a 0, se irá al infinito
+# Antes de que Z valga cero, se eliminará la estrella y se creará otra
+
+# Además de la posición, hay un componente aleatorio de color, para crear estrellas blancas, rojas,
+# amarillas y azules (no hay estrellas verdes).
 
 class Stars3D:
 	def __init__(self, size, numstars=800, speed=1):
@@ -20,7 +29,7 @@ class Stars3D:
 			self.stars.append({
 				"xs": random.randint(-self.fx/2, self.fx/2),
 				"ys": random.randint(-self.fy/2, self.fy/2),
-				"z": random.randint(1, 2000),
+				"z": random.randint(1, 999),
 				"speed": random.randint(1, 10),
 				"r":r, "g":g, "b":b,
 			})
@@ -33,26 +42,27 @@ class Stars3D:
 				s["xs"]=random.randint(-self.fx/2, self.fx/2)
 				s["ys"]=random.randint(-self.fy/2, self.fy/2)
 				s["speed"]=random.randint(1, 10)
-				s["z"]=2000
+				s["z"]=999
 
 
 	def render(self, canvas):
+
 		# draw stars
 		for s in self.stars:
-			# dibujamos la estrella el 80% de los frames, para simular el parpadeo de las estrellas
-			if random.randint(0, 100)<80:
+			# dibujamos la estrella el 90% de los frames, para simular el parpadeo de las estrellas
+			if random.randint(0, 100)<90:
 				# posición pseudo 3D
 				z=int(s["z"])
-				x=int(s["xs"]/(z/2001)+self.fx/2)
-				y=int(s["ys"]/(z/2001)+self.fy/2)
-				# el brillo depende de la velocidad y la distancia
-				brillo=((10-s["speed"])/10)*((2000-z)/2000)
-				r=int(15+(80+s["r"]*160)*brillo)
-				g=int(15+(80+s["g"]*160)*brillo)
-				b=int(15+(80+s["b"]*160)*brillo)
+				x=int(s["xs"]/(z/1000)+self.fx/2)
+				y=int(s["ys"]/(z/1000)+self.fy/2)
+				# el brillo depende de la velocidad y la distancia, entre 0 y 1
+				brillo=((10-s["speed"])/10+0.1)*((1000-z)/1000)
+				r=int(15+(s["r"]*240)*brillo)
+				g=int(15+(s["g"]*240)*brillo)
+				b=int(15+(s["b"]*240)*brillo)
 				# dibujamos la estrella
-				pygame.draw.rect(canvas, (r,g,b), (x,y,2,2))
-				#canvas.set_at((x,y), (r,g,b))
+				#canvas.set_at((x,y), (r,g,b)) # 1 pixel
+				pygame.draw.rect(canvas, (r,g,b), (x,y,2,2)) # 2x2 pixels
 
 	def release(self):
 		self.stars.clear()

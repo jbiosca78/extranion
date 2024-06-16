@@ -30,7 +30,8 @@ class Intro(State):
 	def event(self, event):
 		if event.type == pygame.KEYDOWN:
 			if event.key == pygame.K_SPACE:
-				self.change_state = "Gameplay"
+				#self.change_state = "Gameplay"
+				self.change_state = "Travel"
 
 	def update(self, delta_time):
 		# parpadeo del texto
