@@ -63,7 +63,7 @@ class PlanetSurface:
 
 	def render(self, canvas):
 
-		shift_y=(360-gvar.HERO_POS.y)/5
+		shift_y=(360-gvar.HERO_POS.y)/4
 		shift_x=(gvar.HERO_POS.x-640/2)
 
 		x,y,w,h=self.canvas_rect

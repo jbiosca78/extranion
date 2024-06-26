@@ -30,6 +30,7 @@ class Gameplay(State):
 
 		# grupos de entidades
 		self.__herobullets=EntityGroup()
+		self.__enemybullets=EntityGroup()
 		self._enemies=EntityGroup()
 
 		self._board_rect=cfg("layout.game.board_rect")
@@ -44,7 +45,7 @@ class Gameplay(State):
 		self._scenecontroller=SceneController()
 
 		# inicializamos valores de partida
-		self._lives=cfg("mechanics.initial_lives")
+		self._lives=cfg("gameplay.initial_lives")
 		self._score=0
 		self._maxscore=1234
 
@@ -94,7 +95,7 @@ class Gameplay(State):
 
 		if self._pause: return
 
-		self._scenecontroller.update(delta_time, self.__hero, self._enemies)
+		self._scenecontroller.update(delta_time, self.__hero, self._enemies, self.__enemybullets)
 		self.__hero.update(delta_time)
 		self._enemies.update(delta_time)
 		self.__herobullets.update(delta_time)
@@ -174,24 +175,23 @@ class Gameplay(State):
 		#    SoundManager.instance().play_sound(cfg_item("sfx", "enemy_gunfire", "name"))
 		pass
 
-	def __spawn_enemy(self, enemy_type, spawn_point):
-		enemy = self.__enemy_pool.acquire()
-		enemy.init(enemy_type, spawn_point, self.__spawn_projectile, self.__kill_enemy)
-		self.__enemies.add(enemy)
+	#def __spawn_enemy(self, enemy_type, spawn_point):
+	#	enemy = self.__enemy_pool.acquire()
+	#	enemy.init(enemy_type, spawn_point, self.__spawn_projectile, self.__kill_enemy)
+	#	self.__enemies.add(enemy)
 
-	def __kill_enemy(self, enemy):
-		self.__enemies.remove(enemy)
-		self.__enemy_pool.release(enemy)
+	#def __kill_enemy(self, enemy):
+	#	self.__enemies.remove(enemy)
+	#	self.__enemy_pool.release(enemy)
 
-	def __spawn_explosion(self, position):
-		#self.__explosions.add(Explosion(position))
-		pass
+	#def __spawn_explosion(self, position):
+	#	#self.__explosions.add(Explosion(position))
+	#	pass
 
-	def __game_over(self):
-		print("GAME OVER")
+	#def __game_over(self):
+	#	print("GAME OVER")
 
 	def exit(self):
-
 		# vaciamos los EntityGroups
 		self.__herobullets.empty()
 		self._enemies.empty()

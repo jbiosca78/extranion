@@ -9,7 +9,7 @@ class HeroBullet(Entity):
 	def __init__(self, position=(0,0)):
 		super().__init__("herobullet", position)
 
-		self.velocity=vector(0, cfg("entities.herobullet.speed"))
+		self.velocity=vector(0, cfg("entities.enemybullet.speed"))
 
 
 	def update(self, delta_time):

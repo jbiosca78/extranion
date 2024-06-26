@@ -57,7 +57,7 @@ layout:
     ship-turn:
       type: image
       file: ship-turn.png
-    ship_pos: [ 170, 150 ]
+    ship_pos: [ 170, 170 ]
     travelling_time: 1800
     arriving_time: 1600
     turbulencias_time: 80
@@ -76,7 +76,7 @@ layout:
     scene_pos: [ 570, 270 ]
     lives_pos: [ 503, 320 ]
 
-mechanics:
+gameplay:
   initial_lives: 4
   initial_charge: 50
   waves_per_scene: 2
@@ -173,7 +173,14 @@ entities:
     animation:
       default: [ 0, 0, 1, 0 ]
     inflate_collider: [ -2, 0 ]
-    speed: 0.5
+    speed: -0.5
+
+  enemybullet:
+    spritesheet: "bullets"
+    animation:
+      default: [ 0, 2, 1, 0 ]
+    inflate_collider: [ 0, 0 ]
+    speed: 0.1
 
 music:
   volume: 0.5

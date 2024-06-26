@@ -21,11 +21,11 @@ class Hero(Entity):
 		space=cfg("layout.game.space_rect")
 		self._space_rect=(space[0]+self.width/2, space[1]+self.height/2, space[2]-self.width/2, space[3]-self.height/2)
 
-		# referencia a los proyectiles
+		# control de proyectiles
 		self.__bullets=bullets
 		self.__cooldown_fast_fire=0
 		self.__fast_firing=False
-		self.charge=cfg("mechanics.initial_charge")
+		self.charge=cfg("gameplay.initial_charge")
 
 	def _map_input(self):
 		self._keymap = {}
