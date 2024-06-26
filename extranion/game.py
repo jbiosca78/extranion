@@ -54,20 +54,22 @@ def _initialize():
 		pygame.display.set_caption(cfg("game.name"))
 
 		log.info("Initializing screen")
-		global _desktop_size, _window_size, _screen, _fullscreen
+		global __desktop_size, __window_size, __screen, _fullscreen
 		pgdi=pygame.display.Info()
-		_desktop_size=(pgdi.current_w, pgdi.current_h)
-		_window_size=(pgdi.current_w/2, pgdi.current_h/2)
-		_screen=pygame.display.set_mode(_window_size, pygame.RESIZABLE|pygame.HWACCEL, 32)
+		__desktop_size=(pgdi.current_w, pgdi.current_h)
+		log.info(f"desktop_size: {__desktop_size}")
+		__window_size=(pgdi.current_w//3*2, pgdi.current_h//3*2)
+		log.info(f"window_size: {__window_size}")
+		__screen=pygame.display.set_mode(__window_size, pygame.RESIZABLE|pygame.HWACCEL, 32)
 		_fullscreen=False
 
 		# canvas es el 'lienzo' donde vamos a dibujar, se escalará a la ventana del juego incluso
 		# en modo ventana. así no dependemos de la resolución del usuario y evitamos que la ventana
 		# se vea muy pequeña en displays 4k o superiores. además se consigue un bonito efecto pixelado
 		log.info("Initializing canvas")
-		global _canvas
+		global __canvas
 		canvas_x, canvas_y=cfg("game.canvas_size")
-		_canvas=pygame.Surface((canvas_x,canvas_y))
+		__canvas=pygame.Surface((canvas_x,canvas_y))
 
 		log.info("Initializing game")
 		global _time_per_frame, _fps_stats, _running
@@ -137,30 +139,35 @@ def _handle_events():
 				if statemanager.current_state.name=="Intro": _running=False
 			elif event.key == pygame.K_F5: gvar.DEBUG=not gvar.DEBUG
 			elif event.key == pygame.K_F11: __toggle_fullscreen()
-			elif event.key == pygame.K_F12: pygame.image.save(_canvas, "screenshot.png")
+			elif event.key == pygame.K_F12: pygame.image.save(__canvas, "screenshot.png")
 			elif event.key == pygame.K_TAB: debug_memory_log()
 		statemanager.event(event)
 	pass
 
 def __toggle_fullscreen():
-	global _fullscreen, _screen, _window_size
+	global _fullscreen, __screen, __window_size
 	_fullscreen=not _fullscreen
 	if _fullscreen:
 		# guardamos el tamaño de la ventana actual para restaurarlo al pasar a ventana
-		_window_size=_screen.get_size()
+		__window_size=__screen.get_size()
 		# pasamos a fullscreen
 		if sys.platform == 'win32':
-			#pygame.display.set_mode(_desktop_size, pygame.FULLSCREEN|pygame.SCALED)
-			_screen=pygame.display.set_mode(_desktop_size, pygame.FULLSCREEN|pygame.DOUBLEBUF)
+			log.info(f"set fullscreen {__desktop_size}")
+			__screen=pygame.display.set_mode(__desktop_size, pygame.FULLSCREEN|pygame.DOUBLEBUF)
 		else:
-		#	# en linux da problemas fullscreen y es preferible ventana completa sin bordes
+			# en linux FULLSCREEN da problemas y es preferible ventana completa sin bordes
+			# sería recomendable un menú de selección donde podamos elegir fullscreen o windowed fullscreen
+			log.info(f"set windowed fullscreen {__desktop_size}")
 			os.environ['SDL_VIDEO_WINDOW_POS'] = "0,0"
-			#pygame.display.set_mode(_desktop_size, pygame.NOFRAME|pygame.HWACCEL|pygame.DOUBLEBUF|pygame.HWSURFACE, 32)
+			pygame.display.quit()
+			pygame.display.init()
+			#pygame.display.set_mode(__desktop_size, pygame.NOFRAME|pygame.HWACCEL|pygame.DOUBLEBUF|pygame.HWSURFACE, 32)
 			# HWACCEL y HWSURFACE están deprecados y ya no hacen nada
 			# SDL no soporta DOUBLEBUF, sólo tiene sentido para el modo OPENGL
-			_screen=pygame.display.set_mode(_desktop_size, pygame.NOFRAME)
+			__screen=pygame.display.set_mode(__desktop_size, pygame.NOFRAME)
 	else:
-		_screen=pygame.display.set_mode(_window_size, pygame.RESIZABLE)
+		log.info(f"set window {__window_size}")
+		__screen=pygame.display.set_mode(__window_size, pygame.RESIZABLE)
 
 def _update(delta_time):
 	statemanager.update(delta_time)
@@ -171,42 +178,41 @@ def _render():
 
 	global _fullscreen
 
-	_canvas.fill(cfg("game.background_color"))
-	statemanager.render(_canvas)
+	__canvas.fill(cfg("game.background_color"))
+	statemanager.render(__canvas)
 	if gvar.DEBUG:
-		_fps_stats.render(_canvas)
-		debug_memory_render(_canvas)
+		_fps_stats.render(__canvas)
+		debug_memory_render(__canvas)
 
+	aspect_ratio__canvas=int(100*__canvas.get_width()/__canvas.get_height())
+	aspect_ratio__screen=int(100*__screen.get_width()/__screen.get_height())
 
-	aspect_ratio_canvas=int(100*_canvas.get_width()/_canvas.get_height())
-	aspect_ratio_screen=int(100*_screen.get_width()/_screen.get_height())
-
-	if aspect_ratio_canvas==aspect_ratio_screen:
+	if aspect_ratio__canvas==aspect_ratio__screen:
 		# Escalado básico cuando el aspect ratio de la ventana coincide con el canvas del juego
 		# A no ser que el usuario redimensione la ventana, será el caso normal en pantallas 16:9
-		pygame.transform.scale(_canvas, _screen.get_size(), _screen)
+		pygame.transform.scale(__canvas, __screen.get_size(), __screen)
 
 	else:
 		# Escalado manteniendo aspect ratio
 		# Nota: Funciona bien pero perdemos bastante rendimiento, habría que optimizarlo.
 		# Por ejemplo creando previamente el canvas "expandcanvas" en lugar de crearlo cada vez.
 
-		canvasratio=_canvas.get_width()/_canvas.get_height()
-		screenratio=_screen.get_width()/_screen.get_height()
+		canvasratio=__canvas.get_width()/__canvas.get_height()
+		screenratio=__screen.get_width()/__screen.get_height()
 		if canvasratio>screenratio:
 			# si el canvas es más ancho que la pantalla, ajustamos el ancho
-			newwidth=int(_screen.get_width())
-			newheight=int(_canvas.get_height()*newwidth/_canvas.get_width())
+			newwidth=int(__screen.get_width())
+			newheight=int(__canvas.get_height()*newwidth/__canvas.get_width())
 		else:
 			# si el canvas es más alto que la pantalla, ajustamos el alto
-			newheight=int(_screen.get_height())
-			newwidth=int(_canvas.get_width()*newheight/_canvas.get_height())
+			newheight=int(__screen.get_height())
+			newwidth=int(__canvas.get_width()*newheight/__canvas.get_height())
 		expandcanvas=pygame.Surface((newwidth,newheight))
 		# Escalamos a un tamaño que cabe en la ventana
-		pygame.transform.scale(_canvas, (newwidth,newheight), expandcanvas)
+		pygame.transform.scale(__canvas, (newwidth,newheight), expandcanvas)
 		# Transferimos el canvas escalado al centro de la pantalla
-		_screen.fill(cfg("game.background_color"))
-		_screen.blit(expandcanvas, ((_screen.get_width()-newwidth)/2, (_screen.get_height()-newheight)/2))
+		__screen.fill(cfg("game.background_color"))
+		__screen.blit(expandcanvas, ((__screen.get_width()-newwidth)/2, (__screen.get_height()-newheight)/2))
 
 	pygame.display.update()
 

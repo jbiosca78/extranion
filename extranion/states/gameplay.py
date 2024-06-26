@@ -30,7 +30,7 @@ class Gameplay(State):
 
 		# grupos de entidades
 		self.__herobullets=EntityGroup()
-		self._enemies=EntityGroup()
+		self.__enemies=EntityGroup()
 
 		self._board_rect=cfg("layout.game.board_rect")
 
@@ -94,18 +94,18 @@ class Gameplay(State):
 
 		if self._pause: return
 
-		self._scenecontroller.update(delta_time, self.__hero, self._enemies)
+		self._scenecontroller.update(delta_time, self.__hero, self.__enemies)
 		self.__hero.update(delta_time)
-		self._enemies.update(delta_time)
+		self.__enemies.update(delta_time)
 		self.__herobullets.update(delta_time)
 
-		for enemy in pygame.sprite.spritecollide(self.__hero, self._enemies, True):
+		for enemy in pygame.sprite.spritecollide(self.__hero, self.__enemies, True):
 			print("COLLISION")
 			if self._lives==0:
 				self.change_state="Intro"
 			self._lives-=1
 
-		for enemy in pygame.sprite.groupcollide(self._enemies, self.__herobullets, True, True):
+		for enemy in pygame.sprite.groupcollide(self.__enemies, self.__herobullets, True, True):
 			self.__hero.charge+=1
 			self._score+=10
 
@@ -118,13 +118,13 @@ class Gameplay(State):
 		self.__planetsurface.render(canvas)
 
 		#self.__players.draw(surface)
-		#self.__enemies.draw(surface)
+		#self.___enemies.draw(surface)
 		#self.__allied_projectiles.draw(surface)
 		#self.__enemy_projectiles.draw(surface)
 		#self.__explosions.draw(surface)
 
 		self.__herobullets.render(canvas)
-		self._enemies.render(canvas)
+		self.__enemies.render(canvas)
 		self.__hero.render(canvas)
 
 		# draw blue box in board rect
@@ -140,11 +140,9 @@ class Gameplay(State):
 		text = font.render(f"SCENE", True, cfg("game.foreground_color"), None)
 		canvas.blit(text, cfg("layout.game.scene_text_pos"))
 
-		score=1234
-		#self._charge+=1
-		#self._score+=10
+		topscore=1234
 
-		text = font.render(f"{score:12}", True, cfg("game.foreground_color"), None)
+		text = font.render(f"{topscore:12}", True, cfg("game.foreground_color"), None)
 		canvas.blit(text, cfg("layout.game.topscore_pos"))
 		text = font.render(f"{self._score:12}", True, cfg("game.foreground_color"), None)
 		canvas.blit(text, cfg("layout.game.score_pos"))
@@ -158,54 +156,54 @@ class Gameplay(State):
 		for l in range(self._lives):
 			canvas.blit(exerion[0][0], cfg("layout.game.lives_pos")+vector((32+2)*l,0))
 
-		# draw pause
+		# draw pause if paused
 		if self._pause:
 			text=font.render("PAUSE", True, cfg("game.foreground_color"), None)
 			pause_box=pygame.rect.Rect(cfg("layout.game.pause_text_pos")-vector(5,5), text.get_size()+vector(10,10))
 			canvas.fill(cfg("game.menu_color"), pause_box)
 			canvas.blit(text, cfg("layout.game.pause_text_pos"))
 
-	def _spawn_projectile(self, proj_type, position):
-		#if proj_type == ProjectileType.Allied:
-		#    self.__allied_projectiles.add(ProjectileFactory.create_projectile(proj_type, position))
-		#    SoundManager.instance().play_sound(cfg_item("sfx", "allied_gunfire", "name"))
-		#elif proj_type == ProjectileType.Enemy:
-		#    self.__enemy_projectiles.add(ProjectileFactory.create_projectile(proj_type, position))
-		#    SoundManager.instance().play_sound(cfg_item("sfx", "enemy_gunfire", "name"))
-		pass
-
-	def __spawn_enemy(self, enemy_type, spawn_point):
-		enemy = self.__enemy_pool.acquire()
-		enemy.init(enemy_type, spawn_point, self.__spawn_projectile, self.__kill_enemy)
-		self.__enemies.add(enemy)
-
-	def __kill_enemy(self, enemy):
-		self.__enemies.remove(enemy)
-		self.__enemy_pool.release(enemy)
-
-	def __spawn_explosion(self, position):
-		#self.__explosions.add(Explosion(position))
-		pass
-
-	def __game_over(self):
-		print("GAME OVER")
+#	def _spawn_projectile(self, proj_type, position):
+#		#if proj_type == ProjectileType.Allied:
+#		#    self.__allied_projectiles.add(ProjectileFactory.create_projectile(proj_type, position))
+#		#    SoundManager.instance().play_sound(cfg_item("sfx", "allied_gunfire", "name"))
+#		#elif proj_type == ProjectileType.Enemy:
+#		#    self.__enemy_projectiles.add(ProjectileFactory.create_projectile(proj_type, position))
+#		#    SoundManager.instance().play_sound(cfg_item("sfx", "enemy_gunfire", "name"))
+#		pass
+#
+#	def __spawn_enemy(self, enemy_type, spawn_point):
+#		enemy = self.__enemy_pool.acquire()
+#		enemy.init(enemy_type, spawn_point, self.__spawn_projectile, self.__kill_enemy)
+#		self.___enemies.add(enemy)
+#
+#	def __kill_enemy(self, enemy):
+#		self.___enemies.remove(enemy)
+#		self.__enemy_pool.release(enemy)
+#
+#	def __spawn_explosion(self, position):
+#		#self.__explosions.add(Explosion(position))
+#		pass
+#
+#	def __game_over(self):
+#		print("GAME OVER")
 
 	def exit(self):
 
 		# vaciamos los EntityGroups
 		self.__herobullets.empty()
-		self._enemies.empty()
+		self.__enemies.empty()
 
 		asset.unload('gameplay')
 		self.__planetsurface.release()
 		self.__stars.release()
-		#for enemy in self.__enemies:
+		#for enemy in self.___enemies:
 		#    self.__enemy_pool.release(enemy)
 
 		#self.__players.empty()
 		#self.__allied_projectiles.empty()
 		#self.__enemy_projectiles.empty()
-		#self.__enemies.empty()
+		#self.___enemies.empty()
 		#self.__explosions.empty()
 		#self.__spawner = None
 		##SoundManager.instance().stop_music()

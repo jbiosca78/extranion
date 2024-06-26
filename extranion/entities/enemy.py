@@ -17,10 +17,10 @@ class Enemy(Entity):
 	def update(self, delta_time):
 		super().update(delta_time)
 
-		if self._name == "mariposa": self._move_mariposa()
-		if self._name == "rueda": self._move_rueda()
+		if self._name == "mariposa": self.__update_mariposa()
+		if self._name == "rueda": self.__update_rueda()
 
-	def _move_mariposa(self):
+	def __update_mariposa(self):
 		# La mariposa sigue al jugador. Pero a diferencia de Exerion que siempre
 		# iba a la misma velocidad en direcciones ortogonales o diagonales, aquí
 		# agregamos el concepto de aceleración, obteniendo un movimiento mucho más
@@ -53,7 +53,7 @@ class Enemy(Entity):
 		if self.velocity.y>speed_max: self.velocity.y=speed_max
 		if self.velocity.y<-speed_max: self.velocity.y=-speed_max
 
-	def _move_rueda(self):
+	def __update_rueda(self):
 		# La rueda es parecida a la mariposa pero sin aceleración y calculando el vector
 		# unitario hacia el objetivo para un movimiento directo. Debido a eso es mas
 		# fácil que se acaben apelotonando, por lo que agregamos un 'freno' cuando el

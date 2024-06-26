@@ -1,7 +1,7 @@
 from extranion.entities.enemy import Enemy
 from extranion.config import cfg
 
-# Esta clase se encarga de gestionar las olas de enemigos y las escenas.
+# Esta clase se encarga de gestionar las distintas escenas (olas de enemigos).
 # Cada escena tiene un tipo de enemigos que vienen en varias olas de ataque.
 # Cuando todos los enemigos de una ola mueren o huyen, se pasa a la siguiente
 # ola tras un breve periodo de tiempo.
@@ -42,7 +42,7 @@ class SceneController:
 
 		# Para los enemigos que persiguen al jugador, el primero de ellos
 		# siempre tiene de objetivo al jugador, el resto tienen de objetivo
-		# la posición del enemigo anterior, y sólo la actualizan al llegar (new_destination)
+		# la posición del enemigo anterior, y solo la actualizan al llegar (new_destination)
 		# De esta forma conseguimos un movimiento 'en fila' en lugar de apelotonarse todos.
 		pos=None
 		for enemy in enemies:

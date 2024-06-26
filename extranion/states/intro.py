@@ -20,7 +20,7 @@ class Intro(State):
 		asset.load('intro','layout.intro.logo', 'logo')
 		# iniciamos el efecto de estrellas
 		#self._stars=Stars(cfg("game.canvas_size"))
-		self._stars=Stars3D(cfg("game.canvas_size"), speed=0.2)
+		self._stars=Stars3D(cfg("game.canvas_size"), speed=0.1)
 		self.__render_text()
 
 	def exit(self):

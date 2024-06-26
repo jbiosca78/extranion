@@ -10,6 +10,9 @@ from extranion.config import cfg
 # Si lo tenemos instalado, con TAB podemos ver en el log la memoria usada por los
 # principales módulos del juego, y al activar debug con F5 podremos verlo en pantalla.
 
+# El control de la memoria usada es muy útil para detectar memory leaks en fases
+# tempranas de desarrollo.
+
 def debug_memory_log():
 
 	try:
@@ -35,7 +38,7 @@ def debug_memory_render(canvas):
 	mem=0
 	mem+=pympler.asizeof.asizeof(statemanager)//1024
 	mem+=pympler.asizeof.asizeof(asset)//1024
-	
+
 	font=asset.get("font.default")
 	image=font.render(f"{mem}K", True, cfg("game.foreground_color"), None)
 	canvas.blit(image, cfg("debug.mem_pos"))
