@@ -12,10 +12,10 @@ class SceneController:
 		self.scene=1
 		self.wave=0
 		self.__wavewait=0
-		self.__enemy_list=cfg("mechanics.enemy_list")
-		self.__waves_per_scene=cfg("mechanics.waves_per_scene")
+		self.__enemy_list=cfg("gameplay.enemy_list")
+		self.__waves_per_scene=cfg("gameplay.waves_per_scene")
 
-	def update(self, delta_time, hero, enemies):
+	def update(self, delta_time, hero, enemies, enemybullets):
 
 		# Si hay enemigos activos, estamos en una ola
 		# Cuando no queda ninguno pasamos a la siguiente
@@ -32,8 +32,8 @@ class SceneController:
 			self.__wavewait+=delta_time
 
 			# Cuando termina la espera vienen los enemigos
-			if self.__wavewait>cfg("mechanics.wave_wait"):
-				for i in range(cfg("mechanics.wave_size")):
+			if self.__wavewait>cfg("gameplay.wave_wait"):
+				for i in range(cfg("gameplay.wave_size")):
 					if (self.scene-1)%2==0: enemies.add(Enemy("mariposa", [400+i*30,0-i*30]))
 					if (self.scene-1)%2==1: enemies.add(Enemy("rueda", [400+i*30,0-i*30]))
 
@@ -49,3 +49,7 @@ class SceneController:
 			if pos is None: enemy.destination=hero.get_position()
 			else: enemy.new_destination=pos
 			pos=enemy.get_position()
+
+	def __fire(self):
+
+		self.__bullets.add(EnemyBullet(self.position))

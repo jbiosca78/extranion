@@ -44,7 +44,7 @@ class Gameplay(State):
 		self._scenecontroller=SceneController()
 
 		# inicializamos valores de partida
-		self._lives=cfg("mechanics.initial_lives")
+		self._lives=cfg("gameplay.initial_lives")
 		self._score=0
 		self._maxscore=1234
 
@@ -94,7 +94,7 @@ class Gameplay(State):
 
 		if self._pause: return
 
-		self._scenecontroller.update(delta_time, self.__hero, self.__enemies)
+		self._scenecontroller.update(delta_time, self.__hero, self._enemies, self.__enemybullets)
 		self.__hero.update(delta_time)
 		self.__enemies.update(delta_time)
 		self.__herobullets.update(delta_time)
@@ -163,33 +163,32 @@ class Gameplay(State):
 			canvas.fill(cfg("game.menu_color"), pause_box)
 			canvas.blit(text, cfg("layout.game.pause_text_pos"))
 
-#	def _spawn_projectile(self, proj_type, position):
-#		#if proj_type == ProjectileType.Allied:
-#		#    self.__allied_projectiles.add(ProjectileFactory.create_projectile(proj_type, position))
-#		#    SoundManager.instance().play_sound(cfg_item("sfx", "allied_gunfire", "name"))
-#		#elif proj_type == ProjectileType.Enemy:
-#		#    self.__enemy_projectiles.add(ProjectileFactory.create_projectile(proj_type, position))
-#		#    SoundManager.instance().play_sound(cfg_item("sfx", "enemy_gunfire", "name"))
-#		pass
-#
-#	def __spawn_enemy(self, enemy_type, spawn_point):
-#		enemy = self.__enemy_pool.acquire()
-#		enemy.init(enemy_type, spawn_point, self.__spawn_projectile, self.__kill_enemy)
-#		self.___enemies.add(enemy)
-#
-#	def __kill_enemy(self, enemy):
-#		self.___enemies.remove(enemy)
-#		self.__enemy_pool.release(enemy)
-#
-#	def __spawn_explosion(self, position):
-#		#self.__explosions.add(Explosion(position))
-#		pass
-#
-#	def __game_over(self):
-#		print("GAME OVER")
+	def _spawn_projectile(self, proj_type, position):
+		#if proj_type == ProjectileType.Allied:
+		#    self.__allied_projectiles.add(ProjectileFactory.create_projectile(proj_type, position))
+		#    SoundManager.instance().play_sound(cfg_item("sfx", "allied_gunfire", "name"))
+		#elif proj_type == ProjectileType.Enemy:
+		#    self.__enemy_projectiles.add(ProjectileFactory.create_projectile(proj_type, position))
+		#    SoundManager.instance().play_sound(cfg_item("sfx", "enemy_gunfire", "name"))
+		pass
+
+	#def __spawn_enemy(self, enemy_type, spawn_point):
+	#	enemy = self.__enemy_pool.acquire()
+	#	enemy.init(enemy_type, spawn_point, self.__spawn_projectile, self.__kill_enemy)
+	#	self.__enemies.add(enemy)
+
+	#def __kill_enemy(self, enemy):
+	#	self.__enemies.remove(enemy)
+	#	self.__enemy_pool.release(enemy)
+
+	#def __spawn_explosion(self, position):
+	#	#self.__explosions.add(Explosion(position))
+	#	pass
+
+	#def __game_over(self):
+	#	print("GAME OVER")
 
 	def exit(self):
-
 		# vaciamos los EntityGroups
 		self.__herobullets.empty()
 		self.__enemies.empty()
