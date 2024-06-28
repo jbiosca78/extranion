@@ -7,10 +7,12 @@ from extranion.entities.herobullet import HeroBullet
 
 class Hero(Entity):
 
-	def __init__(self, name, position, bullets):
+	def __init__(self, name, bullets):
+
+		position=cfg("entities.hero.start_pos")
 		super().__init__(name, position)
 
-		self._map_input()
+		self.__map_input()
 		self._input_pressed = { "left": False, "right": False, "up": False, "down": False }
 
 		self._acceleration=cfg("entities.hero.acceleration")
@@ -25,9 +27,14 @@ class Hero(Entity):
 		self.__bullets=bullets
 		self.__cooldown_fast_fire=0
 		self.__fast_firing=False
-		self.charge=cfg("gameplay.initial_charge")
+		self.__hero_charge=self.charge=cfg("gameplay.initial_charge")
 
-	def _map_input(self):
+		# control de vidas
+		self.alive=True
+		self.lives=cfg("gameplay.initial_lives")
+		self.__respawn=0
+
+	def __map_input(self):
 		self._keymap = {}
 		kmap = cfg("keymap.hero")
 		for g, v in kmap.items():
@@ -36,6 +43,11 @@ class Hero(Entity):
 				if k == "LALT": code=pygame.K_LALT
 				else: code=pygame.key.key_code(k)
 				self._keymap[g].append(code)
+
+	def die(self):
+		if self.__respawn>0: return
+		self.lives-=1
+		self.__respawn=cfg("entities.hero.respawn_time")
 
 	def input(self, key, pressed):
 		if key in self._keymap["up"]:
@@ -58,7 +70,15 @@ class Hero(Entity):
 			if key in self._keymap["fire_normal"]: self.__fire("normal")
 			#if key in self._keymap["fire_fast"]: self.__fire("fast")
 
+	def render(self, delta_time):
+		if self.__respawn>0: return
+		super().render(delta_time)
+
 	def update(self, delta_time):
+
+		if self.__respawn>0:
+			self.__respawn-=delta_time
+			return
 
 		super().update(delta_time)
 		gvar.HERO_POS=self.get_position()

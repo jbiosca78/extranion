@@ -16,7 +16,7 @@ class Entity(pygame.sprite.Sprite):
 	def __init__(self, name, position=(0,0), velocity=(0.0,0.0)):
 		super().__init__()
 
-		log.info(f"Creating entity {name}")
+		log.info(f"Creating entity {name} at {position}")
 		self.name=name
 
 		self.position = vector(position)

@@ -30,9 +30,11 @@ class Gameplay(State):
 
 		# grupos de entidades
 		self.__herobullets=EntityGroup()
+		self.__enemybullets=EntityGroup()
 		self.__enemies=EntityGroup()
 
 		self._board_rect=cfg("layout.game.board_rect")
+
 
 	def enter(self):
 
@@ -41,10 +43,9 @@ class Gameplay(State):
 		self._pause=False
 
 		# control de escenas
-		self._scenecontroller=SceneController()
+		self.__scenecontroller=SceneController()
 
 		# inicializamos valores de partida
-		self._lives=cfg("gameplay.initial_lives")
 		self._score=0
 		self._maxscore=1234
 
@@ -56,8 +57,8 @@ class Gameplay(State):
 		self.__stars=Stars3D(cfg("layout.game.space_rect")[2:4])
 		self.__planetsurface=PlanetSurface(cfg("layout.game.space_rect"))
 
-		# cargamos héroe
-		self.__hero=Hero("hero", cfg("entities.hero.start_pos"), self.__herobullets)
+		# iniciamos héroe
+		self.__hero=Hero("hero", self.__herobullets)
 
 	def _load_assets(self):
 
@@ -94,23 +95,28 @@ class Gameplay(State):
 
 		if self._pause: return
 
-		self._scenecontroller.update(delta_time, self.__hero, self._enemies, self.__enemybullets)
-		self.__hero.update(delta_time)
+		self.__scenecontroller.update(delta_time, self.__hero, self.__enemies, self.__enemybullets)
+		if self.__hero: self.__hero.update(delta_time)
 		self.__enemies.update(delta_time)
 		self.__herobullets.update(delta_time)
+		self.__enemybullets.update(delta_time)
 
-		for enemy in pygame.sprite.spritecollide(self.__hero, self.__enemies, True):
-			print("COLLISION")
-			if self._lives==0:
+		if self.__hero and pygame.sprite.spritecollide(self.__hero, self.__enemies, False):
+			if self.__hero.lives==0:
 				self.change_state="Intro"
-			self._lives-=1
+			self.__hero.die()
+			#self.__hero.lives-=1
+			#self.__hero=None
+			#self.__hero_respawn=cfg("entities.hero.respawn_time")
 
 		for enemy in pygame.sprite.groupcollide(self.__enemies, self.__herobullets, True, True):
+			# TODO: mover a hero.enemy_hit
 			self.__hero.charge+=1
 			self._score+=10
 
 		self.__stars.update(delta_time)
 		self.__planetsurface.update(delta_time)
+
 
 	def render(self, canvas):
 
@@ -123,9 +129,10 @@ class Gameplay(State):
 		#self.__enemy_projectiles.draw(surface)
 		#self.__explosions.draw(surface)
 
+		self.__enemybullets.render(canvas)
 		self.__herobullets.render(canvas)
 		self.__enemies.render(canvas)
-		self.__hero.render(canvas)
+		if self.__hero: self.__hero.render(canvas)
 
 		# draw blue box in board rect
 		canvas.fill((33,36,255), self._board_rect)
@@ -148,15 +155,15 @@ class Gameplay(State):
 		canvas.blit(text, cfg("layout.game.score_pos"))
 		text = font.render(str(self.__hero.charge), True, cfg("game.foreground_color"), None)
 		canvas.blit(text, cfg("layout.game.charge_pos")-vector(text.get_width()/2, 0))
-		text = font.render(f"{self._scenecontroller.scene}", True, cfg("game.foreground_color"), None)
+		text = font.render(f"{self.__scenecontroller.scene}", True, cfg("game.foreground_color"), None)
 		canvas.blit(text, cfg("layout.game.scene_pos")-vector(text.get_width()/2, 0))
 
 		# draw lives
 		exerion=asset.get("exerion")
-		for l in range(self._lives):
+		for l in range(self.__hero.lives):
 			canvas.blit(exerion[0][0], cfg("layout.game.lives_pos")+vector((32+2)*l,0))
 
-		# draw pause if paused
+		# pause text
 		if self._pause:
 			text=font.render("PAUSE", True, cfg("game.foreground_color"), None)
 			pause_box=pygame.rect.Rect(cfg("layout.game.pause_text_pos")-vector(5,5), text.get_size()+vector(10,10))
@@ -190,6 +197,7 @@ class Gameplay(State):
 
 	def exit(self):
 		# vaciamos los EntityGroups
+		self.__enemybullets.empty()
 		self.__herobullets.empty()
 		self.__enemies.empty()
 

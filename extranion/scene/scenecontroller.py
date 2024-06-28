@@ -1,5 +1,7 @@
 from extranion.entities.enemy import Enemy
+from extranion.entities.enemybullet import EnemyBullet
 from extranion.config import cfg
+import random
 
 # Esta clase se encarga de gestionar las distintas escenas (olas de enemigos).
 # Cada escena tiene un tipo de enemigos que vienen en varias olas de ataque.
@@ -48,8 +50,9 @@ class SceneController:
 		for enemy in enemies:
 			if pos is None: enemy.destination=hero.get_position()
 			else: enemy.new_destination=pos
+			# get position for next enemy
 			pos=enemy.get_position()
 
-	def __fire(self):
-
-		self.__bullets.add(EnemyBullet(self.position))
+			# random fire
+			if random.randint(0,100)==0:
+				enemybullets.add(EnemyBullet(pos))

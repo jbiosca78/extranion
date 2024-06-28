@@ -4,10 +4,10 @@ from pygame.math import Vector2 as vector
 from extranion.config import cfg
 from extranion import log
 
-class HeroBullet(Entity):
+class EnemyBullet(Entity):
 
 	def __init__(self, position=(0,0)):
-		super().__init__("herobullet", position)
+		super().__init__("enemybullet", position)
 
 		self.velocity=vector(0, cfg("entities.enemybullet.speed"))
 

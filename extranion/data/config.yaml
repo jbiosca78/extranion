@@ -79,10 +79,15 @@ layout:
 gameplay:
   initial_lives: 4
   initial_charge: 50
-  waves_per_scene: 2
-  wave_size: 10
-  wave_wait: 3000
+  #waves_per_scene: 2
+  #wave_size: 10
+  #wave_wait: 3000
   enemy_list: [ "mariposa", "rueda" ]
+
+  # dev
+  wave_size: 2
+  wave_wait: 200
+  waves_per_scene: 1
 
 sprites:
   hero:
@@ -108,6 +113,20 @@ sprites:
 
 entities:
 
+  herobullet:
+    spritesheet: "bullets"
+    animation:
+      default: [ 0, 0, 1, 0 ]
+    inflate_collider: [ -2, 0 ]
+    speed: -0.5
+
+  enemybullet:
+    spritesheet: "bullets"
+    animation:
+      default: [ 0, 2, 1, 0 ]
+    inflate_collider: [ 0, 0 ]
+    speed: 0.15
+
   hero:
     spritesheet: "hero"
     animation:
@@ -120,6 +139,7 @@ entities:
     speed_max: 0.2
     speed_decay: 0.005
     cooldown_fast_fire: 100
+    respawn_time: 3000
 
   mariposa:
     spritesheet: "enemies"
@@ -167,20 +187,6 @@ entities:
       default: [ 6, 0, 3, 300 ]
     inflate_collider: [ -4, -4 ]
     basepoints: 100
-
-  herobullet:
-    spritesheet: "bullets"
-    animation:
-      default: [ 0, 0, 1, 0 ]
-    inflate_collider: [ -2, 0 ]
-    speed: -0.5
-
-  enemybullet:
-    spritesheet: "bullets"
-    animation:
-      default: [ 0, 2, 1, 0 ]
-    inflate_collider: [ 0, 0 ]
-    speed: 0.1
 
 music:
   volume: 0.5

@@ -33,11 +33,13 @@ class Enemy(Entity):
 		# persigue al jugador.
 
 		if self.destination is None: self.destination=self.new_destination
-		if self.destination is None: return
 
 		# si estamos muy cerca del objetivo anterior, vamos al nuevo objetivo
 		distance = (pygame.math.Vector2(self.destination)-self.position).length()
 		if distance<10: self.destination=self.new_destination
+
+		# si no tenemos destino aun, salimos
+		if self.destination is None: return
 
 		# Aceleramos cada componente hacia el objetivo
 		acceleration=cfg("entities.mariposa.acceleration")
