@@ -12,7 +12,6 @@ states = {
 def init():
 	global current_state
 	current_state=states["Intro"]
-	#current_state=states["Gameplay"]
 	current_state.enter()
 
 def release():

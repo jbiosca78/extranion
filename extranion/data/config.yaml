@@ -31,8 +31,8 @@ keymap:
     left:  [ "Left",  "s", "o" ]
     down:  [ "Down",  "d", "a" ]
     right: [ "Right", "f", "p" ]
-    fire_normal:  [ "Space", "v" ]
-    fire_fast:  [ "LALT", "c" ]
+    fire:  [ "Space", "v" ]
+    fastfire:  [ "LALT", "c" ]
 
 font:
   default:
@@ -77,17 +77,21 @@ layout:
     lives_pos: [ 503, 320 ]
 
 gameplay:
-  initial_lives: 4
-  initial_charge: 50
+  #initial_lives: 2
+  #initial_charge: 50
   #waves_per_scene: 2
   #wave_size: 10
   #wave_wait: 3000
-  enemy_list: [ "mariposa", "rueda" ]
+  #enemy_list: [ "rueda", "pajaro", "mariposa" ]
 
   # dev
-  wave_size: 2
-  wave_wait: 200
+  initial_lives: 4
+  initial_charge: 5000
+  wave_size: 10
+  wave_wait: 600
   waves_per_scene: 1
+  enemy_list: [ "pajaro", "rueda", "mariposa" ]
+  #enemy_list: [ "rueda", "mariposa" ]
 
 sprites:
   hero:
@@ -150,7 +154,6 @@ entities:
     acceleration: 0.01
     speed_max: 0.1
     basepoints: 100
-    seed: 1234
 
   pajaro:
     spritesheet: "enemies"
@@ -158,6 +161,8 @@ entities:
       default: [ 1, 0, 3, 150 ]
     inflate_collider: [ -4, -4 ]
     basepoints: 100
+    speed_x: 0.12
+    speed_y: 0.08
 
   ovni:
     spritesheet: "enemies"
@@ -171,7 +176,7 @@ entities:
     animation:
       default: [ 4, 0, 3, 150 ]
     inflate_collider: [ -4, -4 ]
-    speed: 0.15
+    speed: 0.12
     basepoints: 100
 
   elefante:

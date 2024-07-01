@@ -36,6 +36,8 @@ class Travel(State):
 		if event.type == pygame.KEYDOWN:
 			if event.key == pygame.K_SPACE:
 				self.change_state = "Gameplay"
+			if event.key == pygame.K_ESCAPE:
+				self.change_state = "Intro"
 
 	def update(self, delta_time):
 
@@ -59,8 +61,6 @@ class Travel(State):
 		if self.__arriving_time<=0:
 			self.change_state = "Gameplay"
 
-
-
 	def render(self, canvas):
 		# primero pintamos las estrellas de fondo
 		self.__stars.render(canvas)
@@ -73,4 +73,3 @@ class Travel(State):
 			# mostramos la nave girando
 			logo=asset.get("ship-turn")
 			canvas.blit(logo, self.__ship_pos+self.__turbulencias)
-

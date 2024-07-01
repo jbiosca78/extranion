@@ -2,18 +2,16 @@ from extranion.entities.entity import Entity
 import pygame
 from pygame.math import Vector2 as vector
 from extranion.config import cfg, gvar
-from extranion import log
 from extranion.entities.herobullet import HeroBullet
+from extranion import log
 
 class Hero(Entity):
 
 	def __init__(self, name, bullets):
 
-		position=cfg("entities.hero.start_pos")
-		super().__init__(name, position)
+		super().__init__(name)
 
 		self.__map_input()
-		self._input_pressed = { "left": False, "right": False, "up": False, "down": False }
 
 		self._acceleration=cfg("entities.hero.acceleration")
 		self._speed_max=cfg("entities.hero.speed_max")
@@ -26,13 +24,20 @@ class Hero(Entity):
 		# control de proyectiles
 		self.__bullets=bullets
 		self.__cooldown_fast_fire=0
-		self.__fast_firing=False
-		self.__hero_charge=self.charge=cfg("gameplay.initial_charge")
+		self.charge=self.charge=cfg("gameplay.initial_charge")
 
 		# control de vidas
-		self.alive=True
 		self.lives=cfg("gameplay.initial_lives")
-		self.__respawn=0
+		self.alive=True
+
+		self._input_pressed = { "left": False, "right": False, "up": False, "down": False, "fastfire": False}
+		self.__respawn_time=0
+		self.__spawn()
+
+	def __spawn(self):
+		self.velocity=vector(0,0)
+		self.position=vector(cfg("entities.hero.start_pos"))
+		self.alive=True
 
 	def __map_input(self):
 		self._keymap = {}
@@ -45,11 +50,17 @@ class Hero(Entity):
 				self._keymap[g].append(code)
 
 	def die(self):
-		if self.__respawn>0: return
+
+		if not self.alive: return
+		log.info("hero die")
+		self.alive=False
+		self.__respawn_time=cfg("entities.hero.respawn_time")
 		self.lives-=1
-		self.__respawn=cfg("entities.hero.respawn_time")
 
 	def input(self, key, pressed):
+
+		#if not self.alive: return
+
 		if key in self._keymap["up"]:
 			self._input_pressed["up"] = pressed
 			log.debug(f"up = {pressed}")
@@ -62,26 +73,25 @@ class Hero(Entity):
 		elif key in self._keymap["right"]:
 			self._input_pressed["right"] = pressed
 			log.debug(f"right = {pressed}")
-		elif key in self._keymap["fire_fast"]:
-			self.__fast_firing = pressed
-			log.debug(f"fire_fast = {pressed}")
-
-		if pressed:
-			if key in self._keymap["fire_normal"]: self.__fire("normal")
-			#if key in self._keymap["fire_fast"]: self.__fire("fast")
+		elif key in self._keymap["fastfire"]:
+			self._input_pressed["fastfire"] = pressed
+			log.debug(f"fastfire = {pressed}")
+		elif key in self._keymap["fire"] and pressed:
+			self.__fire("normal")
 
 	def render(self, delta_time):
-		if self.__respawn>0: return
+		if not self.alive: return
 		super().render(delta_time)
 
 	def update(self, delta_time):
 
-		if self.__respawn>0:
-			self.__respawn-=delta_time
-			return
+		# controlamos respawn para 'revivir' al héroe
+		if self.__respawn_time>0:
+			self.__respawn_time-=delta_time
+			if self.__respawn_time<=0: self.__spawn()
 
-		super().update(delta_time)
-		gvar.HERO_POS=self.get_position()
+		# no actualizamos heroe si estamos muertos
+		if not self.alive: return
 
 		# obtenemos las direcciones de movimiento horizontal y vertical
 		moving_x=moving_y=0
@@ -124,9 +134,13 @@ class Hero(Entity):
 		# establecemos la animación según el movimiento horizontal
 		self.set_animation(["left","default","right"][moving_x+1])
 
-		if self.__cooldown_fast_fire>0: self.__cooldown_fast_fire-=delta_time
-		if self.__fast_firing: self.__fire("fast")
+		# fast fire
+		if self.__cooldown_fast_fire>0:
+			self.__cooldown_fast_fire-=delta_time
+		else:
+			if self._input_pressed["fastfire"]: self.__fire("fast")
 
+		super().update(delta_time)
 
 	def __fire(self, fire_type):
 
@@ -136,7 +150,6 @@ class Hero(Entity):
 			self.__bullets.add(HeroBullet(self.position+vector(8,0)))
 
 		if fire_type=="fast":
-			if self.__cooldown_fast_fire>0: return
 			if self.charge==0: return
 			self.charge-=1
 			self.__cooldown_fast_fire=cfg("entities.hero.cooldown_fast_fire")

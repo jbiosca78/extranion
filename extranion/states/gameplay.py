@@ -20,13 +20,15 @@ from extranion.effects.stars3d import Stars3D
 from extranion.effects.planetsurface import PlanetSurface
 from extranion.entities.hero import Hero
 from extranion.entities.entitygroup import EntityGroup
-from extranion.scene.scenecontroller import SceneController
+from extranion.entities.enemies.scenecontroller import SceneController
 
 class Gameplay(State):
 
 	def __init__(self):
 		super().__init__()
 		self.name="Gameplay"
+
+		# debug
 
 		# grupos de entidades
 		self.__herobullets=EntityGroup()
@@ -67,6 +69,9 @@ class Gameplay(State):
 		asset.load('gameplay', 'sprites.bullets', 'bullets')
 		asset.load('gameplay', 'sprites.exerion', 'exerion')
 		asset.load('gameplay', 'sprites.mountains', 'mountains')
+
+		#months = [ "J", "F", "M",
+
 		#self.starship=entity
 		#asset.load('intro','intro.logo')
 
@@ -86,6 +91,8 @@ class Gameplay(State):
 				log.info(f"PAUSE: {self._pause}")
 			if event.key == pygame.K_ESCAPE:
 				self.change_state="Intro"
+			if event.key == pygame.K_TAB:
+				self.__debug_info()
 		if self._pause: return
 
 		if event.type == pygame.KEYDOWN: self.__hero.input(event.key, True)
@@ -115,8 +122,7 @@ class Gameplay(State):
 			self._score+=10
 
 		self.__stars.update(delta_time)
-		self.__planetsurface.update(delta_time)
-
+		self.__planetsurface.update(delta_time, self.__hero)
 
 	def render(self, canvas):
 
@@ -135,6 +141,7 @@ class Gameplay(State):
 		if self.__hero: self.__hero.render(canvas)
 
 		# draw blue box in board rect
+		# asdfa
 		canvas.fill((33,36,255), self._board_rect)
 
 		font=asset.get("font.default")
@@ -214,3 +221,11 @@ class Gameplay(State):
 		#self.__explosions.empty()
 		#self.__spawner = None
 		##SoundManager.instance().stop_music()
+
+	def __debug_info(self):
+		log.info(f"Num enemies: {len(self.__enemies)}")
+		log.info(f"Num enemy bullets: {len(self.__enemybullets)}")
+		log.info(f"Num hero bullets: {len(self.__herobullets)}")
+
+		#pass
+

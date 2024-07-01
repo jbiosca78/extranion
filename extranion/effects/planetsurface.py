@@ -31,6 +31,8 @@ class PlanetSurface:
 			self.__objects.append(p)
 
 		self._stripeidx=0
+		self.__shift_x=0
+		self.__shift_y=0
 
 	#def generate(self):
 	#	for x in range(self.width):
@@ -45,7 +47,7 @@ class PlanetSurface:
 	#				print(" ", end="")
 	#		print()
 
-	def update(self, delta_time):
+	def update(self, delta_time, hero):
 
 		self._nstart+=0.03
 		if self._nstart>2.71:
@@ -61,13 +63,14 @@ class PlanetSurface:
 		if self._stripeidx>0.2:
 			self._stripeidx=0
 
+		# dependiendo de la posición del héroe, la superficie y elementos se desplazan
+		self.__shift_x=(hero.position.x-640/2)
+		self.__shift_y=(360-hero.position.y)/4
+
 	def render(self, canvas):
 
-		shift_y=(360-gvar.HERO_POS.y)/4
-		shift_x=(gvar.HERO_POS.x-640/2)
-
 		x,y,w,h=self.canvas_rect
-		horizon_y=int(h/2+y)+shift_y
+		horizon_y=int(h/2+y)+self.__shift_y
 
 		# Stripes
 		pygame.draw.rect(canvas, [100,20,20], [x,horizon_y,x+w,y+h])
@@ -91,7 +94,7 @@ class PlanetSurface:
 			# la posición x se multiplica por 10 desde el centro
 			# la posición y a una distancia de 0% será el horizonte y en 100% algo mas bajo
 			# que el borde inferior de la pantalla (factor de 1.3) para evitar que desaparezca de repente
-			obj_x=w/2-(w/2-obj.posx)*(1+d*9)-shift_x*d
+			obj_x=w/2-(w/2-obj.posx)*(1+d*9)-self.__shift_x*d
 			obj_y=horizon_y+(h-horizon_y)*d*1.3
 			# lo dibujamos
 			canvas.blit(sprite, (int(obj_x)+x-sprite.get_width()/2, int(obj_y)+y-sprite.get_height()/2))

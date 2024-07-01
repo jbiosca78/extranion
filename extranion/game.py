@@ -14,9 +14,9 @@ from extranion.fps_stats import FPS_Stats
 from extranion.memory_stats import debug_memory_log, debug_memory_render
 
 def main():
-	# si tenemos instalado rich, lo usamos para
-	# mostrar excepciones mucho mas detalladas
-	# apt install python3-rich
+	#* si tenemos instalado rich, lo usamos para
+	# TODO mostrar excepciones mucho mas detalladas
+	# FIX apt install python3-rich
 	Console=None
 	try:
 		from rich.console import Console
