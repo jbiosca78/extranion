@@ -21,8 +21,36 @@ class Mariposa(Entity):
 		self.destination=None
 		self.new_destination=None
 
+		# iniciamos los enemigos ne modo ataque
+		self.attack=True
+		self.__attack_time=cfg("entities.mariposa.attack_time")
+		self.__flee_time=cfg("entities.mariposa.flee_time")
+
 	def update(self, delta_time):
-		super().update(delta_time)
+
+		if self.attack:
+			self.__update_attack(delta_time)
+			# tiempo de ataque
+			self.__attack_time-=delta_time
+			if self.__attack_time<0: self.flee()
+		else:
+			self.__update_flee(delta_time)
+			# tiempo de huida
+			self.__flee_time-=delta_time
+			if self.__flee_time<0:
+				self.kill()
+
+	# si se acaba el tiempo de ataque o el jugador muere, los enemigos huyen
+	def flee(self):
+		self.attack=False
+
+		speed_max=cfg("entities.mariposa.speed_max")
+		if random.randint(0,1)==0: self.velocity.y=speed_max
+		else: self.velocity.y=-speed_max
+		if random.randint(0,1)==0: self.velocity.x=speed_max
+		else: self.velocity.x=-speed_max
+
+	def __update_attack(self, delta_time):
 
 		# La mariposa sigue al jugador. Pero a diferencia de Exerion que siempre
 		# iba a la misma velocidad en direcciones ortogonales o diagonales, aquí
@@ -52,3 +80,9 @@ class Mariposa(Entity):
 		if self.velocity.y>speed_max: self.velocity.y=speed_max
 		if self.velocity.y<-speed_max: self.velocity.y=-speed_max
 
+		super().update(delta_time)
+
+	def __update_flee(self, delta_time):
+
+		# nos movemos en la dirección que tuvieramos sin descanso
+		super().update(delta_time)

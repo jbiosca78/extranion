@@ -44,12 +44,13 @@ class SceneController:
 				# iniciamos espera entre olas
 				self.__wavewait=cfg("gameplay.wave_wait")
 
-		# Para los enemigos que persiguen al jugador, el primero de ellos
-		# siempre tiene de objetivo al jugador, el resto tienen de objetivo
-		# la posición del enemigo anterior, y solo la actualizan al llegar (new_destination)
-		# De esta forma conseguimos un movimiento 'en fila' en lugar de apelotonarse todos.
 		pos=None
 		for enemy in enemies:
+
+			# Para los enemigos que persiguen al jugador, el primero de ellos
+			# siempre tiene de objetivo al jugador, el resto tienen de objetivo
+			# la posición del enemigo anterior, y solo la actualizan al llegar (new_destination)
+			# De esta forma conseguimos un movimiento 'en fila' en lugar de apelotonarse todos.
 			if enemy.name in ["rueda", "mariposa"]:
 				if pos is None: enemy.destination=hero.get_position()
 				else: enemy.new_destination=pos
@@ -59,3 +60,7 @@ class SceneController:
 				# random fire
 				if random.randint(0,100)==0:
 					enemybullets.add(EnemyBullet(pos))
+
+			# Si el jugador muere, los enemigos se van
+			if not hero.alive:
+				enemy.attack=False
