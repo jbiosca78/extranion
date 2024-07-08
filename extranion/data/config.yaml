@@ -6,6 +6,12 @@ game:
   foreground_color: [ 222,222,222 ]
   menu_color: [ 33,33,255 ]
   fps: 60
+  font_default:
+      type: font
+      #file: hack_nerd.ttf
+      file: TerminusTTF-Bold-4.39.ttf
+      #size: 16
+      size: 20
 
 log:
   enabled: true
@@ -31,16 +37,8 @@ keymap:
     left:  [ "Left",  "s", "o" ]
     down:  [ "Down",  "d", "a" ]
     right: [ "Right", "f", "p" ]
-    fire:  [ "Space", "v" ]
-    fastfire:  [ "LALT", "c" ]
-
-font:
-  default:
-    type: font
-    #file: hack_nerd.ttf
-    file: TerminusTTF-Bold-4.39.ttf
-    #size: 16
-    size: 20
+    fire:  [ "Space", "n", "c" ]
+    fastfire:  [ "LALT", "RALT", "m", "x" ]
 
 layout:
   intro:
@@ -88,11 +86,126 @@ gameplay:
   initial_lives: 4
   initial_charge: 5000
   wave_size: 10
-  wave_wait: 600
+  wave_wait: 200
   waves_per_scene: 1
   #enemy_list: [ "pajaro", "rueda", "mariposa" ]
   #enemy_list: [ "rueda", "mariposa" ]
-  enemy_list: [ "mariposa" ]
+  enemy_list: [ "rueda", "pajaro", "mariposa" ]
+  #enemy_list: [ "mariposa" ]
+
+  enemy_shot_rand: 100
+  enemy_shots: 10 # en cada escena, un proyectil adicional
+
+entities:
+
+  hero:
+    spritesheet: "hero"
+    animation:
+      default: [ 1, 0, 3, 60 ]
+      left:    [ 0, 0, 3, 60 ]
+      right:   [ 2, 0, 3, 60 ]
+    inflate_collider: [ -8, -4 ]
+    start_pos: [ 250, 200 ]
+    acceleration: 0.014
+    speed_max: 0.22
+    speed_decay: 0.005
+    cooldown_fast_fire: 100
+    respawn_time: 3000
+
+  enemy:
+
+    rueda:
+      spritesheet: "enemies"
+      animation:
+        default: [ 4, 0, 3, 150 ]
+      inflate_collider: [ -4, -4 ]
+      speed: 0.14
+      attack_time: 16000
+      flee_time: 4000
+      initial_points: 100
+
+    pajaro:
+      spritesheet: "enemies"
+      animation:
+        default: [ 1, 0, 3, 150 ]
+        left: [ 2, 0, 1, 0 ]
+        right: [ 2, 1, 1, 0 ]
+      inflate_collider: [ -4, -4 ]
+      speed_x: 0.10
+      speed_y: 0.08
+      turn_rand: 400
+      attack_time: 10000
+      flee_time: 5000
+
+    mariposa:
+      spritesheet: "enemies"
+      animation:
+        default: [ 0, 0, 3, 150 ]
+      inflate_collider: [ -4, -4 ]
+      acceleration: 0.01
+      speed_max: 0.12
+      attack_time: 16000
+      flee_time: 4000
+
+    ovni:
+      spritesheet: "enemies"
+      animation:
+        default: [ 3, 0, 3, 150 ]
+      inflate_collider: [ -4, -4 ]
+
+    elefante:
+      spritesheet: "enemies"
+      animation:
+        default: [ 5, 1, 2, 150 ]
+      inflate_collider: [ -4, -4 ]
+
+    pluma:
+      spritesheet: "enemies"
+      animation:
+        default: [ 6, 0, 3, 300 ]
+      inflate_collider: [ -4, -4 ]
+
+  explossion:
+
+    hero:
+      spritesheet: "explossions"
+      animation:
+        default: [ 0, 0, 4, 150 ]
+      time: 600
+
+    enemy:
+
+      rueda:
+        spritesheet: "explossions"
+        animation:
+          default: [ 4, 0, 4, 100 ]
+        time: 400
+
+      pajaro:
+        spritesheet: "explossions"
+        animation:
+          default: [ 2, 0, 4, 100 ]
+        time: 400
+
+      mariposa:
+        spritesheet: "explossions"
+        animation:
+          default: [ 1, 0, 4, 100 ]
+        time: 400
+
+  bullet:
+    hero:
+      spritesheet: "bullets"
+      animation:
+        default: [ 0, 0, 1, 0 ]
+      inflate_collider: [ -2, 0 ]
+      speed: -0.5
+    enemy:
+      spritesheet: "bullets"
+      animation:
+        default: [ 0, 2, 1, 0 ]
+      inflate_collider: [ 0, 0 ]
+      speed: 0.15
 
 sprites:
   hero:
@@ -103,127 +216,54 @@ sprites:
     type: spritesheet
     file: bullets.png
     size: [ 6, 8 ]
-  exerion:
-    type: spritesheet
-    file: exerion-sheet-x2.png
-    size: [ 32, 32 ]
   enemies:
     type: spritesheet
     file: enemies.png
+    size: [ 32, 32 ]
+  explossions:
+    type: spritesheet
+    file: explossions.png
     size: [ 32, 32 ]
   mountains:
     type: spritesheet
     file: mountains.png
     size: [ 48, 48 ]
+  exerion:
+    type: spritesheet
+    file: exerion-sheet-x2.png
+    size: [ 32, 32 ]
 
-entities:
-
-  herobullet:
-    spritesheet: "bullets"
-    animation:
-      default: [ 0, 0, 1, 0 ]
-    inflate_collider: [ -2, 0 ]
-    speed: -0.5
-
-  enemybullet:
-    spritesheet: "bullets"
-    animation:
-      default: [ 0, 2, 1, 0 ]
-    inflate_collider: [ 0, 0 ]
-    speed: 0.15
-
-  hero:
-    spritesheet: "hero"
-    animation:
-      default: [ 1, 0, 3, 60 ]
-      left:    [ 0, 0, 3, 60 ]
-      right:   [ 2, 0, 3, 60 ]
-    inflate_collider: [ -8, -4 ]
-    start_pos: [ 250, 200 ]
-    acceleration: 0.02
-    speed_max: 0.2
-    speed_decay: 0.005
-    cooldown_fast_fire: 100
-    respawn_time: 3000
-
-  mariposa:
-    spritesheet: "enemies"
-    animation:
-      default: [ 0, 0, 3, 150 ]
-    inflate_collider: [ -4, -4 ]
-    escape_time: 5000
-    acceleration: 0.01
-    speed_max: 0.1
-    basepoints: 100
-    attack_time: 6000
-    flee_time: 6000
-
-  pajaro:
-    spritesheet: "enemies"
-    animation:
-      default: [ 1, 0, 3, 150 ]
-    inflate_collider: [ -4, -4 ]
-    basepoints: 100
-    speed_x: 0.12
-    speed_y: 0.08
-
-  ovni:
-    spritesheet: "enemies"
-    animation:
-      default: [ 3, 0, 3, 150 ]
-    inflate_collider: [ -4, -4 ]
-    basepoints: 100
-
-  rueda:
-    spritesheet: "enemies"
-    animation:
-      default: [ 4, 0, 3, 150 ]
-    inflate_collider: [ -4, -4 ]
-    speed: 0.12
-    basepoints: 100
-
-  elefante:
-    spritesheet: "enemies"
-    animation:
-      default: [ 5, 1, 2, 150 ]
-    inflate_collider: [ -4, -4 ]
-    basepoints: 100
-
-  pluma:
-    spritesheet: "enemies"
-    animation:
-      default: [ 6, 0, 3, 300 ]
-    inflate_collider: [ -4, -4 ]
-    basepoints: 100
+sound:
+  volume: 1
+  intro:
+    select_option:
+      type: sfx
+      file: select_option.ogg
+  travel:
+    traveling:
+      type: sfx
+      file: traveling.ogg
+  gameplay:
+    shoot:
+      type: sfx
+      file: shoot.mp3
+    hero_killed:
+      type: sfx
+      file: hero_killed.ogg
+    enemy_killed:
+      type: sfx
+      file: enemy_killed.ogg
 
 music:
-  volume: 0.5
-  fadeout: 200
-  mission:
-    name: mission
-    file:
-      - shmup.assets.music
-      - mission.ogg
+  volume: 0.9
+  intro:
+    type: music
+    file: intro.mp3
+  gameplay:
+    type: music
+    file: gameplay.mp3
+    volume_mult: 0.6
 
-sfx:
-  volume: 1
-  allied_gunfire:
-    name: allied_gunfire
-    file:
-      - shmup.assets.sfx
-      - allied_gunfire.wav
-  enemy_gunfire:
-    name: enemy_gunfire
-    file:
-      - shmup.assets.sfx
-      - enemy_gunfextranion/entities/enemy.pyire.wav
-  explosion1:
-    name: explosion1
-    file:
-      - shmup.assets.sfx
-      - explosion1.wav
-  explosion2:
-    name: explosion2
-    file:
-      - shmup.assets.sfx
-      - explosion2.wav
+
+score:
+  topscore: 0

@@ -3,6 +3,8 @@ from extranion.states.travel import Travel
 from extranion.states.gameplay import Gameplay
 from extranion import log
 
+# TODO: convertir a clase estática
+
 states = {
 	"Intro": Intro(),
 	"Travel": Travel(),

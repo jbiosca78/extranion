@@ -13,7 +13,7 @@ import random
 
 class Entity(pygame.sprite.Sprite):
 
-	def __init__(self, name, position=(0,0), velocity=(0.0,0.0)):
+	def __init__(self, name, position=(0,0), velocity=(0.0,0.0), random_frame=False):
 		super().__init__()
 
 		log.info(f"Creating entity {name} at {position}")
@@ -22,16 +22,22 @@ class Entity(pygame.sprite.Sprite):
 		self.position = vector(position)
 		self.velocity = vector(velocity)
 
-		self.config=cfg("entities", name)
-		self.spritesheet=asset.get(self.config["spritesheet"])
+		self.__config=cfg("entities."+name)
+		self.spritesheet=asset.get(self.__config["spritesheet"])
 		self.set_animation("default")
-		# iniciamos con un frame aleatorio para que no se vean todos igual
-		self.animptr=random.random()*self.animframes
+		if random_frame:
+			# los enemigos los iniciamos con un frame aleatorio para que no se vean todos igual
+			self.animptr=random.random()*self.animframes
+		else:
+			self.animptr=0
 
 		self.width=self.spritesheet[self.spriterow][self.spritecol].get_width()
 		self.height=self.spritesheet[self.spriterow][self.spritecol].get_height()
 		self.render_rect=self.spritesheet[self.spriterow][self.spritecol].get_rect()
-		self.rect=self.render_rect.inflate(self.config["inflate_collider"])
+		if "inflate_collider" in self.__config:
+			self.rect=self.render_rect.inflate(self.__config["inflate_collider"])
+		else:
+			self.rect=self.render_rect
 
 	def kill(self):
 		log.info(f"Killing entity {self.name}")
@@ -39,10 +45,10 @@ class Entity(pygame.sprite.Sprite):
 
 	def set_animation(self, animation):
 
-		self.spriterow=self.config["animation"][animation][0]
-		self.spritecol=self.config["animation"][animation][1]
-		self.animframes=self.config["animation"][animation][2]
-		self.animspeed=self.config["animation"][animation][3]
+		self.spriterow=self.__config["animation"][animation][0]
+		self.spritecol=self.__config["animation"][animation][1]
+		self.animframes=self.__config["animation"][animation][2]
+		self.animspeed=self.__config["animation"][animation][3]
 
 	def update(self, delta_time):
 

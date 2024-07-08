@@ -28,12 +28,17 @@ class SceneController:
 			# tiempo de espera entre olas de enemigos
 			self.__wavewait-=delta_time
 			if self.__wavewait<=0:
-				# nueva ola
+				# ajustamos velocidad según la escena, para aumentar complejidad
+				speed_mul=1+self.scene/100
+				hero.speed_mul=speed_mul
+				# creamos ola de enemigos
 				log.info(f"New wave. wave={self.wave}, scene={self.scene}")
+				wave_size=int(cfg("gameplay.wave_size"))
 				self.__current_enemy=self.__enemy_list[(self.scene-1)%len(self.__enemy_list)]
-				if self.__current_enemy=="rueda": Rueda.create_wave(enemies)
-				if self.__current_enemy=="pajaro": Pajaro.create_wave(enemies)
-				if self.__current_enemy=="mariposa": Mariposa.create_wave(enemies)
+				if self.__current_enemy=="rueda": Rueda.create_wave(enemies, wave_size, speed_mul)
+				if self.__current_enemy=="pajaro": Pajaro.create_wave(enemies, wave_size, speed_mul)
+				if self.__current_enemy=="mariposa": Mariposa.create_wave(enemies, wave_size, speed_mul)
+
 		else:
 			# si no quedan enemigos, pasamos a la siguiente ola
 			if len(enemies)==0:
@@ -44,23 +49,27 @@ class SceneController:
 				# iniciamos espera entre olas
 				self.__wavewait=cfg("gameplay.wave_wait")
 
-		pos=None
-		for enemy in enemies:
+		# Para los enemigos que persiguen al jugador, el primero de ellos
+		# siempre tiene de objetivo al jugador, el resto tienen de objetivo
+		# la posición del enemigo anterior, y solo la actualizan al llegar (new_destination)
+		# De esta forma conseguimos un movimiento 'en fila' en lugar de apelotonarse todos.
+		if self.__current_enemy in ["rueda", "mariposa"]:
+			destination=None
+			for enemy in enemies:
+				if destination is None: enemy.destination=hero.get_position()
+				else: enemy.new_destination=destination
+				destination=enemy.get_position()
 
-			# Para los enemigos que persiguen al jugador, el primero de ellos
-			# siempre tiene de objetivo al jugador, el resto tienen de objetivo
-			# la posición del enemigo anterior, y solo la actualizan al llegar (new_destination)
-			# De esta forma conseguimos un movimiento 'en fila' en lugar de apelotonarse todos.
-			if enemy.name in ["rueda", "mariposa"]:
-				if pos is None: enemy.destination=hero.get_position()
-				else: enemy.new_destination=pos
-				# get position for next enemy
-				pos=enemy.get_position()
+		# Si el jugador muere, los enemigos se van
+		if not hero.alive:
+			for enemy in enemies:
+				if enemy.attacking: enemy.flee()
 
-				# random fire
-				if random.randint(0,100)==0:
-					enemybullets.add(EnemyBullet(pos))
-
-			# Si el jugador muere, los enemigos se van
-			if not hero.alive:
-				enemy.attack=False
+		# Si el jugador está vivo, los enemigos disparan. en cada escena hay un proyectil
+		# más que la anterior, para incrementar la complejidad del juego
+		if hero.alive:
+			for enemy in enemies:
+				if enemy.position.y>0 and \
+				len(enemybullets)<cfg("gameplay.enemy_shots")+self.scene and \
+				random.randint(0,cfg("gameplay.enemy_shot_rand"))==0:
+					enemybullets.add(EnemyBullet(enemy.get_position()))

@@ -3,6 +3,7 @@ from extranion.states.state import State
 from extranion.config import cfg
 from extranion.asset import asset
 from extranion.effects.stars3d import Stars3D
+from extranion.soundmanager import SoundManager
 import extranion.log as log
 
 class Intro(State):
@@ -18,12 +19,17 @@ class Intro(State):
 	def enter(self):
 		log.info("Entering state Intro")
 		asset.load('intro','layout.intro.logo', 'logo')
-		# iniciamos el efecto de estrellas
-		#self._stars=Stars(cfg("game.canvas_size"))
+		asset.load('intro', 'sound.intro.select_option', 'select_option')
+		asset.load('intro', 'music.intro')
+
+		SoundManager.play_music("intro")
+
+		# efecto de estrellas a mínima velocidad
 		self._stars=Stars3D(cfg("game.canvas_size"), speed=0.1)
 		self.__render_text()
 
 	def exit(self):
+		SoundManager.stop_music()
 		asset.unload('intro')
 		self._stars.release()
 
@@ -32,6 +38,7 @@ class Intro(State):
 			if event.key == pygame.K_SPACE:
 				#self.change_state = "Gameplay"
 				self.change_state = "Travel"
+				SoundManager.play_sound("select_option")
 
 	def update(self, delta_time):
 		# parpadeo del texto
@@ -54,6 +61,6 @@ class Intro(State):
 			canvas.blit(self._text, cfg("layout.intro.text_pos"))
 
 	def __render_text(self):
-		font=asset.get("font.default")
+		font=asset.get("font_default")
 		#self.__image.blit(logo, (400,0))
 		self._text = font.render("PRESS SPACE TO CONTINUE", True, cfg("game.foreground_color"), None)

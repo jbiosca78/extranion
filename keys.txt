@@ -1,0 +1,9 @@
+
+
+             opt 1   opt 2   opt 3
+Move up      up      e       q
+Move down    down    d       a
+Move left    left    s       o
+Move right   right   f       p
+Normal fire  c       n       space
+Fast fire    x       m       alt

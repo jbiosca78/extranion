@@ -4,6 +4,7 @@ from pygame.math import Vector2 as vector
 from extranion.config import cfg, gvar
 from extranion.entities.herobullet import HeroBullet
 from extranion import log
+from extranion.soundmanager import SoundManager
 
 class Hero(Entity):
 
@@ -13,9 +14,10 @@ class Hero(Entity):
 
 		self.__map_input()
 
-		self._acceleration=cfg("entities.hero.acceleration")
+		self.speed_mul=1
 		self._speed_max=cfg("entities.hero.speed_max")
 		self._speed_decay=cfg("entities.hero.speed_decay")
+		self._acceleration=cfg("entities.hero.acceleration")
 
 		# dimensiones del espacio donde puede entrar la nave
 		space=cfg("layout.game.space_rect")
@@ -46,20 +48,11 @@ class Hero(Entity):
 			self._keymap[g] = []
 			for k in v:
 				if k == "LALT": code=pygame.K_LALT
+				elif k == "RALT": code=pygame.K_RALT
 				else: code=pygame.key.key_code(k)
 				self._keymap[g].append(code)
 
-	def die(self):
-
-		if not self.alive: return
-		log.info("hero die")
-		self.alive=False
-		self.__respawn_time=cfg("entities.hero.respawn_time")
-		self.lives-=1
-
 	def input(self, key, pressed):
-
-		#if not self.alive: return
 
 		if key in self._keymap["up"]:
 			self._input_pressed["up"] = pressed
@@ -78,10 +71,6 @@ class Hero(Entity):
 			log.debug(f"fastfire = {pressed}")
 		elif key in self._keymap["fire"] and pressed:
 			self.__fire("normal")
-
-	def render(self, delta_time):
-		if not self.alive: return
-		super().render(delta_time)
 
 	def update(self, delta_time):
 
@@ -102,12 +91,12 @@ class Hero(Entity):
 
 		# aceleramos en la dirección de movimiento correspondiente hasta el máximo
 		self.velocity.x += moving_x*self._acceleration
-		if self.velocity.x>self._speed_max: self.velocity.x=self._speed_max
-		if self.velocity.x<-self._speed_max: self.velocity.x=-self._speed_max
+		if self.velocity.x>self._speed_max*self.speed_mul: self.velocity.x=self._speed_max
+		if self.velocity.x<-self._speed_max*self.speed_mul: self.velocity.x=-self._speed_max
 		if moving_x==0: self.velocity.x*=(1-self._speed_decay)
 		self.velocity.y += moving_y*self._acceleration
-		if self.velocity.y>self._speed_max: self.velocity.y=self._speed_max
-		if self.velocity.y<-self._speed_max: self.velocity.y=-self._speed_max
+		if self.velocity.y>self._speed_max*self.speed_mul: self.velocity.y=self._speed_max
+		if self.velocity.y<-self._speed_max*self.speed_mul: self.velocity.y=-self._speed_max
 		if moving_y==0: self.velocity.y*=(1-self._speed_decay)
 
 		# si estamos en un borde, no nos movemos y quitamos la aceleración hacia ese borde
@@ -142,15 +131,32 @@ class Hero(Entity):
 
 		super().update(delta_time)
 
+	def render(self, delta_time):
+		if not self.alive: return
+		super().render(delta_time)
+
+	def die(self):
+
+		log.info("hero die")
+		self.alive=False
+		self.__respawn_time=cfg("entities.hero.respawn_time")
+		self.lives-=1
+		SoundManager.play_sound("hero_killed")
+
+
 	def __fire(self, fire_type):
+
+		if not self.alive: return
 
 		if fire_type=="normal":
 			if len(self.__bullets)>1: return
+			SoundManager.play_sound("shoot")
 			self.__bullets.add(HeroBullet(self.position-vector(8,0)))
 			self.__bullets.add(HeroBullet(self.position+vector(8,0)))
 
 		if fire_type=="fast":
 			if self.charge==0: return
+			SoundManager.play_sound("shoot")
 			self.charge-=1
 			self.__cooldown_fast_fire=cfg("entities.hero.cooldown_fast_fire")
 			self.__bullets.add(HeroBullet(self.position))

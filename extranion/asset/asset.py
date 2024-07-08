@@ -7,7 +7,7 @@ _assets={}
 
 def load(category, config, name=None):
 	global _assets
-	if name is None: name = config
+	if name is None: name = config.split(".")[-1]
 	log.debug(f"asset load {category} {config} {name}")
 	conf=cfg(f"{config}")
 	type=conf["type"]

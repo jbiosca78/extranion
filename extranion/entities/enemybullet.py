@@ -7,9 +7,9 @@ from extranion import log
 class EnemyBullet(Entity):
 
 	def __init__(self, position=(0,0)):
-		super().__init__("enemybullet", position)
+		super().__init__("bullet.enemy", position)
 
-		self.velocity=vector(0, cfg("entities.enemybullet.speed"))
+		self.velocity=vector(0, cfg("entities.bullet.enemy.speed"))
 		self.__space_rect=cfg("layout.game.space_rect")
 
 

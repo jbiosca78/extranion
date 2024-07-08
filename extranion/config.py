@@ -2,18 +2,25 @@ from importlib import resources
 #import json
 import yaml
 
-def cfg(*items):
-
-	# En lugar de varios argumentos, permitimos separar los campos por puntos
-	if len(items)==1 and "." in items[0]:
-		items=items[0].split(".")
+def cfg(itempath):
 
 	data=configdata
-	for key in items:
+	for key in itempath.split("."):
 		if key not in data:
 			return None
 		data = data[key]
 	return data
+
+# guarda un valor de configuración temporalmente hasta que se cierra el juego
+def cfgset(itempath, storevalue):
+
+	data=configdata
+	for key in itempath.split("."):
+		if key not in data:
+			return None
+		data = data[key]
+
+	data = storevalue
 
 # Cargamos la configuración al iniciar el módulo
 # no le veo mucho sentido a crear una clase con un singleton programado para la carga inicial como en clase,
@@ -25,4 +32,3 @@ configdata=yaml.safe_load(open(configpath,"rt"))
 # Establecemos variables globales
 class gvar:
 	DEBUG = cfg("debug.enabled")
-	HERO_POS = None

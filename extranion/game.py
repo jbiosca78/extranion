@@ -12,6 +12,7 @@ from extranion.states import statemanager
 from extranion.asset import asset
 from extranion.fps_stats import FPS_Stats
 from extranion.memory_stats import debug_memory_log, debug_memory_render
+from extranion.soundmanager import SoundManager
 
 def main():
 	#* si tenemos instalado rich, lo usamos para
@@ -76,6 +77,7 @@ def _initialize():
 		_time_per_frame=1000.0/cfg("game.fps")
 		_fps_stats=FPS_Stats()
 		_load_assets()
+		SoundManager.init()
 		statemanager.init()
 		_running=True
 
@@ -88,7 +90,7 @@ def _initialize():
 
 def _load_assets():
 	log.info("Loading main assets")
-	asset.load('main','font.default')
+	asset.load('main','game.font_default')
 
 def _mainloop():
 	global _running, _time_per_frame, _fps_stats, _state_manager

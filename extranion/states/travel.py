@@ -5,6 +5,7 @@ from extranion.states.state import State
 from extranion.config import cfg
 from extranion.asset import asset
 from extranion.effects.stars3d import Stars3D
+from extranion.soundmanager import SoundManager
 import extranion.log as log
 
 class Travel(State):
@@ -15,8 +16,9 @@ class Travel(State):
 
 	def enter(self):
 		log.info("Entering state Travel")
-		asset.load('ship','layout.travel.ship-straight', 'ship')
-		asset.load('ship','layout.travel.ship-turn', 'ship-turn')
+		asset.load('travel','layout.travel.ship-straight', 'ship')
+		asset.load('travel','layout.travel.ship-turn', 'ship-turn')
+		asset.load('travel', 'sound.travel.traveling')
 
 		self.__ship_pos=cfg("layout.travel.ship_pos")
 		self.__travelling_time=cfg("layout.travel.travelling_time")
@@ -27,9 +29,11 @@ class Travel(State):
 		# iniciamos el efecto de estrellas a máxima velocidad
 		self.__stars=Stars3D(cfg("game.canvas_size"), speed=8)
 
+		SoundManager.play_sound("traveling")
+
 	def exit(self):
-		asset.unload('ship')
-		asset.unload('ship-turn')
+		SoundManager.stop_sound("traveling")
+		asset.unload("travel")
 		self.__stars.release()
 
 	def event(self, event):
