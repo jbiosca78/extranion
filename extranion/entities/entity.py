@@ -15,7 +15,7 @@ class Entity(pygame.sprite.Sprite):
 	def __init__(self, name, position=(0,0), velocity=(0.0,0.0), random_frame=False):
 		super().__init__()
 
-		log.info(f"Creating entity {name} at {position}")
+		log.debug(f"Creating entity {name} at {position}")
 		self.name=name
 
 		self.space_rect=cfg("layout.gameplay.space_rect")
@@ -40,7 +40,7 @@ class Entity(pygame.sprite.Sprite):
 			self.rect=self.render_rect
 
 	def kill(self):
-		log.info(f"Killing entity {self.name}")
+		log.debug(f"Killing entity {self.name}")
 		super().kill()
 
 	def set_animation(self, animation):

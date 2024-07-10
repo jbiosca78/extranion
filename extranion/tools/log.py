@@ -19,16 +19,16 @@ def init(file=None, level=INFO):
 	setlevel(level)
 
 def setlevel(newlvl):
-	global level
+	global __level
 	if type(newlvl) == int:
-		level=newlvl
+		__level=newlvl
 	if type(newlvl) == str:
-		level=NONE
-		if newlvl=="DEBUG": level=DEBUG
-		if newlvl=="INFO": level=INFO
-		if newlvl=="WARN": level=WARN
-		if newlvl=="ERROR": level=ERROR
-		if newlvl=="FATAL": level=FATAL
+		__level=NONE
+		if newlvl.upper()=="DEBUG": __level=DEBUG
+		if newlvl.upper()=="INFO": __level=INFO
+		if newlvl.upper()=="WARN": __level=WARN
+		if newlvl.upper()=="ERROR": __level=ERROR
+		if newlvl.upper()=="FATAL": __level=FATAL
 
 def debug(msg):
 	_write(DEBUG,msg)
@@ -81,7 +81,7 @@ __section=list()
 __deep=0
 
 def _write(lvl,msg):
-	global __level,__leelstr,__deep,__file
+	global __level,__levelstr,__deep,__file
 
 	# Si el nivel de log definido es inferior, salimos
 	if lvl>0 and lvl<__level: return

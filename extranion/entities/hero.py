@@ -26,10 +26,8 @@ class Hero(Entity):
 		# control de proyectiles
 		self.__bullets=bullets
 		self.__cooldown_fast_fire=0
-		self.charge=self.charge=cfg("gameplay.initial_charge")
 
 		# control de vidas
-		self.lives=cfg("gameplay.initial_lives")
 		self.alive=True
 
 		self._input_pressed = { "left": False, "right": False, "up": False, "down": False, "fastfire": False}
@@ -146,9 +144,9 @@ class Hero(Entity):
 			self.__bullets.add(HeroBullet(self.position+vector(8,0)))
 
 		if fire_type=="fast":
-			if self.charge==0: return
+			if gvar.charge==0: return
 			SoundManager.play_sound("shoot")
-			self.charge-=1
+			gvar.charge-=1
 			self.__cooldown_fast_fire=cfg("entities.hero.cooldown_fast_fire")
 			self.__bullets.add(HeroBullet(self.position))
 
@@ -157,24 +155,24 @@ class Hero(Entity):
 		log.info("hero die")
 		self.alive=False
 		self.__respawn_time=cfg("entities.hero.respawn_time")
-		self.lives-=1
+		gvar.lives-=1
 		SoundManager.play_sound("hero_killed")
 
-	def enemy_hit(self, scene):
+	def enemy_hit(self):
 
 		SoundManager.play_sound("enemy_killed")
 
 		# incrementamos carga para disparo rápido
-		self.charge+=1
+		gvar.charge+=1
 
 		# control de puntuación
-		score_add=100+5*(scene-1)
+		score_add=100+5*gvar.scene
 		gvar.score+=score_add
 		if gvar.score>gvar.topscore:
 			gvar.topscore=gvar.score
 
 		# vida extra
-		if self.lives<cfg("gameplay.max_lives"):
+		if gvar.lives<cfg("gameplay.max_lives"):
 			if gvar.score//cfg("gameplay.score_extralife")!=(gvar.score-score_add)//cfg("gameplay.score_extralife"):
-				self.lives+=1
+				gvar.lives+=1
 				SoundManager.play_sound("extralife")

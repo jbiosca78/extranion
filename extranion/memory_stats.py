@@ -39,6 +39,6 @@ def debug_memory_render(canvas):
 	mem+=pympler.asizeof.asizeof(statemanager)//1024
 	mem+=pympler.asizeof.asizeof(asset)//1024
 
-	font=asset.get("font.default")
+	font=asset.get("font_default")
 	image=font.render(f"{mem}K", True, cfg("game.foreground_color"), None)
 	canvas.blit(image, cfg("debug.mem_pos"))

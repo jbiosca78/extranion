@@ -1,7 +1,9 @@
 # variables globales utilizadas por varios modulos
 
 debug=False
-score=0
 topscore=0
-scene=1
+score=0
+scene=0
+charge=0
+lives=0
 

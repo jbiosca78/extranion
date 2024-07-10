@@ -2,21 +2,18 @@ game:
   name: Extranion
   screen_size: [ 1920, 1080 ]
   canvas_size: [ 640, 360 ]
-  background_color: [ 0,0,0 ]
   foreground_color: [ 222,222,222 ]
+  background_color: [ 0,0,0 ]
   fps: 60
   font_default:
       type: font
-      #file: hack_nerd.ttf
       file: TerminusTTF-Bold-4.39.ttf
-      #size: 16
       size: 20
 
 log:
   enabled: true
-  #logfile: "/tmp/extranion.log" # habría que detectar si estamos en windows o linux
-  file: "extranion.log" # usaremos el path del juego para no dejar ficheros por el sistema
-  level: debug
+  file: "extranion.log" # si no empieza por / ni contiene : usamos el path del juego para no dejar ficheros por el sistema
+  level: info
 
 debug:
   enabled: false

@@ -15,7 +15,7 @@ from extranion.entities.enemybullet import EnemyBullet
 class SceneController:
 
 	def __init__(self):
-		self.scene=1
+		self.scene=0
 		self.wave=0
 		self.__wavewait=cfg("gameplay.wave_wait")
 		self.__waves_per_scene=cfg("gameplay.waves_per_scene")
@@ -32,9 +32,9 @@ class SceneController:
 				speed_mul=1+self.scene/100
 				hero.speed_mul=speed_mul
 				# creamos ola de enemigos
-				log.info(f"New wave. wave={self.wave}, scene={self.scene}")
+				log.info(f"New wave. wave={self.wave+1}, scene={self.scene+1}")
 				wave_size=int(cfg("gameplay.wave_size"))
-				self.__current_enemy=self.__enemy_list[(self.scene-1)%len(self.__enemy_list)]
+				self.__current_enemy=self.__enemy_list[self.scene%len(self.__enemy_list)]
 				if self.__current_enemy=="rueda": Rueda.create_wave(enemies, wave_size, speed_mul)
 				if self.__current_enemy=="pajaro": Pajaro.create_wave(enemies, wave_size, speed_mul)
 				if self.__current_enemy=="mariposa": Mariposa.create_wave(enemies, wave_size, speed_mul)

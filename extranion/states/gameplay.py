@@ -57,6 +57,8 @@ class Gameplay(State):
 		self.__planetsurface=PlanetSurface(cfg("layout.gameplay.space_rect"))
 
 		# iniciamos héroe
+		gvar.lives=cfg("gameplay.initial_lives")
+		gvar.charge=cfg("gameplay.initial_charge")
 		self.__hero=Hero("hero", self.__herobullets)
 
 		# iniciamos música
@@ -124,13 +126,13 @@ class Gameplay(State):
 			# heroe muere!
 			if herodie:
 				self.__explossions.add(Explossion("hero", self.__hero.position))
-				if self.__hero.lives==0: self.change_state="Intro"
+				if gvar.lives==0: self.change_state="Intro"
 				self.__hero.die()
 
 		# colisiones de los enemigos con las balas del héroe
 		for enemy in pygame.sprite.groupcollide(self.__enemies, self.__herobullets, True, True):
 			self.__explossions.add(Explossion(enemy.name, enemy.position))
-			self.__hero.enemy_hit(self.__scenecontroller.scene)
+			self.__hero.enemy_hit()
 
 	def update(self, delta_time):
 
@@ -189,14 +191,14 @@ class Gameplay(State):
 		canvas.blit(text, cfg("layout.gameplay.board.topscore_pos"))
 		text = font.render(f"{gvar.score:12}", True, cfg("game.foreground_color"), None)
 		canvas.blit(text, cfg("layout.gameplay.board.score_pos"))
-		text = font.render(str(self.__hero.charge), True, cfg("game.foreground_color"), None)
+		text = font.render(str(gvar.charge), True, cfg("game.foreground_color"), None)
 		canvas.blit(text, cfg("layout.gameplay.board.charge_pos")-vector(text.get_width()/2, 0))
-		text = font.render(f"{self.__scenecontroller.scene}", True, cfg("game.foreground_color"), None)
+		text = font.render(f"{gvar.scene+1}", True, cfg("game.foreground_color"), None)
 		canvas.blit(text, cfg("layout.gameplay.board.scene_pos")-vector(text.get_width()/2, 0))
 
 		# draw lives
 		exerion=asset.get("exerion")
-		for l in range(self.__hero.lives):
+		for l in range(gvar.lives):
 			canvas.blit(exerion[0][0], cfg("layout.gameplay.board.lives_pos")+vector((32+2)*l,0))
 
 	def exit(self):
