@@ -1,5 +1,6 @@
 import random
 import pygame
+from pygame.math import Vector2 as vector
 from extranion.tools import log
 from extranion.config import cfg
 from extranion.entities.enemies.enemy import Enemy
@@ -10,15 +11,13 @@ class Rueda(Enemy):
 	@staticmethod
 	def create_wave(enemies, wave_size, speed_mul):
 		log.info("Creating wave of ruedas")
-		space_rect=cfg("layout.game.space_rect")
+		space_rect=cfg("layout.gameplay.space_rect")
 		xpos=random.randint(space_rect[0], space_rect[2])
 		for i in range(0,wave_size):
-			enemies.add(Rueda([xpos,-30-i*30], speed_mul=speed_mul))
+			enemies.add(Rueda([xpos,-32-i*32], speed_mul=speed_mul))
 
 	def __init__(self, position=(0,0), speed_mul=1):
 		super().__init__("rueda", position)
-
-		self._space_rect=cfg("layout.game.space_rect")
 
 		self.destination=None
 		self.new_destination=None
@@ -40,7 +39,7 @@ class Rueda(Enemy):
 		if self.destination is None: return
 
 		# calculamos el vector hacia nuestro destino
-		direction = pygame.math.Vector2(self.destination) - self.position
+		direction = vector(self.destination) - self.position
 		# calculamos la distancia
 		distance = direction.length()
 		# si estamos muy cerca, vamos al nuevo destino

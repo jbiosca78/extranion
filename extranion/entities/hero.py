@@ -20,7 +20,7 @@ class Hero(Entity):
 		self._acceleration=cfg("entities.hero.acceleration")
 
 		# dimensiones del espacio donde puede entrar la nave
-		space=cfg("layout.game.space_rect")
+		space=self.space_rect
 		self._space_rect=(space[0]+self.width/2, space[1]+self.height/2, space[2]-self.width/2, space[3]-self.height/2)
 
 		# control de proyectiles
@@ -168,6 +168,13 @@ class Hero(Entity):
 		self.charge+=1
 
 		# control de puntuación
-		gvar.score+=100+5*(scene-1)
+		score_add=100+5*(scene-1)
+		gvar.score+=score_add
 		if gvar.score>gvar.topscore:
 			gvar.topscore=gvar.score
+
+		# vida extra
+		if self.lives<cfg("gameplay.max_lives"):
+			if gvar.score//cfg("gameplay.score_extralife")!=(gvar.score-score_add)//cfg("gameplay.score_extralife"):
+				self.lives+=1
+				SoundManager.play_sound("extralife")

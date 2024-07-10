@@ -3,3 +3,5 @@
 debug=False
 score=0
 topscore=0
+scene=1
+

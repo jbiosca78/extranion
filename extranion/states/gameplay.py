@@ -53,8 +53,8 @@ class Gameplay(State):
 
 		# cargamos efectos
 		#self.__stars=Stars3D(cfg("layout.game.space_rect")[2:4], direction="up", speed=0.5)
-		self.__stars=Stars3D(cfg("layout.game.space_rect")[2:4])
-		self.__planetsurface=PlanetSurface(cfg("layout.game.space_rect"))
+		self.__stars=Stars3D(cfg("layout.gameplay.space_rect")[2:4])
+		self.__planetsurface=PlanetSurface(cfg("layout.gameplay.space_rect"))
 
 		# iniciamos héroe
 		self.__hero=Hero("hero", self.__herobullets)
@@ -75,6 +75,7 @@ class Gameplay(State):
 		asset.load('gameplay', 'sound.gameplay.shoot')
 		asset.load('gameplay', 'sound.gameplay.hero_killed')
 		asset.load('gameplay', 'sound.gameplay.enemy_killed')
+		asset.load('gameplay', 'sound.gameplay.extralife')
 		#asset.load('gameplay', 'sounds.gameplay.shoot')
 
 		#AssetManager.instance().load(AssetType.SpriteSheet, 'gameplay', cfg_item("entities", "name"), cfg_item("entities", "image_file"), data_filename = cfg_item("entities", "data_file"))
@@ -89,8 +90,7 @@ class Gameplay(State):
 
 		if event.type == pygame.KEYDOWN:
 			if event.key == pygame.K_RETURN:
-				self._pause=not self._pause
-				log.info(f"PAUSE: {self._pause}")
+				self.__toggle_pause()
 			if event.key == pygame.K_ESCAPE:
 				self.change_state="Intro"
 			if event.key == pygame.K_TAB:
@@ -99,6 +99,16 @@ class Gameplay(State):
 
 		if event.type == pygame.KEYDOWN: self.__hero.input(event.key, True)
 		if event.type == pygame.KEYUP:   self.__hero.input(event.key, False)
+
+	def __toggle_pause(self):
+		self._pause=not self._pause
+
+		if self._pause:
+			SoundManager.pause_music()
+		else:
+			SoundManager.resume_music()
+
+		log.info(f"PAUSE: {self._pause}")
 
 	def __collisions(self):
 
@@ -155,40 +165,39 @@ class Gameplay(State):
 		# pause text
 		if self._pause:
 			font=asset.get("font_default")
-			text=font.render("PAUSE", True, cfg("game.foreground_color"), None)
-			pause_box=pygame.rect.Rect(cfg("layout.game.pause_text_pos")-vector(5,5), text.get_size()+vector(10,10))
-			canvas.fill(cfg("game.menu_color"), pause_box)
-			canvas.blit(text, cfg("layout.game.pause_text_pos"))
+			text=font.render("PAUSE", True, cfg("layout.gameplay.pause.text_color"), None)
+			pause_box=pygame.rect.Rect(cfg("layout.gameplay.pause.text_pos")-vector(5,5), text.get_size()+vector(10,10))
+			canvas.fill(cfg("layout.gameplay.pause.background_color"), pause_box)
+			canvas.blit(text, cfg("layout.gameplay.pause_text_pos"))
 
 	def render_board(self, canvas):
 
 		# draw blue box in board rect
-		canvas.fill((33,36,255), cfg("layout.game.board_rect"))
+		canvas.fill((33,36,255), cfg("layout.gameplay.board.board_rect"))
 
 		font=asset.get("font_default")
 		text = font.render(f"TOP SCORE", True, cfg("game.foreground_color"), None)
-		canvas.blit(text, cfg("layout.game.topscore_text_pos"))
+		canvas.blit(text, cfg("layout.gameplay.board.topscore_text_pos"))
 		text = font.render(f"SCORE", True, cfg("game.foreground_color"), None)
-		canvas.blit(text, cfg("layout.game.score_text_pos"))
+		canvas.blit(text, cfg("layout.gameplay.board.score_text_pos"))
 		text = font.render(f"CHARGE", True, cfg("game.foreground_color"), None)
-		canvas.blit(text, cfg("layout.game.charge_text_pos"))
+		canvas.blit(text, cfg("layout.gameplay.board.charge_text_pos"))
 		text = font.render(f"SCENE", True, cfg("game.foreground_color"), None)
-		canvas.blit(text, cfg("layout.game.scene_text_pos"))
+		canvas.blit(text, cfg("layout.gameplay.board.scene_text_pos"))
 
 		text = font.render(f"{gvar.topscore:12}", True, cfg("game.foreground_color"), None)
-		canvas.blit(text, cfg("layout.game.topscore_pos"))
+		canvas.blit(text, cfg("layout.gameplay.board.topscore_pos"))
 		text = font.render(f"{gvar.score:12}", True, cfg("game.foreground_color"), None)
-		canvas.blit(text, cfg("layout.game.score_pos"))
+		canvas.blit(text, cfg("layout.gameplay.board.score_pos"))
 		text = font.render(str(self.__hero.charge), True, cfg("game.foreground_color"), None)
-		canvas.blit(text, cfg("layout.game.charge_pos")-vector(text.get_width()/2, 0))
+		canvas.blit(text, cfg("layout.gameplay.board.charge_pos")-vector(text.get_width()/2, 0))
 		text = font.render(f"{self.__scenecontroller.scene}", True, cfg("game.foreground_color"), None)
-		canvas.blit(text, cfg("layout.game.scene_pos")-vector(text.get_width()/2, 0))
+		canvas.blit(text, cfg("layout.gameplay.board.scene_pos")-vector(text.get_width()/2, 0))
 
 		# draw lives
 		exerion=asset.get("exerion")
 		for l in range(self.__hero.lives):
-			canvas.blit(exerion[0][0], cfg("layout.game.lives_pos")+vector((32+2)*l,0))
-
+			canvas.blit(exerion[0][0], cfg("layout.gameplay.board.lives_pos")+vector((32+2)*l,0))
 
 	def exit(self):
 		# vaciamos los EntityGroups

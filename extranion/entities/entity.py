@@ -18,6 +18,7 @@ class Entity(pygame.sprite.Sprite):
 		log.info(f"Creating entity {name} at {position}")
 		self.name=name
 
+		self.space_rect=cfg("layout.gameplay.space_rect")
 		self.position = vector(position)
 		self.velocity = vector(velocity)
 

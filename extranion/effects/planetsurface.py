@@ -2,9 +2,20 @@ import random
 import math
 import pygame
 from extranion.asset import asset
-from extranion.tools import gvar
+from extranion.tools import log,gvar
 
 # Planet Surface generator like Exerion background
+
+stripe_color=[
+	#[ (10, 80, 20), (30, 100, 30) ], # verde (rueda)
+	#[ (60, 60, 20), (100, 100, 30) ], # amarillo (pajaros)
+	#[ (40, 20, 0), (90, 40, 0) ], # marron (mariposa)
+	#[ (60, 20, 20), (100, 20, 20) ], # rojo (ovni)
+	(30, 100, 30),
+	(100, 100, 30),
+	(90, 40, 0),
+	(100, 20, 20),
+]
 
 class PlanetObject:
 	distance = None
@@ -73,14 +84,18 @@ class PlanetSurface:
 		horizon_y=int(h/2+y)+self.__shift_y
 
 		# Stripes
-		pygame.draw.rect(canvas, [100,20,20], [x,horizon_y,x+w,y+h])
+		color=stripe_color[gvar.scene%4]
+		# getcolor a bit darker
+		color2=(color[0]*0.8, color[1]*0.8, color[2]*0.8)
+
+		pygame.draw.rect(canvas, color, [x,horizon_y,x+w,y+h])
 		# 0%-10% 20%-30% 40%-50% 60%-70% 80%-90%
 		for d1 in 0, 0.2, 0.4, 0.6, 0.8:
 			d1=d1+self._stripeidx
 			d2=d1+0.1
 			y1=horizon_y+(h-horizon_y)*(d1*d1*d1*d1)
 			y2=horizon_y+(h-horizon_y)*(d2*d2*d2*d2)
-			pygame.draw.rect(canvas, [100,30,30], [0+x,int(y1),w,int(y2-y1)])
+			pygame.draw.rect(canvas, color2, [0+x,int(y1),w,int(y2-y1)])
 
 		# Objetos
 		for obj in self.__objects:

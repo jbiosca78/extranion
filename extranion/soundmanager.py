@@ -24,7 +24,6 @@ class SoundManager:
 
 	@staticmethod
 	def play_music(name):
-
 		if name is SoundManager.__current_music: return
 		music_conf = asset.get(name)
 		pygame.mixer.music.load(music_conf["file"])
@@ -42,6 +41,14 @@ class SoundManager:
 		if name is SoundManager.__current_music: return
 		SoundManager.__next_music = name
 		pygame.mixer.music.fadeout(time)
+
+	@staticmethod
+	def pause_music():
+		pygame.mixer.music.pause()
+
+	@staticmethod
+	def resume_music():
+		pygame.mixer.music.unpause()
 
 	@staticmethod
 	def update(SoundManager, delta_time):

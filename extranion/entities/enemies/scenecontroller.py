@@ -4,6 +4,7 @@ from extranion.config import cfg
 from extranion.entities.enemies.rueda import Rueda
 from extranion.entities.enemies.pajaro import Pajaro
 from extranion.entities.enemies.mariposa import Mariposa
+from extranion.entities.enemies.ovni import Ovni
 from extranion.entities.enemybullet import EnemyBullet
 
 # Esta clase se encarga de gestionar las distintas escenas (olas de enemigos).
@@ -37,6 +38,7 @@ class SceneController:
 				if self.__current_enemy=="rueda": Rueda.create_wave(enemies, wave_size, speed_mul)
 				if self.__current_enemy=="pajaro": Pajaro.create_wave(enemies, wave_size, speed_mul)
 				if self.__current_enemy=="mariposa": Mariposa.create_wave(enemies, wave_size, speed_mul)
+				if self.__current_enemy=="ovni": Ovni.create_wave(enemies, wave_size, speed_mul)
 
 		else:
 			# si no quedan enemigos, pasamos a la siguiente ola
@@ -45,6 +47,7 @@ class SceneController:
 				if self.wave==self.__waves_per_scene:
 					self.wave=0
 					self.scene+=1
+					gvar.scene=self.scene
 				# iniciamos espera entre olas
 				self.__wavewait=cfg("gameplay.wave_wait")
 
@@ -66,7 +69,7 @@ class SceneController:
 
 		# Si el jugador está vivo, los enemigos disparan. en cada escena hay un proyectil
 		# más que la anterior, para incrementar la complejidad del juego
-		enemy_shots_max=cfg("gameplay.enemy_shots")+self.scene*cfg("gameplay.enemy_shots_add")
+		enemy_shots_max=cfg("gameplay.enemy_shots")+self.scene*cfg("gameplay.enemy_shots_add_scene")
 		if hero.alive:
 			for enemy in enemies:
 				if enemy.position.y>0 and \

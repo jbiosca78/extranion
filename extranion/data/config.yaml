@@ -4,7 +4,6 @@ game:
   canvas_size: [ 640, 360 ]
   background_color: [ 0,0,0 ]
   foreground_color: [ 222,222,222 ]
-  menu_color: [ 33,33,255 ]
   fps: 60
   font_default:
       type: font
@@ -60,47 +59,55 @@ layout:
     arriving_time: 1600
     turbulencias_time: 80
     turbulencias_shift: 2
-  game:
-    pause_text_pos: [ 225, 170 ]
+  gameplay:
     space_rect: [ 0, 0, 500, 360 ]
-    board_rect: [ 500, 0, 140, 360 ]
-    topscore_text_pos: [ 510, 30 ]
-    topscore_pos: [ 510, 60 ]
-    score_text_pos: [ 510, 90 ]
-    score_pos: [ 510, 120 ]
-    charge_text_pos: [ 540, 180 ]
-    charge_pos: [ 570, 210 ]
-    scene_text_pos: [ 545, 240 ]
-    scene_pos: [ 570, 270 ]
-    lives_pos: [ 503, 320 ]
+    pause_text_pos: [ 225, 170 ]
+    board:
+      board_rect: [ 500, 0, 140, 360 ]
+      topscore_text_pos: [ 510, 30 ]
+      topscore_pos: [ 510, 60 ]
+      score_text_pos: [ 510, 90 ]
+      score_pos: [ 510, 120 ]
+      charge_text_pos: [ 540, 180 ]
+      charge_pos: [ 570, 210 ]
+      scene_text_pos: [ 545, 240 ]
+      scene_pos: [ 570, 270 ]
+      lives_pos: [ 503, 320 ]
+    pause:
+      background_color: [ 33,33,255 ]
+      text_color: [ 222,222,222 ]
+      text_pos: [ 225, 170 ]
 
 gameplay:
   initial_lives: 1
   max_lives: 4
-  #extra_life_points: 10000
+  score_extralife: 10000
 
-  #initial_charge: 50
+  initial_charge: 50
   waves_per_scene: 2
   wave_size: 10
   wave_wait: 2000
-  enemy_list: [ "rueda", "pajaro", "mariposa" ]
+  enemy_list: [ "rueda", "pajaro", "mariposa", "ovni" ]
 
   enemy_shot_rand: 100
-  enemy_shots: 10
-  enemy_shots_add: 1 # en cada escena habra un proyectil adicional
+  enemy_shots: 6
+  enemy_shots_add_scene: 2 # incremento dificultad cada escena
 
   # dev
-  #initial_lives: 4
-  extra_life_points: 1000
+  initial_lives: 4
+  #score_extralife: 1000
   initial_charge: 5000
   #wave_size: 10
-  #wave_wait: 200
+  wave_wait: 200
   waves_per_scene: 1
   #enemy_list: [ "pajaro", "rueda", "mariposa" ]
   #enemy_list: [ "rueda", "mariposa" ]
   #enemy_list: [ "rueda", "pajaro", "mariposa" ]
   #enemy_list: [ "mariposa" ]
-
+  #enemy_list: [ "pajaro" ]
+  #enemy_list: [ "rueda" ]
+  #enemy_list: [ "mariposa" ]
+  #enemy_list: [ "ovni", "rueda", "pajaro", "mariposa" ]
 
 entities:
 
@@ -128,7 +135,6 @@ entities:
       speed: 0.14
       attack_time: 16000
       flee_time: 4000
-      initial_points: 100
 
     pajaro:
       spritesheet: "enemies"
@@ -158,6 +164,9 @@ entities:
       animation:
         default: [ 3, 0, 3, 150 ]
       inflate_collider: [ -4, -4 ]
+      speed: 0.10
+      attack_time: 16000
+      flee_time: 4000
 
     elefante:
       spritesheet: "enemies"
@@ -197,6 +206,12 @@ entities:
         spritesheet: "explossions"
         animation:
           default: [ 1, 0, 4, 100 ]
+        time: 400
+
+      ovni:
+        spritesheet: "explossions"
+        animation:
+          default: [ 3, 0, 4, 100 ]
         time: 400
 
   bullet:
@@ -259,15 +274,22 @@ sound:
     enemy_killed:
       type: sfx
       file: enemy_killed.ogg
+    extralife:
+      type: sfx
+      file: extralife.mp3
 
 music:
   volume: 0.9
   intro:
     type: music
-    file: intro.mp3
+    file: martian.mp3
+  #gameplay:
+  #  type: music
+  #  file: 8bitretrofunk.mp3
+  #  volume_mult: 0.6
   gameplay:
     type: music
-    file: gameplay.mp3
+    file: neongaming.mp3
     volume_mult: 0.6
 
 

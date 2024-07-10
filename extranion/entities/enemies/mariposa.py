@@ -10,7 +10,7 @@ class Mariposa(Enemy):
 	@staticmethod
 	def create_wave(enemies, wave_size, speed_mul):
 		log.info("Creating wave of mariposas")
-		space_rect=cfg("layout.game.space_rect")
+		space_rect=cfg("layout.gameplay.space_rect")
 		xpos=random.randint(space_rect[0], space_rect[2])
 		for i in range(0,wave_size):
 			enemies.add(Mariposa([xpos,-30-i*30], speed_mul=speed_mul))
