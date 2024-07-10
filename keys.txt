@@ -1,9 +1,15 @@
+You control a spaceship with cursor keys, you have two fire buttons,
+one for normal fire and one for fast fire. Fast fire will consume charge.
+You gain charge and points killing enemies.
+You starts with two lifes, every 10,000 points you gain an extra life.
 
+The key mapping is as follows:
 
-             opt 1   opt 2   opt 3
-Move up      up      e       q
-Move down    down    d       a
-Move left    left    s       o
-Move right   right   f       p
-Normal fire  c       n       space
-Fast fire    x       m       alt
+Keys         opt1   opt2  opt3
+-------------------------------
+Move up      up     e     q
+Move down    down   d     a
+Move left    left   s     o
+Move right   right  f     p
+Normal fire  c      n     space
+Fast fire    x      m     alt
