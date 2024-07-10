@@ -9,8 +9,8 @@ from extranion.entities.enemybullet import EnemyBullet
 
 # Esta clase se encarga de gestionar las distintas escenas (olas de enemigos).
 # Cada escena tiene un tipo de enemigos que vienen en varias olas de ataque.
-# Cuando todos los enemigos de una ola mueren o huyen, se pasa a la siguiente
-# ola tras un breve periodo de tiempo.
+# Cuando todos los enemigos de una ola mueren o huyen, se pasa a la
+# siguiente ola tras un breve periodo de tiempo de descanso.
 
 class SceneController:
 

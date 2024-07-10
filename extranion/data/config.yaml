@@ -70,6 +70,12 @@ layout:
       scene_text_pos: [ 545, 240 ]
       scene_pos: [ 570, 270 ]
       lives_pos: [ 503, 320 ]
+    planetsurface_color:
+      - [ 30, 100, 30 ]
+      - [ 100, 100, 30 ]
+      - [ 90, 40, 0 ]
+      - [ 100, 20, 20 ]
+
     pause:
       background_color: [ 33,33,255 ]
       text_color: [ 222,222,222 ]

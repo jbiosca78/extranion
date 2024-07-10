@@ -1,21 +1,12 @@
 import random
 import math
 import pygame
+from pygame.math import Vector3 as vector3
 from extranion.asset import asset
 from extranion.tools import log,gvar
+from extranion.config import cfg
 
 # Planet Surface generator like Exerion background
-
-stripe_color=[
-	#[ (10, 80, 20), (30, 100, 30) ], # verde (rueda)
-	#[ (60, 60, 20), (100, 100, 30) ], # amarillo (pajaros)
-	#[ (40, 20, 0), (90, 40, 0) ], # marron (mariposa)
-	#[ (60, 20, 20), (100, 20, 20) ], # rojo (ovni)
-	(30, 100, 30),
-	(100, 100, 30),
-	(90, 40, 0),
-	(100, 20, 20),
-]
 
 class PlanetObject:
 	distance = None
@@ -44,19 +35,7 @@ class PlanetSurface:
 		self._stripeidx=0
 		self.__shift_x=0
 		self.__shift_y=0
-
-	#def generate(self):
-	#	for x in range(self.width):
-	#		self.surface.append(random.randint(0, self.height))
-
-	#def draw(self):
-	#	for y in range(self.height):
-	#		for x in range(self.width):
-	#			if y < self.surface[x]:
-	#				print(".", end="")
-	#			else:
-	#				print(" ", end="")
-	#		print()
+		self.__stripe_color=(0,0,0)
 
 	def update(self, delta_time, hero):
 
@@ -83,10 +62,13 @@ class PlanetSurface:
 		x,y,w,h=self.canvas_rect
 		horizon_y=int(h/2+y)+self.__shift_y
 
-		# Stripes
-		color=stripe_color[gvar.scene%4]
-		# getcolor a bit darker
-		color2=(color[0]*0.8, color[1]*0.8, color[2]*0.8)
+		# usamos interpolación linear (lerp) para hacer una transición del
+		# color del fondo al color de cada escena
+		color=vector3(self.__stripe_color)
+		scene_color=vector3(cfg("layout.gameplay.planetsurface_color")[gvar.scene%4])
+		if color!=scene_color:
+			color=color.lerp(scene_color, 0.05)
+			self.__stripe_color=color
 
 		pygame.draw.rect(canvas, color, [x,horizon_y,x+w,y+h])
 		# 0%-10% 20%-30% 40%-50% 60%-70% 80%-90%
@@ -95,7 +77,7 @@ class PlanetSurface:
 			d2=d1+0.1
 			y1=horizon_y+(h-horizon_y)*(d1*d1*d1*d1)
 			y2=horizon_y+(h-horizon_y)*(d2*d2*d2*d2)
-			pygame.draw.rect(canvas, color2, [0+x,int(y1),w,int(y2-y1)])
+			pygame.draw.rect(canvas, (color[0]*0.8, color[1]*0.8, color[2]*0.8), [0+x,int(y1),w,int(y2-y1)])
 
 		# Objetos
 		for obj in self.__objects:

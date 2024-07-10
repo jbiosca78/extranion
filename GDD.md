@@ -57,6 +57,7 @@ Vidas
 Sound Effect from Pixabay
 https://pixabay.com
 https://pixabay.com/sound-effects/search/8-bit/?pagi=10
+https://mixkit.co/free-sound-effects/
 
 MARTIAN - u_4bplvbk4dw
 https://pixabay.com/sound-effects/martian-131602/
@@ -68,6 +69,12 @@ https://www.fesliyanstudios.com/royalty-free-music/download/8-bit-retro-funk/883
 
 Neon Gaming - dopestuff
 https://pixabay.com/music/synthwave-neon-gaming-128925/
+
+puntos?
+https://pixabay.com/music/video-games-game-music-loop-17-153390/
+
+game over
+https://pixabay.com/music/upbeat-born-to-the-earth-207192/
 
 
 audacity
