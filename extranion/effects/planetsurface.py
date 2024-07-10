@@ -1,8 +1,8 @@
-import pygame
 import random
-from extranion.asset import asset
-from extranion.config import gvar
 import math
+import pygame
+from extranion.asset import asset
+from extranion.tools import gvar
 
 # Planet Surface generator like Exerion background
 
@@ -99,11 +99,11 @@ class PlanetSurface:
 			# lo dibujamos
 			canvas.blit(sprite, (int(obj_x)+x-sprite.get_width()/2, int(obj_y)+y-sprite.get_height()/2))
 			# debug bordes
-			if gvar.DEBUG:
+			if gvar.debug:
 				pygame.draw.rect(canvas, (0,0,255), (int(obj_x)-sprite.get_width()/2+x, int(obj_y)-sprite.get_height()/2+y, sprite.get_width(), sprite.get_height()), 1)
 
 		# debug
-		if gvar.DEBUG:
+		if gvar.debug:
 			# mostramos las líneas de fuga
 			pygame.draw.line(canvas, (0,255,255), ((w/2)-(w/2)/10,horizon_y+y), (x+0,y+h))
 			pygame.draw.line(canvas, (0,255,255), ((w/2)+(w/2)/10,horizon_y+y), (x+w,y+h))

@@ -1,6 +1,6 @@
 import pygame
 import random
-from extranion import log
+from extranion.tools import log
 from extranion.config import cfg
 from extranion.entities.enemies.enemy import Enemy
 

@@ -75,26 +75,32 @@ layout:
     lives_pos: [ 503, 320 ]
 
 gameplay:
-  #initial_lives: 2
+  initial_lives: 1
+  max_lives: 4
+  #extra_life_points: 10000
+
   #initial_charge: 50
-  #waves_per_scene: 2
-  #wave_size: 10
-  #wave_wait: 3000
-  #enemy_list: [ "rueda", "pajaro", "mariposa" ]
+  waves_per_scene: 2
+  wave_size: 10
+  wave_wait: 2000
+  enemy_list: [ "rueda", "pajaro", "mariposa" ]
+
+  enemy_shot_rand: 100
+  enemy_shots: 10
+  enemy_shots_add: 1 # en cada escena habra un proyectil adicional
 
   # dev
-  initial_lives: 4
+  #initial_lives: 4
+  extra_life_points: 1000
   initial_charge: 5000
-  wave_size: 10
-  wave_wait: 200
+  #wave_size: 10
+  #wave_wait: 200
   waves_per_scene: 1
   #enemy_list: [ "pajaro", "rueda", "mariposa" ]
   #enemy_list: [ "rueda", "mariposa" ]
-  enemy_list: [ "rueda", "pajaro", "mariposa" ]
+  #enemy_list: [ "rueda", "pajaro", "mariposa" ]
   #enemy_list: [ "mariposa" ]
 
-  enemy_shot_rand: 100
-  enemy_shots: 10 # en cada escena, un proyectil adicional
 
 entities:
 

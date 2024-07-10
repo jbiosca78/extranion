@@ -1,8 +1,6 @@
-from extranion.entities.entity import Entity
-import pygame
 from pygame.math import Vector2 as vector
 from extranion.config import cfg
-from extranion import log
+from extranion.entities.entity import Entity
 
 class HeroBullet(Entity):
 

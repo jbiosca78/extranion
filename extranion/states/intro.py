@@ -1,10 +1,10 @@
 import pygame
 from extranion.states.state import State
+from extranion.tools import log
 from extranion.config import cfg
 from extranion.asset import asset
 from extranion.effects.stars3d import Stars3D
 from extranion.soundmanager import SoundManager
-import extranion.log as log
 
 class Intro(State):
 

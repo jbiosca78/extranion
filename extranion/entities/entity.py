@@ -1,10 +1,9 @@
+import random
 import pygame
 from pygame.math import Vector2 as vector
+from extranion.tools import log, gvar
+from extranion.config import cfg
 from extranion.asset import asset
-#from extranion.config import DEBUG
-from extranion.config import cfg,gvar
-from extranion import log
-import random
 
 # Esta clase representa una entidad del juego, y gestiona:
 # El asset (spritesheet), y su animación
@@ -65,7 +64,7 @@ class Entity(pygame.sprite.Sprite):
 		sprite=self.spritesheet[self.spriterow][self.spritecol+int(self.animptr)]
 		canvas.blit(sprite, self.render_rect)
 
-		if gvar.DEBUG:
+		if gvar.debug:
 			pygame.draw.rect(canvas, cfg("debug.rect_render_color"), self.render_rect, 1)
 			pygame.draw.rect(canvas, cfg("debug.rect_collider_color"), self.rect, 1)
 

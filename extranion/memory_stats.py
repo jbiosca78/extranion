@@ -1,7 +1,7 @@
+from extranion.tools import log
+from extranion.config import cfg
 from extranion.states import statemanager
 from extranion.asset import asset
-from extranion import log
-from extranion.config import cfg
 
 # Este módulo requiere pympler, no lo importo directamente porque es opcional, ya
 # que sólo es útil durante el desarrollo del juego y no para su uso normal.

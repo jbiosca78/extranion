@@ -1,11 +1,10 @@
 import random
-#from extranion.entities.enemy import Enemy
-from extranion.entities.enemybullet import EnemyBullet
+from extranion.tools import log,gvar
 from extranion.config import cfg
-from extranion import log
 from extranion.entities.enemies.rueda import Rueda
 from extranion.entities.enemies.pajaro import Pajaro
 from extranion.entities.enemies.mariposa import Mariposa
+from extranion.entities.enemybullet import EnemyBullet
 
 # Esta clase se encarga de gestionar las distintas escenas (olas de enemigos).
 # Cada escena tiene un tipo de enemigos que vienen en varias olas de ataque.
@@ -67,9 +66,10 @@ class SceneController:
 
 		# Si el jugador está vivo, los enemigos disparan. en cada escena hay un proyectil
 		# más que la anterior, para incrementar la complejidad del juego
+		enemy_shots_max=cfg("gameplay.enemy_shots")+self.scene*cfg("gameplay.enemy_shots_add")
 		if hero.alive:
 			for enemy in enemies:
 				if enemy.position.y>0 and \
-				len(enemybullets)<cfg("gameplay.enemy_shots")+self.scene and \
+				len(enemybullets)<enemy_shots_max and \
 				random.randint(0,cfg("gameplay.enemy_shot_rand"))==0:
 					enemybullets.add(EnemyBullet(enemy.get_position()))

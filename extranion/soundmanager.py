@@ -1,5 +1,4 @@
 import pygame
-
 from extranion.config import cfg
 from extranion.asset import asset
 

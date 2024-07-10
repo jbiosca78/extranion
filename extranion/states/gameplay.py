@@ -12,9 +12,9 @@ from extranion.states.state import State
 #from extranion.entities.pool import Pool
 #from extranion.entities.enemy.enemy import Enemy
 #from extranion.entities.explosion import Explosion
-from extranion import log
+from extranion.tools import log, gvar
+from extranion.config import cfg
 from extranion.asset import asset
-from extranion.config import cfg,cfgset
 from extranion.soundmanager import SoundManager
 from extranion.effects.stars import Stars
 from extranion.effects.stars3d import Stars3D
@@ -46,8 +46,7 @@ class Gameplay(State):
 		self.__scenecontroller=SceneController()
 
 		# inicializamos valores de partida
-		self._score=0
-		self._maxscore=1234
+		gvar.score=0
 
 		# cargamos assets
 		self._load_assets()
@@ -105,8 +104,8 @@ class Gameplay(State):
 
 
 		if self.__hero.alive:
-			herodie=False
 
+			herodie=False
 			# colisiones del héroe con los enemigos
 			if pygame.sprite.spritecollide(self.__hero, self.__enemies, False): herodie=True
 			# colisiones del héroe con las balas enemigas
@@ -115,17 +114,13 @@ class Gameplay(State):
 			# heroe muere!
 			if herodie:
 				self.__explossions.add(Explossion("hero", self.__hero.position))
-				if self.__hero.lives==0:
-					self.change_state="Intro"
+				if self.__hero.lives==0: self.change_state="Intro"
 				self.__hero.die()
 
 		# colisiones de los enemigos con las balas del héroe
 		for enemy in pygame.sprite.groupcollide(self.__enemies, self.__herobullets, True, True):
 			self.__explossions.add(Explossion(enemy.name, enemy.position))
-			# TODO: mover a hero.enemy_hit
-			self.__hero.charge+=1
-			self._score+=95+5*self.__scenecontroller.scene
-			SoundManager.play_sound("enemy_killed")
+			self.__hero.enemy_hit(self.__scenecontroller.scene)
 
 	def update(self, delta_time):
 
@@ -155,6 +150,18 @@ class Gameplay(State):
 		self.__explossions.render(canvas)
 		if self.__hero: self.__hero.render(canvas)
 
+		self.render_board(canvas)
+
+		# pause text
+		if self._pause:
+			font=asset.get("font_default")
+			text=font.render("PAUSE", True, cfg("game.foreground_color"), None)
+			pause_box=pygame.rect.Rect(cfg("layout.game.pause_text_pos")-vector(5,5), text.get_size()+vector(10,10))
+			canvas.fill(cfg("game.menu_color"), pause_box)
+			canvas.blit(text, cfg("layout.game.pause_text_pos"))
+
+	def render_board(self, canvas):
+
 		# draw blue box in board rect
 		canvas.fill((33,36,255), cfg("layout.game.board_rect"))
 
@@ -168,14 +175,9 @@ class Gameplay(State):
 		text = font.render(f"SCENE", True, cfg("game.foreground_color"), None)
 		canvas.blit(text, cfg("layout.game.scene_text_pos"))
 
-		topscore=cfg("score.topscore")
-		if self._score>topscore:
-			topscore=self._score
-			cfgset("score.topscore", topscore)
-
-		text = font.render(f"{topscore:12}", True, cfg("game.foreground_color"), None)
+		text = font.render(f"{gvar.topscore:12}", True, cfg("game.foreground_color"), None)
 		canvas.blit(text, cfg("layout.game.topscore_pos"))
-		text = font.render(f"{self._score:12}", True, cfg("game.foreground_color"), None)
+		text = font.render(f"{gvar.score:12}", True, cfg("game.foreground_color"), None)
 		canvas.blit(text, cfg("layout.game.score_pos"))
 		text = font.render(str(self.__hero.charge), True, cfg("game.foreground_color"), None)
 		canvas.blit(text, cfg("layout.game.charge_pos")-vector(text.get_width()/2, 0))
@@ -187,12 +189,6 @@ class Gameplay(State):
 		for l in range(self.__hero.lives):
 			canvas.blit(exerion[0][0], cfg("layout.game.lives_pos")+vector((32+2)*l,0))
 
-		# pause text
-		if self._pause:
-			text=font.render("PAUSE", True, cfg("game.foreground_color"), None)
-			pause_box=pygame.rect.Rect(cfg("layout.game.pause_text_pos")-vector(5,5), text.get_size()+vector(10,10))
-			canvas.fill(cfg("game.menu_color"), pause_box)
-			canvas.blit(text, cfg("layout.game.pause_text_pos"))
 
 	def exit(self):
 		# vaciamos los EntityGroups

@@ -1,12 +1,12 @@
 import pygame
 import random
 from pygame.math import Vector2 as vector
-from extranion.states.state import State
+from extranion.tools import log
 from extranion.config import cfg
-from extranion.asset import asset
+from extranion.states.state import State
 from extranion.effects.stars3d import Stars3D
 from extranion.soundmanager import SoundManager
-import extranion.log as log
+from extranion.asset import asset
 
 class Travel(State):
 

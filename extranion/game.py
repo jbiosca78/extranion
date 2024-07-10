@@ -6,8 +6,8 @@ import time
 os.environ['PYGAME_HIDE_SUPPORT_PROMPT'] = '1' # oculta mensaje de bienvenida de pygame
 import pygame
 from importlib import resources
-from extranion import log
-from extranion.config import cfg, gvar
+from extranion.tools import log,gvar
+from extranion.config import cfg
 from extranion.states import statemanager
 from extranion.asset import asset
 from extranion.fps_stats import FPS_Stats
@@ -119,7 +119,7 @@ def _mainloop():
 		# si no estamos en debug, esperamos el tiempo sobrante entre frames
 		# restando el tiempo que tardamos en generar un frame (time_post-time_prev)
 		# así evitamos sobrecargar la CPU
-		if not gvar.DEBUG:
+		if not gvar.debug:
 			if (time_post-time_prev)<_time_per_frame:
 				time.sleep((_time_per_frame-(time_post-time_prev))/1000)
 
@@ -139,7 +139,7 @@ def _handle_events():
 		elif event.type == pygame.KEYDOWN:
 			if event.key == pygame.K_ESCAPE:
 				if statemanager.current_state.name=="Intro": _running=False
-			elif event.key == pygame.K_F5: gvar.DEBUG=not gvar.DEBUG
+			elif event.key == pygame.K_F5: gvar.debug=not gvar.debug
 			elif event.key == pygame.K_F11: __toggle_fullscreen()
 			elif event.key == pygame.K_F12: pygame.image.save(__canvas, "screenshot.png")
 			elif event.key == pygame.K_TAB: debug_memory_log()
@@ -182,7 +182,7 @@ def _render():
 
 	__canvas.fill(cfg("game.background_color"))
 	statemanager.render(__canvas)
-	if gvar.DEBUG:
+	if gvar.debug:
 		_fps_stats.render(__canvas)
 		debug_memory_render(__canvas)
 

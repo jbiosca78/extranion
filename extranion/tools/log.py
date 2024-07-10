@@ -1,3 +1,5 @@
+# log en fichero
+
 import datetime
 import inspect
 

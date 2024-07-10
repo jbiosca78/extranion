@@ -1,6 +1,6 @@
 from importlib import resources
 import pygame
-from extranion import log
+from extranion.tools import log
 from extranion.config import cfg
 
 class AssetItem:

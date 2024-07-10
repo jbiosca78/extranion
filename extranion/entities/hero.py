@@ -1,9 +1,9 @@
 from extranion.entities.entity import Entity
 import pygame
 from pygame.math import Vector2 as vector
-from extranion.config import cfg, gvar
+from extranion.tools import log,gvar
+from extranion.config import cfg
 from extranion.entities.herobullet import HeroBullet
-from extranion import log
 from extranion.soundmanager import SoundManager
 
 class Hero(Entity):
@@ -135,15 +135,6 @@ class Hero(Entity):
 		if not self.alive: return
 		super().render(delta_time)
 
-	def die(self):
-
-		log.info("hero die")
-		self.alive=False
-		self.__respawn_time=cfg("entities.hero.respawn_time")
-		self.lives-=1
-		SoundManager.play_sound("hero_killed")
-
-
 	def __fire(self, fire_type):
 
 		if not self.alive: return
@@ -161,11 +152,22 @@ class Hero(Entity):
 			self.__cooldown_fast_fire=cfg("entities.hero.cooldown_fast_fire")
 			self.__bullets.add(HeroBullet(self.position))
 
-		#if event.type == pygame.KEYDOWN:
-		#	if event.key in self._keymap["left"]:
-		#	#if event.key == pygame.K_LEFT:
-		#		_dir=-1
-		#	elif event.key == pygame.K_RIGHT:
-		#		_dir=1
-		#if event.type == pygame.KEYUP:
-		#	_dir=0
+	def die(self):
+
+		log.info("hero die")
+		self.alive=False
+		self.__respawn_time=cfg("entities.hero.respawn_time")
+		self.lives-=1
+		SoundManager.play_sound("hero_killed")
+
+	def enemy_hit(self, scene):
+
+		SoundManager.play_sound("enemy_killed")
+
+		# incrementamos carga para disparo rápido
+		self.charge+=1
+
+		# control de puntuación
+		gvar.score+=100+5*(scene-1)
+		if gvar.score>gvar.topscore:
+			gvar.topscore=gvar.score
