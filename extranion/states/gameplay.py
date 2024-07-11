@@ -38,17 +38,16 @@ class Gameplay(State):
 
 	def enter(self):
 
-		self._pause=False
+		# cargamos assets
+		self.__load_assets()
 
 		# control de escenas
 		self.__scenecontroller=SceneController()
 
 		# inicializamos valores de partida
+		self._pause=False
 		gvar.scene=0
 		gvar.score=0
-
-		# cargamos assets
-		self._load_assets()
 
 		# cargamos efectos
 		#self.__stars=Stars3D(cfg("layout.game.space_rect")[2:4], direction="up", speed=0.5)
@@ -64,7 +63,7 @@ class Gameplay(State):
 		asset.load('intro', 'music.gameplay')
 		SoundManager.play_music("gameplay")
 
-	def _load_assets(self):
+	def __load_assets(self):
 
 		asset.load('gameplay', 'sprites.hero', 'hero')
 		asset.load('gameplay', 'sprites.enemies', 'enemies')
@@ -192,6 +191,8 @@ class Gameplay(State):
 			canvas.blit(icons[0][0], cfg("layout.gameplay.board.lives_pos")+vector((32+2)*l,0))
 
 	def exit(self):
+		SoundManager.stop_music()
+
 		# vaciamos los EntityGroups
 		self.__enemybullets.empty()
 		self.__herobullets.empty()

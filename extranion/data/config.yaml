@@ -342,6 +342,3 @@ music:
     type: music
     file: gameinfo.mp3
     volume_mult: 0.6
-
-score:
-  topscore: 0

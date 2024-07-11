@@ -4,8 +4,6 @@ from extranion.states.info import Info
 from extranion.states.travel import Travel
 from extranion.states.gameplay import Gameplay
 
-# TODO: convertir a clase estática
-
 states = {
 	"intro": Intro(),
 	"info": Info(),
