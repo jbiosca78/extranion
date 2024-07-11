@@ -131,7 +131,7 @@ gameplay:
   initial_charge: 50
   waves_per_scene: 2
   wave_size: 10
-  wave_wait: 2000
+  wave_wait: 1000
   enemy_list: [ "rueda", "pajaro", "mariposa", "ovni" ]
 
   enemy_shot_rand: 100
@@ -141,12 +141,12 @@ gameplay:
   gameover_time: 2000
 
   # dev
-  initial_lives: 4
+  #initial_lives: 4
   #score_extralife: 1000
-  initial_charge: 5000
+  #initial_charge: 5000
   #wave_size: 10
-  wave_wait: 200
-  waves_per_scene: 1
+  #wave_wait: 200
+  #waves_per_scene: 1
   #enemy_list: [ "pajaro", "rueda", "mariposa" ]
   #enemy_list: [ "rueda", "mariposa" ]
   #enemy_list: [ "rueda", "pajaro", "mariposa" ]
