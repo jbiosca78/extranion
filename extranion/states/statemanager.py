@@ -1,19 +1,21 @@
 from extranion.tools import log
 from extranion.states.intro import Intro
+from extranion.states.info import Info
 from extranion.states.travel import Travel
 from extranion.states.gameplay import Gameplay
 
 # TODO: convertir a clase estática
 
 states = {
-	"Intro": Intro(),
-	"Travel": Travel(),
-	"Gameplay": Gameplay()
+	"intro": Intro(),
+	"info": Info(),
+	"travel": Travel(),
+	"gameplay": Gameplay()
 }
 
 def init():
 	global current_state
-	current_state=states["Intro"]
+	current_state=states["intro"]
 	current_state.enter()
 
 def release():

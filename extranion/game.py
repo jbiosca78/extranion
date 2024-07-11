@@ -15,9 +15,9 @@ from extranion.memory_stats import debug_memory_log, debug_memory_render
 from extranion.soundmanager import SoundManager
 
 def main():
-	#* si tenemos instalado rich, lo usamos para
-	# TODO mostrar excepciones mucho mas detalladas
-	# FIX apt install python3-rich
+	# si tenemos instalado rich, lo usamos para
+	# mostrar excepciones mucho mas detalladas
+	# apt install python3-rich
 	Console=None
 	try:
 		from rich.console import Console
@@ -26,7 +26,7 @@ def main():
 		pass
 
 	try:
-		# Iniciamos logger si está activado
+		# iniciamos logger si está activado
 		if cfg("log.enabled"):
 			logfile=resources.files("extranion").joinpath(cfg("log.file"))
 			log.init(file=logfile, level=cfg("log.level"))
@@ -79,7 +79,6 @@ def _initialize():
 		_load_assets()
 		SoundManager.init()
 		statemanager.init()
-		_running=True
 
 	except Exception as e:
 		log.fatal(f"Exception {type(e).__name__}: {str(e)}")
@@ -93,13 +92,13 @@ def _load_assets():
 	asset.load('main','game.font_default')
 
 def _mainloop():
-	global _running, _time_per_frame, _fps_stats, _state_manager
+	global _time_per_frame, _fps_stats, _state_manager
 
 	log.info("Starting mainloop")
 	last_time = pygame.time.get_ticks()
 	time_since_last_update = 0
 	time_prev=last_time
-	while _running:
+	while gvar.running:
 		# calculamos tiempo transcurrido
 		current_time = pygame.time.get_ticks()
 		delta_time = current_time-last_time
@@ -132,14 +131,11 @@ def _unload_assets():
 	asset.unload('main')
 
 def _handle_events():
-	global _running
 
 	for event in pygame.event.get():
-		if event.type == pygame.QUIT: _running=False
+		if event.type == pygame.QUIT: gvar.running=False
 		elif event.type == pygame.KEYDOWN:
-			if event.key == pygame.K_ESCAPE:
-				if statemanager.current_state.name=="Intro": _running=False
-			elif event.key == pygame.K_F5: gvar.debug=not gvar.debug
+			if event.key == pygame.K_F5: gvar.debug=not gvar.debug
 			elif event.key == pygame.K_F11: __toggle_fullscreen()
 			elif event.key == pygame.K_F12: pygame.image.save(__canvas, "screenshot.png")
 			elif event.key == pygame.K_TAB: debug_memory_log()

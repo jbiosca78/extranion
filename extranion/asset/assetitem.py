@@ -14,6 +14,7 @@ class AssetItem:
 		elif self.type == "spritesheet": self.data = _load_spritesheet(filepath, conf["size"])
 		elif self.type == "sfx": self.data = pygame.mixer.Sound(filepath)
 		elif self.type == "music": self.data = { "file":filepath, "volume_mult":conf.get("volume_mult",1) }
+		elif self.type == "text": self.data=open(filepath, "r").readlines()
 
 	def get(self):
 		return self.data

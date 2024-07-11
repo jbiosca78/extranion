@@ -12,10 +12,9 @@ class Travel(State):
 
 	def __init__(self):
 		super().__init__()
-		self.name="Travel"
+		self.name="travel"
 
 	def enter(self):
-		log.info("Entering state Travel")
 		asset.load('travel','layout.travel.ship-straight', 'ship')
 		asset.load('travel','layout.travel.ship-turn', 'ship-turn')
 		asset.load('travel', 'sound.travel.traveling')
@@ -39,9 +38,9 @@ class Travel(State):
 	def event(self, event):
 		if event.type == pygame.KEYDOWN:
 			if event.key == pygame.K_SPACE:
-				self.change_state = "Gameplay"
+				self.change_state = "gameplay"
 			if event.key == pygame.K_ESCAPE:
-				self.change_state = "Intro"
+				self.change_state = "intro"
 
 	def update(self, delta_time):
 
@@ -63,7 +62,7 @@ class Travel(State):
 			self.__ship_pos+=vector(6,-2)
 
 		if self.__arriving_time<=0:
-			self.change_state = "Gameplay"
+			self.change_state = "gameplay"
 
 	def render(self, canvas):
 		# primero pintamos las estrellas de fondo

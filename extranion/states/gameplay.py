@@ -28,7 +28,7 @@ class Gameplay(State):
 
 	def __init__(self):
 		super().__init__()
-		self.name="Gameplay"
+		self.name="gameplay"
 
 		# grupos de entidades
 		self.__herobullets=EntityGroup()
@@ -38,14 +38,13 @@ class Gameplay(State):
 
 	def enter(self):
 
-		log.info("Entering state Gameplay")
-
 		self._pause=False
 
 		# control de escenas
 		self.__scenecontroller=SceneController()
 
 		# inicializamos valores de partida
+		gvar.scene=0
 		gvar.score=0
 
 		# cargamos assets
@@ -71,22 +70,13 @@ class Gameplay(State):
 		asset.load('gameplay', 'sprites.enemies', 'enemies')
 		asset.load('gameplay', 'sprites.bullets', 'bullets')
 		asset.load('gameplay', 'sprites.explossions', 'explossions')
-		asset.load('gameplay', 'sprites.exerion', 'exerion')
+		asset.load('gameplay', 'sprites.icons', 'icons')
 		asset.load('gameplay', 'sprites.mountains', 'mountains')
 
 		asset.load('gameplay', 'sound.gameplay.shoot')
 		asset.load('gameplay', 'sound.gameplay.hero_killed')
 		asset.load('gameplay', 'sound.gameplay.enemy_killed')
 		asset.load('gameplay', 'sound.gameplay.extralife')
-		#asset.load('gameplay', 'sounds.gameplay.shoot')
-
-		#AssetManager.instance().load(AssetType.SpriteSheet, 'gameplay', cfg_item("entities", "name"), cfg_item("entities", "image_file"), data_filename = cfg_item("entities", "data_file"))
-		#AssetManager.instance().load(AssetType.Music, 'gameplay', cfg_item("music", "mission", "name"), cfg_item("music", "mission", "file"))
-		#AssetManager.instance().load(AssetType.Sound, 'gameplay', cfg_item("sfx", "allied_gunfire", "name"), cfg_item("sfx", "allied_gunfire", "file"))
-		#AssetManager.instance().load(AssetType.Sound, 'gameplay', cfg_item("sfx", "enemy_gunfire", "name"), cfg_item("sfx", "enemy_gunfire", "file"))
-		#AssetManager.instance().load(AssetType.Sound, 'gameplay', cfg_item("sfx", "explosion1", "name"), cfg_item("sfx", "explosion1", "file"))
-		#AssetManager.instance().load(AssetType.Sound, 'gameplay', cfg_item("sfx", "explosion2", "name"), cfg_item("sfx", "explosion2", "file"))
-		#AssetManager.instance().load(AssetType.FlipBook, 'gameplay', cfg_item("entities", "explosion", "name"), cfg_item("entities", "explosion" , "image_file"), rows = cfg_item("entities", "explosion", "size")[0], cols = cfg_item("entities", "explosion", "size")[1])
 
 	def event(self, event):
 
@@ -94,7 +84,7 @@ class Gameplay(State):
 			if event.key == pygame.K_RETURN:
 				self.__toggle_pause()
 			if event.key == pygame.K_ESCAPE:
-				self.change_state="Intro"
+				self.change_state="intro"
 			if event.key == pygame.K_TAB:
 				self.__debug_info()
 		if self._pause: return
@@ -126,7 +116,7 @@ class Gameplay(State):
 			# heroe muere!
 			if herodie:
 				self.__explossions.add(Explossion("hero", self.__hero.position))
-				if gvar.lives==0: self.change_state="Intro"
+				if gvar.lives==0: self.change_state="intro"
 				self.__hero.die()
 
 		# colisiones de los enemigos con las balas del héroe
@@ -170,7 +160,7 @@ class Gameplay(State):
 			text=font.render("PAUSE", True, cfg("layout.gameplay.pause.text_color"), None)
 			pause_box=pygame.rect.Rect(cfg("layout.gameplay.pause.text_pos")-vector(5,5), text.get_size()+vector(10,10))
 			canvas.fill(cfg("layout.gameplay.pause.background_color"), pause_box)
-			canvas.blit(text, cfg("layout.gameplay.pause_text_pos"))
+			canvas.blit(text, cfg("layout.gameplay.pause.text_pos"))
 
 	def render_board(self, canvas):
 
@@ -197,9 +187,9 @@ class Gameplay(State):
 		canvas.blit(text, cfg("layout.gameplay.board.scene_pos")-vector(text.get_width()/2, 0))
 
 		# draw lives
-		exerion=asset.get("exerion")
+		icons=asset.get("icons")
 		for l in range(gvar.lives):
-			canvas.blit(exerion[0][0], cfg("layout.gameplay.board.lives_pos")+vector((32+2)*l,0))
+			canvas.blit(icons[0][0], cfg("layout.gameplay.board.lives_pos")+vector((32+2)*l,0))
 
 	def exit(self):
 		# vaciamos los EntityGroups
@@ -215,12 +205,7 @@ class Gameplay(State):
 		self.__planetsurface.release()
 		self.__stars.release()
 
-		##SoundManager.instance().stop_music()
-
 	def __debug_info(self):
 		log.info(f"Num enemies: {len(self.__enemies)}")
 		log.info(f"Num enemy bullets: {len(self.__enemybullets)}")
 		log.info(f"Num hero bullets: {len(self.__herobullets)}")
-
-		#pass
-

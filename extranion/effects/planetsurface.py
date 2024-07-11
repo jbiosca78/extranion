@@ -65,7 +65,7 @@ class PlanetSurface:
 		# usamos interpolación linear (lerp) para hacer una transición del
 		# color del fondo al color de cada escena
 		color=vector3(self.__stripe_color)
-		scene_color=vector3(cfg("layout.gameplay.planetsurface_color")[gvar.scene%4])
+		scene_color=vector3(cfg("layout.gameplay.planetsurface.colors")[gvar.scene%4])
 		if color!=scene_color:
 			color=color.lerp(scene_color, 0.05)
 			self.__stripe_color=color

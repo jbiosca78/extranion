@@ -9,6 +9,10 @@ game:
       type: font
       file: TerminusTTF-Bold-4.39.ttf
       size: 20
+  font_small:
+      type: font
+      file: TerminusTTF-Bold-4.39.ttf
+      size: 14
 
 log:
   enabled: true
@@ -37,6 +41,7 @@ keymap:
     fastfire:  [ "LALT", "RALT", "m", "x" ]
 
 layout:
+
   intro:
     logo:
       type: image
@@ -44,6 +49,35 @@ layout:
     logo_pos: [ 120,40 ]
     text_pos: [ 200,300 ]
     text_blink_time: 600
+    menu:
+      blink: 250
+      options:
+        - text: "Start game"
+          pos: [ 260, 265 ]
+          action: "travel"
+        - text: "How to play"
+          pos: [ 260, 285 ]
+          action: "info"
+        - text: "Exit"
+          pos: [ 260, 305 ]
+          action: "exit"
+
+  info:
+    background:
+      type: image
+      file: inside.png
+      alpha: 80
+    text_info:
+      type: "text"
+      file: "info.txt"
+      pos: [ 25, 40 ]
+      spacing: 20
+    text_keys:
+      type: "text"
+      file: "keys.txt"
+      pos: [ 180, 140 ]
+      spacing: 20
+
   travel:
     ship-straight:
       type: image
@@ -56,9 +90,10 @@ layout:
     arriving_time: 1600
     turbulencias_time: 80
     turbulencias_shift: 2
+
   gameplay:
     space_rect: [ 0, 0, 500, 360 ]
-    pause_text_pos: [ 225, 170 ]
+
     board:
       board_rect: [ 500, 0, 140, 360 ]
       topscore_text_pos: [ 510, 30 ]
@@ -70,13 +105,20 @@ layout:
       scene_text_pos: [ 545, 240 ]
       scene_pos: [ 570, 270 ]
       lives_pos: [ 503, 320 ]
-    planetsurface_color:
-      - [ 30, 100, 30 ]
-      - [ 100, 100, 30 ]
-      - [ 90, 40, 0 ]
-      - [ 100, 20, 20 ]
+
+    planetsurface:
+      colors:
+        - [ 30, 100, 30 ]
+        - [ 100, 100, 30 ]
+        - [ 90, 40, 0 ]
+        - [ 100, 20, 20 ]
 
     pause:
+      background_color: [ 33,33,255 ]
+      text_color: [ 222,222,222 ]
+      text_pos: [ 225, 170 ]
+
+    gameover:
       background_color: [ 33,33,255 ]
       text_color: [ 222,222,222 ]
       text_pos: [ 225, 170 ]
@@ -95,6 +137,8 @@ gameplay:
   enemy_shot_rand: 100
   enemy_shots: 6
   enemy_shots_add_scene: 2 # incremento dificultad cada escena
+
+  gameover_time: 2000
 
   # dev
   initial_lives: 4
@@ -229,7 +273,7 @@ entities:
       animation:
         default: [ 0, 2, 1, 0 ]
       inflate_collider: [ 0, 0 ]
-      speed: 0.15
+      speed: 0.14
 
 sprites:
   hero:
@@ -252,9 +296,9 @@ sprites:
     type: spritesheet
     file: mountains.png
     size: [ 48, 48 ]
-  exerion:
+  icons:
     type: spritesheet
-    file: exerion-sheet-x2.png
+    file: icons.png
     size: [ 32, 32 ]
 
 sound:
@@ -294,7 +338,10 @@ music:
     type: music
     file: neongaming.mp3
     volume_mult: 0.6
-
+  info:
+    type: music
+    file: gameinfo.mp3
+    volume_mult: 0.6
 
 score:
   topscore: 0
