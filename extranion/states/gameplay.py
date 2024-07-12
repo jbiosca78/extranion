@@ -34,9 +34,11 @@ class Gameplay(State):
 		self.__scenecontroller=SceneController()
 
 		# inicializamos valores de partida
-		self.__pause=False
 		gvar.scene=0
 		gvar.score=0
+		self.__pause=False
+		self.__gameover=False
+		self.__gameover_time=0
 
 		# cargamos efectos
 		self.__stars=Stars3D(cfg("layout.gameplay.space_rect")[2:4])
@@ -68,17 +70,32 @@ class Gameplay(State):
 
 	def event(self, event):
 
+		# eventos globales
 		if event.type == pygame.KEYDOWN:
-			if event.key == pygame.K_RETURN:
-				self.__toggle_pause()
 			if event.key == pygame.K_ESCAPE:
 				self.change_state="intro"
 			if event.key == pygame.K_TAB:
 				self.__debug_info()
-		if self.__pause: return
 
+		# eventos según estado
+		if self.__gameover: self.__event_gameover(event)
+		elif self.__pause: self.__event_pause(event)
+		else: self.__event_playing(event)
+
+	def __event_playing(self, event):
+		if event.type == pygame.KEYDOWN and event.key == pygame.K_RETURN: self.__toggle_pause()
 		if event.type == pygame.KEYDOWN: self.__hero.input(event.key, True)
-		if event.type == pygame.KEYUP:   self.__hero.input(event.key, False)
+		if event.type == pygame.KEYUP: self.__hero.input(event.key, False)
+
+	def __event_pause(self, event):
+		if event.type == pygame.KEYDOWN and event.key == pygame.K_RETURN:
+			self.__toggle_pause()
+
+	def __event_gameover(self, event):
+		if self.__gameover_time>0: return
+		if event.type == pygame.KEYDOWN:
+			if event.key in [pygame.K_SPACE, pygame.K_RETURN]:
+				self.change_state="intro"
 
 	def __toggle_pause(self):
 		self.__pause=not self.__pause
@@ -92,7 +109,6 @@ class Gameplay(State):
 
 	def __collisions(self):
 
-
 		if self.__hero.alive:
 
 			herodie=False
@@ -104,8 +120,10 @@ class Gameplay(State):
 			# heroe muere!
 			if herodie:
 				self.__explossions.add(Explossion("hero", self.__hero.position))
-				if gvar.lives==0: self.change_state="intro"
 				self.__hero.die()
+				if gvar.lives<0:
+					self.__gameover=True
+					self.__gameover_time=cfg("gameplay.gameover_time")
 
 		# colisiones de los enemigos con las balas del héroe
 		for enemy in pygame.sprite.groupcollide(self.__enemies, self.__herobullets, True, True):
@@ -129,6 +147,9 @@ class Gameplay(State):
 		self.__stars.update(delta_time)
 		self.__planetsurface.update(delta_time, self.__hero)
 
+		if self.__gameover_time>0:
+			self.__gameover_time-=delta_time
+
 	def render(self, canvas):
 
 		self.__stars.render(canvas)
@@ -146,9 +167,21 @@ class Gameplay(State):
 		if self.__pause:
 			font=asset.get("font_default")
 			text=font.render("PAUSE", True, cfg("layout.gameplay.pause.text_color"), None)
-			pause_box=pygame.rect.Rect(cfg("layout.gameplay.pause.text_pos")-vector(5,5), text.get_size()+vector(10,10))
-			canvas.fill(cfg("layout.gameplay.pause.background_color"), pause_box)
+			box=pygame.rect.Rect(cfg("layout.gameplay.pause.text_pos")-vector(5,5), text.get_size()+vector(10,10))
+			canvas.fill(cfg("layout.gameplay.pause.background_color"), box)
 			canvas.blit(text, cfg("layout.gameplay.pause.text_pos"))
+
+		# game over
+		if self.__gameover:
+			font=asset.get("font_default")
+			text=font.render("GAME OVER", True, cfg("layout.gameplay.gameover.text_color"), None)
+			box=pygame.rect.Rect(cfg("layout.gameplay.gameover.text_pos")-vector(5,5), text.get_size()+vector(10,10))
+			canvas.fill(cfg("layout.gameplay.gameover.background_color"), box)
+			canvas.blit(text, cfg("layout.gameplay.gameover.text_pos"))
+
+			if self.__gameover_time<=0:
+				text=font.render("press space to continue", True, cfg("layout.gameplay.gameover.text_color"), None)
+				canvas.blit(text, cfg("layout.gameplay.gameover.press_space_pos"))
 
 	def render_board(self, canvas):
 
