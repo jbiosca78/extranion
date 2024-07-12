@@ -95,6 +95,7 @@ layout:
     space_rect: [ 0, 0, 500, 360 ]
 
     board:
+      background_color: [ 33,33,255 ]
       board_rect: [ 500, 0, 140, 360 ]
       topscore_text_pos: [ 510, 30 ]
       topscore_pos: [ 510, 60 ]
@@ -140,21 +141,13 @@ gameplay:
 
   gameover_time: 2000
 
-  # dev
+  # develop
   #initial_lives: 4
   #score_extralife: 1000
   #initial_charge: 5000
-  #wave_size: 10
   #wave_wait: 200
   #waves_per_scene: 1
-  #enemy_list: [ "pajaro", "rueda", "mariposa" ]
-  #enemy_list: [ "rueda", "mariposa" ]
-  #enemy_list: [ "rueda", "pajaro", "mariposa" ]
-  #enemy_list: [ "mariposa" ]
-  #enemy_list: [ "pajaro" ]
-  #enemy_list: [ "rueda" ]
-  #enemy_list: [ "mariposa" ]
-  #enemy_list: [ "ovni", "rueda", "pajaro", "mariposa" ]
+  #enemy_list: [ "ovni" ]
 
 entities:
 

@@ -1,17 +1,6 @@
 import pygame
 from pygame.math import Vector2 as vector
 from extranion.states.state import State
-#from extranion.entities.hero import Hero
-#from extranion.entities.rendergroup import RenderGroup
-#from extranion.assets.assetmanager import AssetManager
-#from extranion.assets.asset import AssetType
-#from extranion.config import cfg_item
-#from extranion.entities.projectiles.projectile_factory import ProjectileFactory, ProjectileType
-#from extranion.assets.soundmanager import SoundManager
-#from extranion.entities.enemy.spawner import Spawner
-#from extranion.entities.pool import Pool
-#from extranion.entities.enemy.enemy import Enemy
-#from extranion.entities.explosion import Explosion
 from extranion.tools import log, gvar
 from extranion.config import cfg
 from extranion.asset import asset
@@ -59,7 +48,6 @@ class Gameplay(State):
 		self.__hero=Hero("hero", self.__herobullets)
 
 		# iniciamos música
-		asset.load('intro', 'music.gameplay')
 		SoundManager.play_music("gameplay")
 
 	def __load_assets(self):
@@ -75,6 +63,8 @@ class Gameplay(State):
 		asset.load('gameplay', 'sound.gameplay.hero_killed')
 		asset.load('gameplay', 'sound.gameplay.enemy_killed')
 		asset.load('gameplay', 'sound.gameplay.extralife')
+
+		asset.load('intro', 'music.gameplay')
 
 	def event(self, event):
 
@@ -162,8 +152,7 @@ class Gameplay(State):
 
 	def render_board(self, canvas):
 
-		# draw blue box in board rect
-		canvas.fill((33,36,255), cfg("layout.gameplay.board.board_rect"))
+		canvas.fill(cfg("layout.gameplay.board.background_color"), cfg("layout.gameplay.board.board_rect"))
 
 		font=asset.get("font_default")
 		text = font.render(f"TOP SCORE", True, cfg("game.foreground_color"), None)
@@ -184,10 +173,10 @@ class Gameplay(State):
 		text = font.render(f"{gvar.scene+1}", True, cfg("game.foreground_color"), None)
 		canvas.blit(text, cfg("layout.gameplay.board.scene_pos")-vector(text.get_width()/2, 0))
 
-		# draw lives
-		icons=asset.get("icons")
+		# dibujamos un icono de nave por cada vida
+		ship=asset.get("icons")[0][0]
 		for l in range(gvar.lives):
-			canvas.blit(icons[0][0], cfg("layout.gameplay.board.lives_pos")+vector((32+2)*l,0))
+			canvas.blit(ship, cfg("layout.gameplay.board.lives_pos")+vector((ship.get_width()+2)*l,0))
 
 	def exit(self):
 		SoundManager.stop_music()
