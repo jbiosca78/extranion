@@ -8,7 +8,8 @@ from extranion.asset import asset
 # En caso de no tenerlo instalado, simplemente no se mostrará la información.
 
 # Si lo tenemos instalado, con TAB podemos ver en el log la memoria usada por los
-# principales módulos del juego, y al activar debug con F5 podremos verlo en pantalla.
+# principales módulos del juego (si tenemos el log activado), y al activar debug
+# con F5 podremos ver la memoria total usada por el juego en pantalla.
 
 # El control de la memoria usada es muy útil para detectar memory leaks en fases
 # tempranas de desarrollo.

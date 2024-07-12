@@ -6,4 +6,8 @@ Move left    left    s     o
 Move right   right   f     p
 Normal fire  c       n     space
 Fast fire    x       m     alt
-Pause        return
+--------------------------------
+Exit: Escape
+Pause: Return
+Fullscreen: F11
+Screenshot: F12

@@ -74,6 +74,7 @@ puntos?
 https://pixabay.com/music/video-games-game-music-loop-17-153390/
 
 game over
+Born to the Earth - nojisuma
 https://pixabay.com/music/upbeat-born-to-the-earth-207192/
 
 

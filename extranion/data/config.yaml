@@ -70,13 +70,13 @@ layout:
     text_info:
       type: "text"
       file: "info.txt"
-      pos: [ 25, 40 ]
+      pos: [ 25, 25 ]
       spacing: 20
     text_keys:
       type: "text"
       file: "keys.txt"
-      pos: [ 180, 140 ]
-      spacing: 20
+      pos: [ 180, 120 ]
+      spacing: 16
 
   travel:
     ship-straight:
@@ -116,14 +116,15 @@ layout:
 
     pause:
       background_color: [ 33,33,255 ]
+      text: "PAUSE"
       text_color: [ 222,222,222 ]
       text_pos: [ 225, 170 ]
 
     gameover:
       background_color: [ 33,33,255 ]
+      text: "GAME OVER"
       text_color: [ 222,222,222 ]
       text_pos: [ 225, 150 ]
-      press_space_pos: [ 200, 180 ]
 
 gameplay:
   initial_lives: 1
@@ -140,7 +141,7 @@ gameplay:
   enemy_shots: 6
   enemy_shots_add_scene: 2 # incremento dificultad cada escena
 
-  gameover_time: 1000
+  gameover_time: 3000
 
   # develop
   #initial_lives: 4
@@ -149,7 +150,7 @@ gameplay:
   wave_wait: 200
   #waves_per_scene: 1
   #enemy_list: [ "ovni" ]
-  initial_lives: 0
+  initial_lives: 1
 
 entities:
 
@@ -319,12 +320,16 @@ sound:
     extralife:
       type: sfx
       file: extralife.mp3
+    hero_died:
+      type: sfx
+      file: gameover.ogg
 
 music:
   volume: 0.9
   intro:
     type: music
     file: martian.mp3
+    volume_mult: 1
   #gameplay:
   #  type: music
   #  file: 8bitretrofunk.mp3
@@ -333,6 +338,10 @@ music:
     type: music
     file: neongaming.mp3
     volume_mult: 0.6
+  gameover:
+    type: music
+    file: borntotheearth.mp3
+    volume_mult: 0.5
   info:
     type: music
     file: gameinfo.mp3

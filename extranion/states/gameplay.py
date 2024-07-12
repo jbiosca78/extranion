@@ -65,8 +65,10 @@ class Gameplay(State):
 		asset.load('gameplay', 'sound.gameplay.hero_killed')
 		asset.load('gameplay', 'sound.gameplay.enemy_killed')
 		asset.load('gameplay', 'sound.gameplay.extralife')
+		asset.load('gameplay', 'sound.gameplay.hero_died')
 
-		asset.load('intro', 'music.gameplay')
+		asset.load('gameplay', 'music.gameplay')
+		asset.load('gameplay', 'music.gameover')
 
 	def event(self, event):
 
@@ -115,13 +117,15 @@ class Gameplay(State):
 			# colisiones del héroe con los enemigos
 			if pygame.sprite.spritecollide(self.__hero, self.__enemies, False): herodie=True
 			# colisiones del héroe con las balas enemigas
-			if pygame.sprite.spritecollide(self.__hero, self.__enemybullets, True): herodie=True
+			if pygame.sprite.spritecollide(self.__hero, self.__enemybullets, False): herodie=True
 
 			# heroe muere!
 			if herodie:
 				self.__explossions.add(Explossion("hero", self.__hero.position))
 				self.__hero.die()
 				if gvar.lives<0:
+					SoundManager.stop_music()
+					SoundManager.play_sound("hero_died")
 					self.__gameover=True
 					self.__gameover_time=cfg("gameplay.gameover_time")
 
@@ -132,7 +136,13 @@ class Gameplay(State):
 
 	def update(self, delta_time):
 
+		if self.__gameover_time>0:
+			self.__gameover_time-=delta_time
+			if self.__gameover_time<=0:
+				SoundManager.play_music("gameover")
+
 		if self.__pause: return
+		if self.__gameover: return
 
 		self.__collisions()
 
@@ -147,18 +157,15 @@ class Gameplay(State):
 		self.__stars.update(delta_time)
 		self.__planetsurface.update(delta_time, self.__hero)
 
-		if self.__gameover_time>0:
-			self.__gameover_time-=delta_time
-
 	def render(self, canvas):
 
 		self.__stars.render(canvas)
 		self.__planetsurface.render(canvas)
 
-		self.__enemybullets.render(canvas)
-		self.__herobullets.render(canvas)
 		self.__enemies.render(canvas)
 		self.__explossions.render(canvas)
+		self.__herobullets.render(canvas)
+		self.__enemybullets.render(canvas)
 		if self.__hero: self.__hero.render(canvas)
 
 		self.render_board(canvas)
@@ -166,22 +173,18 @@ class Gameplay(State):
 		# pause text
 		if self.__pause:
 			font=asset.get("font_default")
-			text=font.render("PAUSE", True, cfg("layout.gameplay.pause.text_color"), None)
+			text=font.render(cfg("layout.gameplay.pause.text"), True, cfg("layout.gameplay.pause.text_color"), None)
 			box=pygame.rect.Rect(cfg("layout.gameplay.pause.text_pos")-vector(5,5), text.get_size()+vector(10,10))
 			canvas.fill(cfg("layout.gameplay.pause.background_color"), box)
 			canvas.blit(text, cfg("layout.gameplay.pause.text_pos"))
 
 		# game over
-		if self.__gameover:
-			font=asset.get("font_default")
-			text=font.render("GAME OVER", True, cfg("layout.gameplay.gameover.text_color"), None)
-			box=pygame.rect.Rect(cfg("layout.gameplay.gameover.text_pos")-vector(5,5), text.get_size()+vector(10,10))
-			canvas.fill(cfg("layout.gameplay.gameover.background_color"), box)
-			canvas.blit(text, cfg("layout.gameplay.gameover.text_pos"))
-
-			if self.__gameover_time<=0:
-				text=font.render("press space to continue", True, cfg("layout.gameplay.gameover.text_color"), None)
-				canvas.blit(text, cfg("layout.gameplay.gameover.press_space_pos"))
+		if self.__gameover and self.__gameover_time<=0:
+				font=asset.get("font_default")
+				text=font.render(cfg("layout.gameplay.gameover.text"), True, cfg("layout.gameplay.gameover.text_color"), None)
+				box=pygame.rect.Rect(cfg("layout.gameplay.gameover.text_pos")-vector(5,5), text.get_size()+vector(10,10))
+				canvas.fill(cfg("layout.gameplay.gameover.background_color"), box)
+				canvas.blit(text, cfg("layout.gameplay.gameover.text_pos"))
 
 	def render_board(self, canvas):
 
@@ -231,3 +234,4 @@ class Gameplay(State):
 		log.info(f"Num enemies: {len(self.__enemies)}")
 		log.info(f"Num enemy bullets: {len(self.__enemybullets)}")
 		log.info(f"Num hero bullets: {len(self.__herobullets)}")
+		log.info(f"Num explossions: {len(self.__explossions)}")
