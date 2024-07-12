@@ -30,7 +30,7 @@ class Hero(Entity):
 		# control de vidas
 		self.alive=True
 
-		self._input_pressed = { "left": False, "right": False, "up": False, "down": False, "fastfire": False}
+		self.__input_pressed = { "left": False, "right": False, "up": False, "down": False, "fastfire": False}
 		self.__respawn_time=0
 		self.__spawn()
 
@@ -53,19 +53,19 @@ class Hero(Entity):
 	def input(self, key, pressed):
 
 		if key in self._keymap["up"]:
-			self._input_pressed["up"] = pressed
+			self.__input_pressed["up"] = pressed
 			log.debug(f"up = {pressed}")
 		elif key in self._keymap["down"]:
-			self._input_pressed["down"] = pressed
+			self.__input_pressed["down"] = pressed
 			log.debug(f"down = {pressed}")
 		elif key in self._keymap["left"]:
-			self._input_pressed["left"] = pressed
+			self.__input_pressed["left"] = pressed
 			log.debug(f"left = {pressed}")
 		elif key in self._keymap["right"]:
-			self._input_pressed["right"] = pressed
+			self.__input_pressed["right"] = pressed
 			log.debug(f"right = {pressed}")
 		elif key in self._keymap["fastfire"]:
-			self._input_pressed["fastfire"] = pressed
+			self.__input_pressed["fastfire"] = pressed
 			log.debug(f"fastfire = {pressed}")
 		elif key in self._keymap["fire"] and pressed:
 			self.__fire("normal")
@@ -82,10 +82,10 @@ class Hero(Entity):
 
 		# obtenemos las direcciones de movimiento horizontal y vertical
 		moving_x=moving_y=0
-		if self._input_pressed["left"]: moving_x-=1
-		if self._input_pressed["right"]: moving_x+=1
-		if self._input_pressed["up"]: moving_y-=1
-		if self._input_pressed["down"]: moving_y+=1
+		if self.__input_pressed["left"]: moving_x-=1
+		if self.__input_pressed["right"]: moving_x+=1
+		if self.__input_pressed["up"]: moving_y-=1
+		if self.__input_pressed["down"]: moving_y+=1
 
 		# aceleramos en la dirección de movimiento correspondiente hasta el máximo
 		self.velocity.x += moving_x*self._acceleration
@@ -125,7 +125,7 @@ class Hero(Entity):
 		if self.__cooldown_fast_fire>0:
 			self.__cooldown_fast_fire-=delta_time
 		else:
-			if self._input_pressed["fastfire"]: self.__fire("fast")
+			if self.__input_pressed["fastfire"]: self.__fire("fast")
 
 		super().update(delta_time)
 

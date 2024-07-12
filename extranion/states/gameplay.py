@@ -45,12 +45,11 @@ class Gameplay(State):
 		self.__scenecontroller=SceneController()
 
 		# inicializamos valores de partida
-		self._pause=False
+		self.__pause=False
 		gvar.scene=0
 		gvar.score=0
 
 		# cargamos efectos
-		#self.__stars=Stars3D(cfg("layout.game.space_rect")[2:4], direction="up", speed=0.5)
 		self.__stars=Stars3D(cfg("layout.gameplay.space_rect")[2:4])
 		self.__planetsurface=PlanetSurface(cfg("layout.gameplay.space_rect"))
 
@@ -86,20 +85,20 @@ class Gameplay(State):
 				self.change_state="intro"
 			if event.key == pygame.K_TAB:
 				self.__debug_info()
-		if self._pause: return
+		if self.__pause: return
 
 		if event.type == pygame.KEYDOWN: self.__hero.input(event.key, True)
 		if event.type == pygame.KEYUP:   self.__hero.input(event.key, False)
 
 	def __toggle_pause(self):
-		self._pause=not self._pause
+		self.__pause=not self.__pause
 
-		if self._pause:
+		if self.__pause:
 			SoundManager.pause_music()
 		else:
 			SoundManager.resume_music()
 
-		log.info(f"PAUSE: {self._pause}")
+		log.info(f"PAUSE: {self.__pause}")
 
 	def __collisions(self):
 
@@ -125,7 +124,7 @@ class Gameplay(State):
 
 	def update(self, delta_time):
 
-		if self._pause: return
+		if self.__pause: return
 
 		self.__collisions()
 
@@ -154,7 +153,7 @@ class Gameplay(State):
 		self.render_board(canvas)
 
 		# pause text
-		if self._pause:
+		if self.__pause:
 			font=asset.get("font_default")
 			text=font.render("PAUSE", True, cfg("layout.gameplay.pause.text_color"), None)
 			pause_box=pygame.rect.Rect(cfg("layout.gameplay.pause.text_pos")-vector(5,5), text.get_size()+vector(10,10))
