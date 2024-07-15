@@ -8,11 +8,11 @@ import pygame
 from importlib import resources
 from extranion.tools import log,gvar
 from extranion.config import cfg
-from extranion.states import statemanager
 from extranion.asset import asset
 from extranion.fps_stats import FPS_Stats
 from extranion.memory_stats import debug_memory_log, debug_memory_render
 from extranion.soundmanager import SoundManager
+from extranion.states.statemanager import StateManager
 
 def main():
 	# si tenemos instalado rich, lo usamos para
@@ -79,7 +79,7 @@ def __initialize():
 		__fps_stats=FPS_Stats()
 		__load_assets()
 		SoundManager.init()
-		statemanager.init()
+		StateManager.init()
 
 	except Exception as e:
 		log.fatal(f"Exception {type(e).__name__}: {str(e)}")
@@ -124,7 +124,7 @@ def __mainloop():
 				time.sleep((__time_per_frame-(time_post-time_prev))/1000)
 
 def __release():
-	statemanager.release()
+	StateManager.release()
 	__unload_assets()
 	pygame.quit()
 
@@ -140,7 +140,7 @@ def __handle_events():
 			elif event.key == pygame.K_TAB: debug_memory_log()
 			elif event.key == pygame.K_F11: __toggle_fullscreen()
 			elif event.key == pygame.K_F12: __screenshot()
-		statemanager.event(event)
+		StateManager.event(event)
 	pass
 
 def __screenshot():
@@ -173,7 +173,7 @@ def __toggle_fullscreen():
 		__screen=pygame.display.set_mode(__window_size, pygame.RESIZABLE)
 
 def __update(delta_time):
-	statemanager.update(delta_time)
+	StateManager.update(delta_time)
 	__fps_stats.update(delta_time)
 	#SoundManager.instance().update(delta_time)
 
@@ -182,7 +182,7 @@ def __render():
 	global __fullscreen
 
 	__canvas.fill(cfg("game.background_color"))
-	statemanager.render(__canvas)
+	StateManager.render(__canvas)
 	if gvar.debug:
 		__fps_stats.render(__canvas)
 		debug_memory_render(__canvas)

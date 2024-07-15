@@ -1,6 +1,6 @@
 from extranion.tools import log
 from extranion.config import cfg
-from extranion.states import statemanager
+from extranion.states.statemanager import StateManager
 from extranion.asset import asset
 
 # Este módulo requiere pympler, no lo importo directamente porque es opcional, ya
@@ -25,7 +25,7 @@ def debug_memory_log():
 	# Si tenemos pympler, mostramos la ram que ocupa nuestro estado actual
 	# con esto podemos detectar memory leaks, por ejemplo si no estamos
 	# destruyendo bien algún objeto
-	mem_state=pympler.asizeof.asizeof(statemanager)//1024
+	mem_state=pympler.asizeof.asizeof(StateManager)//1024
 	mem_assets=pympler.asizeof.asizeof(asset)//1024
 	log.info(f"MEM used: state={mem_state}K assets={mem_assets}K")
 
@@ -37,7 +37,7 @@ def debug_memory_render(canvas):
 		return
 
 	mem=0
-	mem+=pympler.asizeof.asizeof(statemanager)//1024
+	mem+=pympler.asizeof.asizeof(StateManager)//1024
 	mem+=pympler.asizeof.asizeof(asset)//1024
 
 	font=asset.get("font_default")

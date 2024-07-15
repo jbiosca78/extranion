@@ -4,42 +4,53 @@ from extranion.states.info import Info
 from extranion.states.travel import Travel
 from extranion.states.gameplay import Gameplay
 
-states = {
-	"intro": Intro(),
-	"info": Info(),
-	"travel": Travel(),
-	"gameplay": Gameplay()
-}
+class StateManager:
 
-def init():
-	global current_state
-	current_state=states["intro"]
-	current_state.enter()
+	__states = {
+		"intro": Intro(),
+		"info": Info(),
+		"travel": Travel(),
+		"gameplay": Gameplay()
+	}
 
-def release():
-	current_state.exit()
+	@staticmethod
+	def init():
 
-def event(event):
-	current_state.event(event)
+		StateManager.__current_state=StateManager.__states["intro"]
+		StateManager.__current_state.enter()
 
-def update(delta_time):
-	if current_state.change_state is not None: __change_state()
-	current_state.update(delta_time)
+	@staticmethod
+	def release():
 
-def render(surface):
-	current_state.render(surface)
+		StateManager.__current_state.exit()
 
-def __change_state():
+	@staticmethod
+	def event(event):
 
-	global current_state
+		StateManager.__current_state.event(event)
 
-	prev_state = current_state.name
-	new_state = current_state.change_state
+	@staticmethod
+	def update(delta_time):
 
-	log.info(f"Change state from {prev_state} to {new_state}")
+		if StateManager.__current_state.change_state is not None:
+			StateManager.__change_state()
+		StateManager.__current_state.update(delta_time)
 
-	current_state.exit()
-	current_state=states[new_state]
-	current_state.previous_state = prev_state
-	current_state.change_state = None
-	current_state.enter()
+	@staticmethod
+	def render(surface):
+
+		StateManager.__current_state.render(surface)
+
+	@staticmethod
+	def __change_state():
+
+		StateManager.__prev_state = StateManager.__current_state.name
+		StateManager.__new_state = StateManager.__current_state.change_state
+
+		log.info(f"Change state from {StateManager.__prev_state} to {StateManager.__new_state}")
+
+		StateManager.__current_state.exit()
+		StateManager.__current_state=StateManager.__states[StateManager.__new_state]
+		StateManager.__current_state.previous_state = StateManager.__prev_state
+		StateManager.__current_state.change_state = None
+		StateManager.__current_state.enter()
