@@ -1,6 +1,10 @@
 from importlib import resources
 import yaml
 
+# Cargamos la configuración al iniciar el módulo
+configpath=resources.files("extranion.data").joinpath("config.yaml")
+configdata=yaml.safe_load(open(configpath,"rt"))
+
 def cfg(itempath):
 
 	data=configdata
@@ -10,6 +14,3 @@ def cfg(itempath):
 		data = data[key]
 	return data
 
-# Cargamos la configuración al iniciar el módulo
-configpath=resources.files("extranion.data").joinpath("config.yaml")
-configdata=yaml.safe_load(open(configpath,"rt"))
