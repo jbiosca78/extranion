@@ -4,7 +4,7 @@ from pygame.math import Vector2 as vector
 from extranion.tools import log,gvar
 from extranion.config import cfg
 from extranion.entities.herobullet import HeroBullet
-from extranion.soundmanager import SoundManager
+from extranion.sound.soundmanager import SoundManager
 
 class Hero(Entity):
 

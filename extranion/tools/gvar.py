@@ -7,4 +7,3 @@ score=0
 scene=0
 charge=0
 lives=0
-

@@ -5,7 +5,7 @@ from extranion.tools import log
 from extranion.config import cfg
 from extranion.states.state import State
 from extranion.effects.stars3d import Stars3D
-from extranion.soundmanager import SoundManager
+from extranion.sound.soundmanager import SoundManager
 from extranion.asset import asset
 
 class Travel(State):

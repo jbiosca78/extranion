@@ -4,7 +4,7 @@ from extranion.states.state import State
 from extranion.tools import log, gvar
 from extranion.config import cfg
 from extranion.asset import asset
-from extranion.soundmanager import SoundManager
+from extranion.sound.soundmanager import SoundManager
 from extranion.effects.stars import Stars
 from extranion.effects.stars3d import Stars3D
 from extranion.effects.planetsurface import PlanetSurface
