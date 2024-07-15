@@ -161,7 +161,7 @@ def __toggle_fullscreen():
 			# en linux FULLSCREEN da problemas y es preferible ventana completa sin bordes
 			# sería recomendable un menú de selección donde podamos elegir fullscreen o windowed fullscreen
 			log.info(f"set windowed fullscreen {__desktop_size}")
-			os.environ['SDL_VIDEO_WINDOW_POS'] = "0,0"
+			os.environ['SDL_VIDEO_WINDOW_POS'] = "0,0" # warning, se pondrá en el primer monitor
 			pygame.display.quit()
 			pygame.display.init()
 			#pygame.display.set_mode(__desktop_size, pygame.NOFRAME|pygame.HWACCEL|pygame.DOUBLEBUF|pygame.HWSURFACE, 32)
