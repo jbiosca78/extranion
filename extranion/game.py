@@ -28,7 +28,8 @@ def main():
 	try:
 		# iniciamos logger si está activado
 		if cfg("log.enabled"):
-			logfile=resources.files("extranion").joinpath(cfg("log.file"))
+			#with resources.path("extranion.data", cfg("log.file")) as p: logfile=p
+			logfile=resources.files("extranion.data").joinpath(cfg("log.file"))
 			log.init(file=logfile, level=cfg("log.level"))
 		log.info("* Game Start *")
 

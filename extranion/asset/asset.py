@@ -11,7 +11,8 @@ def load(category, config, name=None):
 	log.debug(f"asset load {category} {config} {name}")
 	conf=cfg(f"{config}")
 	type=conf["type"]
-	filepath=str(resources.files("extranion.data").joinpath(type).joinpath(conf["file"]))
+	#filepath=str(resources.files("extranion.data").joinpath(type).joinpath(conf["file"]))
+	with resources.path(f"extranion.data.{type}", conf["file"]) as p: filepath=p
 	asset = AssetItem(category, type, filepath, conf)
 	_assets[name] = asset
 

@@ -127,7 +127,7 @@ layout:
       text_pos: [ 225, 150 ]
 
 gameplay:
-  initial_lives: 1
+  initial_lives: 2
   max_lives: 4
   score_extralife: 10000
 
@@ -147,10 +147,10 @@ gameplay:
   #initial_lives: 4
   #score_extralife: 1000
   #initial_charge: 5000
-  wave_wait: 200
+  #wave_wait: 200
   #waves_per_scene: 1
   #enemy_list: [ "ovni" ]
-  initial_lives: 1
+  #initial_lives: 1
 
 entities:
 
@@ -158,8 +158,8 @@ entities:
     spritesheet: "hero"
     animation:
       default: [ 1, 0, 3, 60 ]
-      left:    [ 0, 0, 3, 60 ]
-      right:   [ 2, 0, 3, 60 ]
+      left: [ 0, 0, 3, 60 ]
+      right: [ 2, 0, 3, 60 ]
     inflate_collider: [ -8, -4 ]
     start_pos: [ 250, 200 ]
     acceleration: 0.014
