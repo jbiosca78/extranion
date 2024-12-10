@@ -1,5 +1,5 @@
 from importlib import resources
-from extranion import log
+from extranion.tools import log
 from extranion.config import cfg
 from extranion.asset.assetitem import AssetItem
 
@@ -7,11 +7,12 @@ _assets={}
 
 def load(category, config, name=None):
 	global _assets
-	if name is None: name = config
+	if name is None: name = config.split(".")[-1]
 	log.debug(f"asset load {category} {config} {name}")
 	conf=cfg(f"{config}")
 	type=conf["type"]
-	filepath=str(resources.files("extranion.data").joinpath(type).joinpath(conf["file"]))
+	#filepath=str(resources.files("extranion.data").joinpath(type).joinpath(conf["file"]))
+	with resources.path(f"extranion.data.{type}", conf["file"]) as p: filepath=p
 	asset = AssetItem(category, type, filepath, conf)
 	_assets[name] = asset
 

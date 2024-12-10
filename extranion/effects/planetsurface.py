@@ -1,8 +1,10 @@
-import pygame
 import random
-from extranion.asset import asset
-from extranion.config import gvar
 import math
+import pygame
+from pygame.math import Vector3 as vector3
+from extranion.asset import asset
+from extranion.tools import log,gvar
+from extranion.config import cfg
 
 # Planet Surface generator like Exerion background
 
@@ -31,21 +33,11 @@ class PlanetSurface:
 			self.__objects.append(p)
 
 		self._stripeidx=0
+		self.__shift_x=0
+		self.__shift_y=0
+		self.__stripe_color=(0,0,0)
 
-	#def generate(self):
-	#	for x in range(self.width):
-	#		self.surface.append(random.randint(0, self.height))
-
-	#def draw(self):
-	#	for y in range(self.height):
-	#		for x in range(self.width):
-	#			if y < self.surface[x]:
-	#				print(".", end="")
-	#			else:
-	#				print(" ", end="")
-	#		print()
-
-	def update(self, delta_time):
+	def update(self, delta_time, hero):
 
 		self._nstart+=0.03
 		if self._nstart>2.71:
@@ -61,23 +53,31 @@ class PlanetSurface:
 		if self._stripeidx>0.2:
 			self._stripeidx=0
 
+		# dependiendo de la posición del héroe, la superficie y elementos se desplazan
+		self.__shift_x=(hero.position.x-640/2)
+		self.__shift_y=(360-hero.position.y)/4
+
 	def render(self, canvas):
 
-		shift_y=(360-gvar.HERO_POS.y)/4
-		shift_x=(gvar.HERO_POS.x-640/2)
-
 		x,y,w,h=self.canvas_rect
-		horizon_y=int(h/2+y)+shift_y
+		horizon_y=int(h/2+y)+self.__shift_y
 
-		# Stripes
-		pygame.draw.rect(canvas, [100,20,20], [x,horizon_y,x+w,y+h])
+		# usamos interpolación linear (lerp) para hacer una transición del
+		# color del fondo al color de cada escena
+		color=vector3(self.__stripe_color)
+		scene_color=vector3(cfg("layout.gameplay.planetsurface.colors")[gvar.scene%4])
+		if color!=scene_color:
+			color=color.lerp(scene_color, 0.05)
+			self.__stripe_color=color
+
+		pygame.draw.rect(canvas, color, [x,horizon_y,x+w,y+h])
 		# 0%-10% 20%-30% 40%-50% 60%-70% 80%-90%
 		for d1 in 0, 0.2, 0.4, 0.6, 0.8:
 			d1=d1+self._stripeidx
 			d2=d1+0.1
 			y1=horizon_y+(h-horizon_y)*(d1*d1*d1*d1)
 			y2=horizon_y+(h-horizon_y)*(d2*d2*d2*d2)
-			pygame.draw.rect(canvas, [100,30,30], [0+x,int(y1),w,int(y2-y1)])
+			pygame.draw.rect(canvas, (color[0]*0.8, color[1]*0.8, color[2]*0.8), [0+x,int(y1),w,int(y2-y1)])
 
 		# Objetos
 		for obj in self.__objects:
@@ -91,16 +91,16 @@ class PlanetSurface:
 			# la posición x se multiplica por 10 desde el centro
 			# la posición y a una distancia de 0% será el horizonte y en 100% algo mas bajo
 			# que el borde inferior de la pantalla (factor de 1.3) para evitar que desaparezca de repente
-			obj_x=w/2-(w/2-obj.posx)*(1+d*9)-shift_x*d
+			obj_x=w/2-(w/2-obj.posx)*(1+d*9)-self.__shift_x*d
 			obj_y=horizon_y+(h-horizon_y)*d*1.3
 			# lo dibujamos
 			canvas.blit(sprite, (int(obj_x)+x-sprite.get_width()/2, int(obj_y)+y-sprite.get_height()/2))
 			# debug bordes
-			if gvar.DEBUG:
+			if gvar.debug:
 				pygame.draw.rect(canvas, (0,0,255), (int(obj_x)-sprite.get_width()/2+x, int(obj_y)-sprite.get_height()/2+y, sprite.get_width(), sprite.get_height()), 1)
 
 		# debug
-		if gvar.DEBUG:
+		if gvar.debug:
 			# mostramos las líneas de fuga
 			pygame.draw.line(canvas, (0,255,255), ((w/2)-(w/2)/10,horizon_y+y), (x+0,y+h))
 			pygame.draw.line(canvas, (0,255,255), ((w/2)+(w/2)/10,horizon_y+y), (x+w,y+h))

@@ -1,0 +1,13 @@
+Action       opt1    opt2  opt3
+--------------------------------
+Move up      up      e     q
+Move down    down    d     a
+Move left    left    s     o
+Move right   right   f     p
+Normal fire  c       n     space
+Fast fire    x       m     alt
+--------------------------------
+Exit: Escape
+Pause: Return
+Fullscreen: F11
+Screenshot: F12

@@ -1,28 +1,16 @@
 from importlib import resources
-#import json
 import yaml
 
-def cfg(*items):
+# Cargamos la configuración al iniciar el módulo
+configpath=resources.files("extranion.data").joinpath("config.yaml")
+configdata=yaml.safe_load(open(configpath,"rt"))
 
-	# En lugar de varios argumentos, permitimos separar los campos por puntos
-	if len(items)==1 and "." in items[0]:
-		items=items[0].split(".")
+def cfg(itempath):
 
 	data=configdata
-	for key in items:
+	for key in itempath.split("."):
 		if key not in data:
 			return None
 		data = data[key]
 	return data
 
-# Cargamos la configuración al iniciar el módulo
-# no le veo mucho sentido a crear una clase con un singleton programado para la carga inicial como en clase,
-# me parece innecesariamente complicado y poco "pythonico" ya que los módulos python se cargan sólo una vez.
-# También actualizamos el método de obtención del path, ya que importlib.resources.path está deprecado en python 3.11
-configpath=resources.files("extranion.data").joinpath("config.yaml")
-configdata=yaml.safe_load(open(configpath,"rt"))
-
-# Establecemos variables globales
-class gvar:
-	DEBUG = cfg("debug.enabled")
-	HERO_POS = None

@@ -1,211 +1,237 @@
 import pygame
 from pygame.math import Vector2 as vector
 from extranion.states.state import State
-#from extranion.entities.hero import Hero
-#from extranion.entities.rendergroup import RenderGroup
-#from extranion.assets.assetmanager import AssetManager
-#from extranion.assets.asset import AssetType
-#from extranion.config import cfg_item
-#from extranion.entities.projectiles.projectile_factory import ProjectileFactory, ProjectileType
-#from extranion.assets.soundmanager import SoundManager
-#from extranion.entities.enemy.spawner import Spawner
-#from extranion.entities.pool import Pool
-#from extranion.entities.enemy.enemy import Enemy
-#from extranion.entities.explosion import Explosion
-from extranion import log
-from extranion.asset import asset
+from extranion.tools import log, gvar
 from extranion.config import cfg
+from extranion.asset import asset
+from extranion.sound.soundmanager import SoundManager
 from extranion.effects.stars import Stars
 from extranion.effects.stars3d import Stars3D
 from extranion.effects.planetsurface import PlanetSurface
 from extranion.entities.hero import Hero
 from extranion.entities.entitygroup import EntityGroup
-from extranion.scene.scenecontroller import SceneController
+from extranion.entities.explossion import Explossion
+from extranion.entities.enemies.scenecontroller import SceneController
 
 class Gameplay(State):
 
 	def __init__(self):
 		super().__init__()
-		self.name="Gameplay"
+		self.name="gameplay"
 
 		# grupos de entidades
 		self.__herobullets=EntityGroup()
 		self.__enemybullets=EntityGroup()
-		self._enemies=EntityGroup()
-
-		self._board_rect=cfg("layout.game.board_rect")
+		self.__enemies=EntityGroup()
+		self.__explossions=EntityGroup()
 
 	def enter(self):
 
-		log.info("Entering state Gameplay")
-
-		self._pause=False
+		# cargamos assets
+		self.__load_assets()
 
 		# control de escenas
-		self._scenecontroller=SceneController()
+		self.__scenecontroller=SceneController()
 
 		# inicializamos valores de partida
-		self._lives=cfg("gameplay.initial_lives")
-		self._score=0
-		self._maxscore=1234
-
-		# cargamos assets
-		self._load_assets()
+		gvar.scene=0
+		gvar.score=0
+		self.__pause=False
+		self.__gameover=False
+		self.__gameover_time=0
 
 		# cargamos efectos
-		#self.__stars=Stars3D(cfg("layout.game.space_rect")[2:4], direction="up", speed=0.5)
-		self.__stars=Stars3D(cfg("layout.game.space_rect")[2:4])
-		self.__planetsurface=PlanetSurface(cfg("layout.game.space_rect"))
+		self.__stars=Stars3D(cfg("layout.gameplay.space_rect")[2:4])
+		self.__planetsurface=PlanetSurface(cfg("layout.gameplay.space_rect"))
 
-		# cargamos héroe
-		self.__hero=Hero("hero", cfg("entities.hero.start_pos"), self.__herobullets)
+		# iniciamos héroe
+		gvar.lives=cfg("gameplay.initial_lives")
+		gvar.charge=cfg("gameplay.initial_charge")
+		self.__hero=Hero("hero", self.__herobullets)
 
-	def _load_assets(self):
+		# iniciamos música
+		SoundManager.play_music("gameplay")
+
+	def __load_assets(self):
 
 		asset.load('gameplay', 'sprites.hero', 'hero')
 		asset.load('gameplay', 'sprites.enemies', 'enemies')
 		asset.load('gameplay', 'sprites.bullets', 'bullets')
-		asset.load('gameplay', 'sprites.exerion', 'exerion')
+		asset.load('gameplay', 'sprites.explossions', 'explossions')
+		asset.load('gameplay', 'sprites.icons', 'icons')
 		asset.load('gameplay', 'sprites.mountains', 'mountains')
-		#self.starship=entity
-		#asset.load('intro','intro.logo')
 
-		#AssetManager.instance().load(AssetType.SpriteSheet, 'gameplay', cfg_item("entities", "name"), cfg_item("entities", "image_file"), data_filename = cfg_item("entities", "data_file"))
-		#AssetManager.instance().load(AssetType.Music, 'gameplay', cfg_item("music", "mission", "name"), cfg_item("music", "mission", "file"))
-		#AssetManager.instance().load(AssetType.Sound, 'gameplay', cfg_item("sfx", "allied_gunfire", "name"), cfg_item("sfx", "allied_gunfire", "file"))
-		#AssetManager.instance().load(AssetType.Sound, 'gameplay', cfg_item("sfx", "enemy_gunfire", "name"), cfg_item("sfx", "enemy_gunfire", "file"))
-		#AssetManager.instance().load(AssetType.Sound, 'gameplay', cfg_item("sfx", "explosion1", "name"), cfg_item("sfx", "explosion1", "file"))
-		#AssetManager.instance().load(AssetType.Sound, 'gameplay', cfg_item("sfx", "explosion2", "name"), cfg_item("sfx", "explosion2", "file"))
-		#AssetManager.instance().load(AssetType.FlipBook, 'gameplay', cfg_item("entities", "explosion", "name"), cfg_item("entities", "explosion" , "image_file"), rows = cfg_item("entities", "explosion", "size")[0], cols = cfg_item("entities", "explosion", "size")[1])
+		asset.load('gameplay', 'sound.gameplay.shoot')
+		asset.load('gameplay', 'sound.gameplay.hero_killed')
+		asset.load('gameplay', 'sound.gameplay.enemy_killed')
+		asset.load('gameplay', 'sound.gameplay.extralife')
+		asset.load('gameplay', 'sound.gameplay.hero_died')
+
+		asset.load('gameplay', 'music.gameplay')
+		asset.load('gameplay', 'music.gameover')
 
 	def event(self, event):
 
+		# eventos globales
 		if event.type == pygame.KEYDOWN:
-			if event.key == pygame.K_RETURN:
-				self._pause=not self._pause
-				log.info(f"PAUSE: {self._pause}")
 			if event.key == pygame.K_ESCAPE:
-				self.change_state="Intro"
-		if self._pause: return
+				self.change_state="intro"
+			if event.key == pygame.K_TAB:
+				self.__debug_info()
 
+		# eventos según estado
+		if self.__gameover: self.__event_gameover(event)
+		elif self.__pause: self.__event_pause(event)
+		else: self.__event_playing(event)
+
+	def __event_playing(self, event):
+		if event.type == pygame.KEYDOWN and event.key == pygame.K_RETURN: self.__toggle_pause()
 		if event.type == pygame.KEYDOWN: self.__hero.input(event.key, True)
-		if event.type == pygame.KEYUP:   self.__hero.input(event.key, False)
+		if event.type == pygame.KEYUP: self.__hero.input(event.key, False)
+
+	def __event_pause(self, event):
+		if event.type == pygame.KEYDOWN and event.key == pygame.K_RETURN:
+			self.__toggle_pause()
+
+	def __event_gameover(self, event):
+		if self.__gameover_time>0: return
+		if event.type == pygame.KEYDOWN:
+			if event.key in [pygame.K_SPACE, pygame.K_RETURN]:
+				self.change_state="intro"
+
+	def __toggle_pause(self):
+		self.__pause=not self.__pause
+
+		if self.__pause:
+			SoundManager.pause_music()
+		else:
+			SoundManager.resume_music()
+
+		log.info(f"PAUSE: {self.__pause}")
+
+	def __collisions(self):
+
+		if self.__hero.alive:
+
+			herodie=False
+			# colisiones del héroe con los enemigos
+			if pygame.sprite.spritecollide(self.__hero, self.__enemies, False): herodie=True
+			# colisiones del héroe con las balas enemigas
+			if pygame.sprite.spritecollide(self.__hero, self.__enemybullets, False): herodie=True
+
+			# heroe muere!
+			if herodie:
+				self.__explossions.add(Explossion("hero", self.__hero.position))
+				self.__hero.die()
+				if gvar.lives<0:
+					SoundManager.stop_music()
+					SoundManager.play_sound("hero_died")
+					self.__gameover=True
+					self.__gameover_time=cfg("gameplay.gameover_time")
+
+		# colisiones de los enemigos con las balas del héroe
+		for enemy in pygame.sprite.groupcollide(self.__enemies, self.__herobullets, True, True):
+			self.__explossions.add(Explossion(enemy.name, enemy.position))
+			self.__hero.enemy_hit()
 
 	def update(self, delta_time):
 
-		if self._pause: return
+		if self.__gameover_time>0:
+			self.__gameover_time-=delta_time
+			if self.__gameover_time<=0:
+				SoundManager.play_music("gameover")
 
-		self._scenecontroller.update(delta_time, self.__hero, self._enemies, self.__enemybullets)
-		self.__hero.update(delta_time)
-		self._enemies.update(delta_time)
+		if self.__pause: return
+		if self.__gameover: return
+
+		self.__collisions()
+
+		self.__scenecontroller.update(delta_time, self.__hero, self.__enemies, self.__enemybullets)
+		if self.__hero: self.__hero.update(delta_time)
+
+		self.__enemies.update(delta_time)
 		self.__herobullets.update(delta_time)
-
-		for enemy in pygame.sprite.spritecollide(self.__hero, self._enemies, True):
-			print("COLLISION")
-			if self._lives==0:
-				self.change_state="Intro"
-			self._lives-=1
-
-		for enemy in pygame.sprite.groupcollide(self._enemies, self.__herobullets, True, True):
-			self.__hero.charge+=1
-			self._score+=10
+		self.__enemybullets.update(delta_time)
+		self.__explossions.update(delta_time)
 
 		self.__stars.update(delta_time)
-		self.__planetsurface.update(delta_time)
+		self.__planetsurface.update(delta_time, self.__hero)
 
 	def render(self, canvas):
 
 		self.__stars.render(canvas)
 		self.__planetsurface.render(canvas)
 
-		#self.__players.draw(surface)
-		#self.__enemies.draw(surface)
-		#self.__allied_projectiles.draw(surface)
-		#self.__enemy_projectiles.draw(surface)
-		#self.__explosions.draw(surface)
-
+		self.__enemies.render(canvas)
+		self.__explossions.render(canvas)
 		self.__herobullets.render(canvas)
-		self._enemies.render(canvas)
-		self.__hero.render(canvas)
+		self.__enemybullets.render(canvas)
+		if self.__hero: self.__hero.render(canvas)
 
-		# draw blue box in board rect
-		canvas.fill((33,36,255), self._board_rect)
+		self.render_board(canvas)
 
-		font=asset.get("font.default")
+		# pause text
+		if self.__pause:
+			font=asset.get("font_default")
+			text=font.render(cfg("layout.gameplay.pause.text"), True, cfg("layout.gameplay.pause.text_color"), None)
+			box=pygame.rect.Rect(cfg("layout.gameplay.pause.text_pos")-vector(5,5), text.get_size()+vector(10,10))
+			canvas.fill(cfg("layout.gameplay.pause.background_color"), box)
+			canvas.blit(text, cfg("layout.gameplay.pause.text_pos"))
+
+		# game over
+		if self.__gameover and self.__gameover_time<=0:
+				font=asset.get("font_default")
+				text=font.render(cfg("layout.gameplay.gameover.text"), True, cfg("layout.gameplay.gameover.text_color"), None)
+				box=pygame.rect.Rect(cfg("layout.gameplay.gameover.text_pos")-vector(5,5), text.get_size()+vector(10,10))
+				canvas.fill(cfg("layout.gameplay.gameover.background_color"), box)
+				canvas.blit(text, cfg("layout.gameplay.gameover.text_pos"))
+
+	def render_board(self, canvas):
+
+		canvas.fill(cfg("layout.gameplay.board.background_color"), cfg("layout.gameplay.board.board_rect"))
+
+		font=asset.get("font_default")
 		text = font.render(f"TOP SCORE", True, cfg("game.foreground_color"), None)
-		canvas.blit(text, cfg("layout.game.topscore_text_pos"))
+		canvas.blit(text, cfg("layout.gameplay.board.topscore_text_pos"))
 		text = font.render(f"SCORE", True, cfg("game.foreground_color"), None)
-		canvas.blit(text, cfg("layout.game.score_text_pos"))
+		canvas.blit(text, cfg("layout.gameplay.board.score_text_pos"))
 		text = font.render(f"CHARGE", True, cfg("game.foreground_color"), None)
-		canvas.blit(text, cfg("layout.game.charge_text_pos"))
+		canvas.blit(text, cfg("layout.gameplay.board.charge_text_pos"))
 		text = font.render(f"SCENE", True, cfg("game.foreground_color"), None)
-		canvas.blit(text, cfg("layout.game.scene_text_pos"))
+		canvas.blit(text, cfg("layout.gameplay.board.scene_text_pos"))
 
-		score=1234
-		#self._charge+=1
-		#self._score+=10
+		text = font.render(f"{gvar.topscore:12}", True, cfg("game.foreground_color"), None)
+		canvas.blit(text, cfg("layout.gameplay.board.topscore_pos"))
+		text = font.render(f"{gvar.score:12}", True, cfg("game.foreground_color"), None)
+		canvas.blit(text, cfg("layout.gameplay.board.score_pos"))
+		text = font.render(str(gvar.charge), True, cfg("game.foreground_color"), None)
+		canvas.blit(text, cfg("layout.gameplay.board.charge_pos")-vector(text.get_width()/2, 0))
+		text = font.render(f"{gvar.scene+1}", True, cfg("game.foreground_color"), None)
+		canvas.blit(text, cfg("layout.gameplay.board.scene_pos")-vector(text.get_width()/2, 0))
 
-		text = font.render(f"{score:12}", True, cfg("game.foreground_color"), None)
-		canvas.blit(text, cfg("layout.game.topscore_pos"))
-		text = font.render(f"{self._score:12}", True, cfg("game.foreground_color"), None)
-		canvas.blit(text, cfg("layout.game.score_pos"))
-		text = font.render(str(self.__hero.charge), True, cfg("game.foreground_color"), None)
-		canvas.blit(text, cfg("layout.game.charge_pos")-vector(text.get_width()/2, 0))
-		text = font.render(f"{self._scenecontroller.scene}", True, cfg("game.foreground_color"), None)
-		canvas.blit(text, cfg("layout.game.scene_pos")-vector(text.get_width()/2, 0))
-
-		# draw lives
-		exerion=asset.get("exerion")
-		for l in range(self._lives):
-			canvas.blit(exerion[0][0], cfg("layout.game.lives_pos")+vector((32+2)*l,0))
-
-		# draw pause
-		if self._pause:
-			text=font.render("PAUSE", True, cfg("game.foreground_color"), None)
-			pause_box=pygame.rect.Rect(cfg("layout.game.pause_text_pos")-vector(5,5), text.get_size()+vector(10,10))
-			canvas.fill(cfg("game.menu_color"), pause_box)
-			canvas.blit(text, cfg("layout.game.pause_text_pos"))
-
-	def _spawn_projectile(self, proj_type, position):
-		#if proj_type == ProjectileType.Allied:
-		#    self.__allied_projectiles.add(ProjectileFactory.create_projectile(proj_type, position))
-		#    SoundManager.instance().play_sound(cfg_item("sfx", "allied_gunfire", "name"))
-		#elif proj_type == ProjectileType.Enemy:
-		#    self.__enemy_projectiles.add(ProjectileFactory.create_projectile(proj_type, position))
-		#    SoundManager.instance().play_sound(cfg_item("sfx", "enemy_gunfire", "name"))
-		pass
-
-	#def __spawn_enemy(self, enemy_type, spawn_point):
-	#	enemy = self.__enemy_pool.acquire()
-	#	enemy.init(enemy_type, spawn_point, self.__spawn_projectile, self.__kill_enemy)
-	#	self.__enemies.add(enemy)
-
-	#def __kill_enemy(self, enemy):
-	#	self.__enemies.remove(enemy)
-	#	self.__enemy_pool.release(enemy)
-
-	#def __spawn_explosion(self, position):
-	#	#self.__explosions.add(Explosion(position))
-	#	pass
-
-	#def __game_over(self):
-	#	print("GAME OVER")
+		# dibujamos un icono de nave por cada vida
+		ship=asset.get("icons")[0][0]
+		for l in range(gvar.lives):
+			canvas.blit(ship, cfg("layout.gameplay.board.lives_pos")+vector((ship.get_width()+2)*l,0))
 
 	def exit(self):
-		# vaciamos los EntityGroups
-		self.__herobullets.empty()
-		self._enemies.empty()
+		SoundManager.stop_music()
 
+		# vaciamos los EntityGroups
+		self.__enemybullets.empty()
+		self.__herobullets.empty()
+		self.__enemies.empty()
+		self.__explossions.empty()
+
+		# descargamos assets
 		asset.unload('gameplay')
+
+		# descargamos efectos
 		self.__planetsurface.release()
 		self.__stars.release()
-		#for enemy in self.__enemies:
-		#    self.__enemy_pool.release(enemy)
 
-		#self.__players.empty()
-		#self.__allied_projectiles.empty()
-		#self.__enemy_projectiles.empty()
-		#self.__enemies.empty()
-		#self.__explosions.empty()
-		#self.__spawner = None
-		##SoundManager.instance().stop_music()
+	def __debug_info(self):
+		log.info(f"Num enemies: {len(self.__enemies)}")
+		log.info(f"Num enemy bullets: {len(self.__enemybullets)}")
+		log.info(f"Num hero bullets: {len(self.__herobullets)}")
+		log.info(f"Num explossions: {len(self.__explossions)}")

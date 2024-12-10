@@ -1,10 +1,9 @@
+import random
 import pygame
 from pygame.math import Vector2 as vector
+from extranion.tools import log, gvar
+from extranion.config import cfg
 from extranion.asset import asset
-#from extranion.config import DEBUG
-from extranion.config import cfg,gvar
-from extranion import log
-import random
 
 # Esta clase representa una entidad del juego, y gestiona:
 # El asset (spritesheet), y su animación
@@ -13,36 +12,43 @@ import random
 
 class Entity(pygame.sprite.Sprite):
 
-	def __init__(self, name, position=(0,0), velocity=(0.0,0.0)):
+	def __init__(self, name, position=(0,0), velocity=(0.0,0.0), random_frame=False):
 		super().__init__()
 
-		log.info(f"Creating entity {name}")
+		log.debug(f"Creating entity {name} at {position}")
 		self.name=name
 
+		self.space_rect=cfg("layout.gameplay.space_rect")
 		self.position = vector(position)
 		self.velocity = vector(velocity)
 
-		self.config=cfg("entities", name)
-		self.spritesheet=asset.get(self.config["spritesheet"])
+		self.__config=cfg("entities."+name)
+		self.spritesheet=asset.get(self.__config["spritesheet"])
 		self.set_animation("default")
-		# iniciamos con un frame aleatorio para que no se vean todos igual
-		self.animptr=random.random()*self.animframes
+		if random_frame:
+			# los enemigos los iniciamos con un frame aleatorio para que no se vean todos igual
+			self.animptr=random.random()*self.animframes
+		else:
+			self.animptr=0
 
 		self.width=self.spritesheet[self.spriterow][self.spritecol].get_width()
 		self.height=self.spritesheet[self.spriterow][self.spritecol].get_height()
 		self.render_rect=self.spritesheet[self.spriterow][self.spritecol].get_rect()
-		self.rect=self.render_rect.inflate(self.config["inflate_collider"])
+		if "inflate_collider" in self.__config:
+			self.rect=self.render_rect.inflate(self.__config["inflate_collider"])
+		else:
+			self.rect=self.render_rect
 
 	def kill(self):
-		log.info(f"Killing entity {self.name}")
+		log.debug(f"Killing entity {self.name}")
 		super().kill()
 
 	def set_animation(self, animation):
 
-		self.spriterow=self.config["animation"][animation][0]
-		self.spritecol=self.config["animation"][animation][1]
-		self.animframes=self.config["animation"][animation][2]
-		self.animspeed=self.config["animation"][animation][3]
+		self.spriterow=self.__config["animation"][animation][0]
+		self.spritecol=self.__config["animation"][animation][1]
+		self.animframes=self.__config["animation"][animation][2]
+		self.animspeed=self.__config["animation"][animation][3]
 
 	def update(self, delta_time):
 
@@ -59,7 +65,7 @@ class Entity(pygame.sprite.Sprite):
 		sprite=self.spritesheet[self.spriterow][self.spritecol+int(self.animptr)]
 		canvas.blit(sprite, self.render_rect)
 
-		if gvar.DEBUG:
+		if gvar.debug:
 			pygame.draw.rect(canvas, cfg("debug.rect_render_color"), self.render_rect, 1)
 			pygame.draw.rect(canvas, cfg("debug.rect_collider_color"), self.rect, 1)
 

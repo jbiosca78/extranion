@@ -10,6 +10,6 @@ setup(
 		'pyyaml'
 	],
 	entry_points={
-		"console_scripts": ["extranion = extranion.game:main"]
+		"console_scripts": ["extranion = extranion.main:main"]
 	}
 )

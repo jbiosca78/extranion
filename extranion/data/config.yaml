@@ -2,16 +2,22 @@ game:
   name: Extranion
   screen_size: [ 1920, 1080 ]
   canvas_size: [ 640, 360 ]
-  background_color: [ 0,0,0 ]
   foreground_color: [ 222,222,222 ]
-  menu_color: [ 33,33,255 ]
+  background_color: [ 0,0,0 ]
   fps: 60
+  font_default:
+      type: font
+      file: TerminusTTF-Bold-4.39.ttf
+      size: 20
+  font_small:
+      type: font
+      file: TerminusTTF-Bold-4.39.ttf
+      size: 14
 
 log:
   enabled: true
-  #logfile: "/tmp/extranion.log" # habría que detectar si estamos en windows o linux
-  file: "extranion.log" # usaremos el path del juego para no dejar ficheros por el sistema
-  level: debug
+  file: "extranion.log" # si no empieza por / ni contiene : usamos el path del juego para no dejar ficheros por el sistema
+  level: info
 
 debug:
   enabled: false
@@ -31,18 +37,11 @@ keymap:
     left:  [ "Left",  "s", "o" ]
     down:  [ "Down",  "d", "a" ]
     right: [ "Right", "f", "p" ]
-    fire_normal:  [ "Space", "v" ]
-    fire_fast:  [ "LALT", "c" ]
-
-font:
-  default:
-    type: font
-    #file: hack_nerd.ttf
-    file: TerminusTTF-Bold-4.39.ttf
-    #size: 16
-    size: 20
+    fire:  [ "Space", "n", "c" ]
+    fastfire:  [ "LALT", "RALT", "m", "x" ]
 
 layout:
+
   intro:
     logo:
       type: image
@@ -50,6 +49,35 @@ layout:
     logo_pos: [ 120,40 ]
     text_pos: [ 200,300 ]
     text_blink_time: 600
+    menu:
+      blink: 250
+      options:
+        - text: "Start game"
+          pos: [ 260, 265 ]
+          action: "travel"
+        - text: "How to play"
+          pos: [ 260, 285 ]
+          action: "info"
+        - text: "Exit"
+          pos: [ 260, 305 ]
+          action: "exit"
+
+  info:
+    background:
+      type: image
+      file: inside.png
+      alpha: 80
+    text_info:
+      type: "text"
+      file: "info.txt"
+      pos: [ 25, 25 ]
+      spacing: 20
+    text_keys:
+      type: "text"
+      file: "keys.txt"
+      pos: [ 180, 120 ]
+      spacing: 16
+
   travel:
     ship-straight:
       type: image
@@ -62,27 +90,186 @@ layout:
     arriving_time: 1600
     turbulencias_time: 80
     turbulencias_shift: 2
-  game:
-    pause_text_pos: [ 225, 170 ]
+
+  gameplay:
     space_rect: [ 0, 0, 500, 360 ]
-    board_rect: [ 500, 0, 140, 360 ]
-    topscore_text_pos: [ 510, 30 ]
-    topscore_pos: [ 510, 60 ]
-    score_text_pos: [ 510, 90 ]
-    score_pos: [ 510, 120 ]
-    charge_text_pos: [ 540, 180 ]
-    charge_pos: [ 570, 210 ]
-    scene_text_pos: [ 545, 240 ]
-    scene_pos: [ 570, 270 ]
-    lives_pos: [ 503, 320 ]
+
+    board:
+      background_color: [ 33,33,255 ]
+      board_rect: [ 500, 0, 140, 360 ]
+      topscore_text_pos: [ 510, 30 ]
+      topscore_pos: [ 510, 60 ]
+      score_text_pos: [ 510, 90 ]
+      score_pos: [ 510, 120 ]
+      charge_text_pos: [ 540, 180 ]
+      charge_pos: [ 570, 210 ]
+      scene_text_pos: [ 545, 240 ]
+      scene_pos: [ 570, 270 ]
+      lives_pos: [ 503, 320 ]
+
+    planetsurface:
+      colors:
+        - [ 30, 100, 30 ]
+        - [ 100, 100, 30 ]
+        - [ 90, 40, 0 ]
+        - [ 100, 20, 20 ]
+
+    pause:
+      background_color: [ 33,33,255 ]
+      text: "PAUSE"
+      text_color: [ 222,222,222 ]
+      text_pos: [ 225, 170 ]
+
+    gameover:
+      background_color: [ 33,33,255 ]
+      text: "GAME OVER"
+      text_color: [ 222,222,222 ]
+      text_pos: [ 225, 150 ]
 
 gameplay:
-  initial_lives: 4
+  initial_lives: 2
+  max_lives: 4
+  score_extralife: 10000
+
   initial_charge: 50
   waves_per_scene: 2
   wave_size: 10
-  wave_wait: 3000
-  enemy_list: [ "mariposa", "rueda" ]
+  wave_wait: 1000
+  enemy_list: [ "rueda", "pajaro", "mariposa", "ovni" ]
+
+  enemy_shot_rand: 100
+  enemy_shots: 6
+  enemy_shots_add_scene: 2 # incremento dificultad cada escena
+
+  gameover_time: 3000
+
+  # develop
+  #initial_lives: 4
+  #score_extralife: 1000
+  #initial_charge: 5000
+  #wave_wait: 200
+  #waves_per_scene: 1
+  #enemy_list: [ "ovni" ]
+  #initial_lives: 1
+
+entities:
+
+  hero:
+    spritesheet: "hero"
+    animation:
+      default: [ 1, 0, 3, 60 ]
+      left: [ 0, 0, 3, 60 ]
+      right: [ 2, 0, 3, 60 ]
+    inflate_collider: [ -8, -4 ]
+    start_pos: [ 250, 200 ]
+    acceleration: 0.014
+    speed_max: 0.22
+    speed_decay: 0.005
+    cooldown_fast_fire: 100
+    respawn_time: 3000
+
+  enemy:
+
+    rueda:
+      spritesheet: "enemies"
+      animation:
+        default: [ 4, 0, 3, 150 ]
+      inflate_collider: [ -4, -4 ]
+      speed: 0.14
+      attack_time: 16000
+      flee_time: 4000
+
+    pajaro:
+      spritesheet: "enemies"
+      animation:
+        default: [ 1, 0, 3, 150 ]
+        left: [ 2, 0, 1, 0 ]
+        right: [ 2, 1, 1, 0 ]
+      inflate_collider: [ -4, -4 ]
+      speed_x: 0.10
+      speed_y: 0.08
+      turn_rand: 400
+      attack_time: 10000
+      flee_time: 5000
+
+    mariposa:
+      spritesheet: "enemies"
+      animation:
+        default: [ 0, 0, 3, 150 ]
+      inflate_collider: [ -4, -4 ]
+      acceleration: 0.01
+      speed_max: 0.12
+      attack_time: 16000
+      flee_time: 4000
+
+    ovni:
+      spritesheet: "enemies"
+      animation:
+        default: [ 3, 0, 3, 150 ]
+      inflate_collider: [ -4, -4 ]
+      speed: 0.10
+      attack_time: 16000
+      flee_time: 4000
+
+    elefante:
+      spritesheet: "enemies"
+      animation:
+        default: [ 5, 1, 2, 150 ]
+      inflate_collider: [ -4, -4 ]
+
+    pluma:
+      spritesheet: "enemies"
+      animation:
+        default: [ 6, 0, 3, 300 ]
+      inflate_collider: [ -4, -4 ]
+
+  explossion:
+
+    hero:
+      spritesheet: "explossions"
+      animation:
+        default: [ 0, 0, 4, 150 ]
+      time: 600
+
+    enemy:
+
+      rueda:
+        spritesheet: "explossions"
+        animation:
+          default: [ 4, 0, 4, 100 ]
+        time: 400
+
+      pajaro:
+        spritesheet: "explossions"
+        animation:
+          default: [ 2, 0, 4, 100 ]
+        time: 400
+
+      mariposa:
+        spritesheet: "explossions"
+        animation:
+          default: [ 1, 0, 4, 100 ]
+        time: 400
+
+      ovni:
+        spritesheet: "explossions"
+        animation:
+          default: [ 3, 0, 4, 100 ]
+        time: 400
+
+  bullet:
+    hero:
+      spritesheet: "bullets"
+      animation:
+        default: [ 0, 0, 1, 0 ]
+      inflate_collider: [ -2, 0 ]
+      speed: -0.5
+    enemy:
+      spritesheet: "bullets"
+      animation:
+        default: [ 0, 2, 1, 0 ]
+      inflate_collider: [ 0, 0 ]
+      speed: 0.14
 
 sprites:
   hero:
@@ -93,123 +280,69 @@ sprites:
     type: spritesheet
     file: bullets.png
     size: [ 6, 8 ]
-  exerion:
-    type: spritesheet
-    file: exerion-sheet-x2.png
-    size: [ 32, 32 ]
   enemies:
     type: spritesheet
     file: enemies.png
+    size: [ 32, 32 ]
+  explossions:
+    type: spritesheet
+    file: explossions.png
     size: [ 32, 32 ]
   mountains:
     type: spritesheet
     file: mountains.png
     size: [ 48, 48 ]
+  icons:
+    type: spritesheet
+    file: icons.png
+    size: [ 32, 32 ]
 
-entities:
-
-  hero:
-    spritesheet: "hero"
-    animation:
-      default: [ 1, 0, 3, 60 ]
-      left:    [ 0, 0, 3, 60 ]
-      right:   [ 2, 0, 3, 60 ]
-    inflate_collider: [ -8, -4 ]
-    start_pos: [ 250, 200 ]
-    acceleration: 0.02
-    speed_max: 0.2
-    speed_decay: 0.005
-    cooldown_fast_fire: 100
-
-  mariposa:
-    spritesheet: "enemies"
-    animation:
-      default: [ 0, 0, 3, 150 ]
-    inflate_collider: [ -4, -4 ]
-    escape_time: 5000
-    acceleration: 0.01
-    speed_max: 0.1
-    basepoints: 100
-    seed: 1234
-
-  pajaro:
-    spritesheet: "enemies"
-    animation:
-      default: [ 1, 0, 3, 150 ]
-    inflate_collider: [ -4, -4 ]
-    basepoints: 100
-
-  ovni:
-    spritesheet: "enemies"
-    animation:
-      default: [ 3, 0, 3, 150 ]
-    inflate_collider: [ -4, -4 ]
-    basepoints: 100
-
-  rueda:
-    spritesheet: "enemies"
-    animation:
-      default: [ 4, 0, 3, 150 ]
-    inflate_collider: [ -4, -4 ]
-    speed: 0.15
-    basepoints: 100
-
-  elefante:
-    spritesheet: "enemies"
-    animation:
-      default: [ 5, 1, 2, 150 ]
-    inflate_collider: [ -4, -4 ]
-    basepoints: 100
-
-  pluma:
-    spritesheet: "enemies"
-    animation:
-      default: [ 6, 0, 3, 300 ]
-    inflate_collider: [ -4, -4 ]
-    basepoints: 100
-
-  herobullet:
-    spritesheet: "bullets"
-    animation:
-      default: [ 0, 0, 1, 0 ]
-    inflate_collider: [ -2, 0 ]
-    speed: -0.5
-
-  enemybullet:
-    spritesheet: "bullets"
-    animation:
-      default: [ 0, 2, 1, 0 ]
-    inflate_collider: [ 0, 0 ]
-    speed: 0.1
+sound:
+  volume: 1
+  intro:
+    select_option:
+      type: sfx
+      file: select_option.ogg
+  travel:
+    traveling:
+      type: sfx
+      file: traveling.ogg
+  gameplay:
+    shoot:
+      type: sfx
+      file: shoot.mp3
+    hero_killed:
+      type: sfx
+      file: hero_killed.ogg
+    enemy_killed:
+      type: sfx
+      file: enemy_killed.ogg
+    extralife:
+      type: sfx
+      file: extralife.mp3
+    hero_died:
+      type: sfx
+      file: gameover.ogg
 
 music:
-  volume: 0.5
-  fadeout: 200
-  mission:
-    name: mission
-    file:
-      - shmup.assets.music
-      - mission.ogg
-
-sfx:
-  volume: 1
-  allied_gunfire:
-    name: allied_gunfire
-    file:
-      - shmup.assets.sfx
-      - allied_gunfire.wav
-  enemy_gunfire:
-    name: enemy_gunfire
-    file:
-      - shmup.assets.sfx
-      - enemy_gunfextranion/entities/enemy.pyire.wav
-  explosion1:
-    name: explosion1
-    file:
-      - shmup.assets.sfx
-      - explosion1.wav
-  explosion2:
-    name: explosion2
-    file:
-      - shmup.assets.sfx
-      - explosion2.wav
+  volume: 0.9
+  intro:
+    type: music
+    file: martian.mp3
+    volume_mult: 1
+  #gameplay:
+  #  type: music
+  #  file: 8bitretrofunk.mp3
+  #  volume_mult: 0.6
+  gameplay:
+    type: music
+    file: neongaming.mp3
+    volume_mult: 0.6
+  gameover:
+    type: music
+    file: borntotheearth.mp3
+    volume_mult: 0.5
+  info:
+    type: music
+    file: gameinfo.mp3
+    volume_mult: 0.6

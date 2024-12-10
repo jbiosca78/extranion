@@ -1,22 +1,22 @@
 import pygame
 import random
 from pygame.math import Vector2 as vector
-from extranion.states.state import State
+from extranion.tools import log
 from extranion.config import cfg
-from extranion.asset import asset
+from extranion.states.state import State
 from extranion.effects.stars3d import Stars3D
-import extranion.log as log
+from extranion.sound.soundmanager import SoundManager
+from extranion.asset import asset
 
 class Travel(State):
 
 	def __init__(self):
 		super().__init__()
-		self.name="Travel"
+		self.name="travel"
 
 	def enter(self):
-		log.info("Entering state Travel")
-		asset.load('ship','layout.travel.ship-straight', 'ship')
-		asset.load('ship','layout.travel.ship-turn', 'ship-turn')
+
+		self.__load_assets()
 
 		self.__ship_pos=cfg("layout.travel.ship_pos")
 		self.__travelling_time=cfg("layout.travel.travelling_time")
@@ -24,18 +24,27 @@ class Travel(State):
 		self.__turbulencias_time=cfg("layout.travel.turbulencias_time")
 		self.__turbulencias=vector(0,0)
 
-		# iniciamos el efecto de estrellas a máxima velocidad
+		# iniciamos el efecto de estrellas a alta velocidad
 		self.__stars=Stars3D(cfg("game.canvas_size"), speed=8)
 
+		SoundManager.play_sound("traveling")
+
+	def __load_assets(self):
+		asset.load('travel','layout.travel.ship-straight', 'ship')
+		asset.load('travel','layout.travel.ship-turn', 'ship-turn')
+		asset.load('travel', 'sound.travel.traveling')
+
 	def exit(self):
-		asset.unload('ship')
-		asset.unload('ship-turn')
+		SoundManager.stop_sound("traveling")
+		asset.unload("travel")
 		self.__stars.release()
 
 	def event(self, event):
 		if event.type == pygame.KEYDOWN:
-			if event.key == pygame.K_SPACE:
-				self.change_state = "Gameplay"
+			if event.key in [pygame.K_SPACE, pygame.K_RETURN]:
+				self.change_state = "gameplay"
+			if event.key == pygame.K_ESCAPE:
+				self.change_state = "intro"
 
 	def update(self, delta_time):
 
@@ -57,20 +66,13 @@ class Travel(State):
 			self.__ship_pos+=vector(6,-2)
 
 		if self.__arriving_time<=0:
-			self.change_state = "Gameplay"
-
-
+			self.change_state = "gameplay"
 
 	def render(self, canvas):
 		# primero pintamos las estrellas de fondo
 		self.__stars.render(canvas)
 
-		if self.__travelling_time>0:
-			# mostramos la nave viajando
-			logo=asset.get("ship")
-			canvas.blit(logo, self.__ship_pos+self.__turbulencias)
-		else:
-			# mostramos la nave girando
-			logo=asset.get("ship-turn")
-			canvas.blit(logo, self.__ship_pos+self.__turbulencias)
-
+		# mostramos la nave viajando o girando
+		if self.__travelling_time>0: image=asset.get("ship")
+		else: image=asset.get("ship-turn")
+		canvas.blit(image, self.__ship_pos+self.__turbulencias)

@@ -1,6 +1,6 @@
 from importlib import resources
 import pygame
-from extranion import log
+from extranion.tools import log
 from extranion.config import cfg
 
 class AssetItem:
@@ -12,6 +12,9 @@ class AssetItem:
 		if self.type == "image": self.data = pygame.image.load(filepath)
 		elif self.type == "font": self.data = pygame.font.Font(filepath, conf["size"])
 		elif self.type == "spritesheet": self.data = _load_spritesheet(filepath, conf["size"])
+		elif self.type == "sfx": self.data = pygame.mixer.Sound(filepath)
+		elif self.type == "music": self.data = { "file":filepath, "volume_mult":conf.get("volume_mult",1) }
+		elif self.type == "text": self.data=open(filepath, "r").readlines()
 
 	def get(self):
 		return self.data
