@@ -27,8 +27,8 @@ class Stars3D:
 			if c==2: r=g=1 # estrellas amarillas
 			if c==3: b=1 # estrellas azules
 			self.stars.append({
-				"xs": random.randint(-self.fx/2, self.fx/2),
-				"ys": random.randint(-self.fy/2, self.fy/2),
+				"xs": random.randint(int(-self.fx/2), int(self.fx/2)),
+				"ys": random.randint(int(-self.fy/2), int(self.fy/2)),
 				"z": random.randint(1, 999),
 				"speed": random.randint(1, 10),
 				"r":r, "g":g, "b":b,
@@ -39,8 +39,8 @@ class Stars3D:
 			# movemos la estrella, mas lento cuanto mas lejana
 			s["z"]-=delta_time/s["speed"]*self.speed
 			if int(s["z"])<=0:
-				s["xs"]=random.randint(-self.fx/2, self.fx/2)
-				s["ys"]=random.randint(-self.fy/2, self.fy/2)
+				s["xs"]=random.randint(int(-self.fx/2), int(self.fx/2))
+				s["ys"]=random.randint(int(-self.fy/2), int(self.fy/2))
 				s["speed"]=random.randint(1, 10)
 				s["z"]=999
 
